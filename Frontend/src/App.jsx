@@ -1,22 +1,27 @@
 // App.jsx
-import React from 'react';
-import Home from './pages/Home';
-import DockMenu from './components/DockMenu';
+import Home from "./pages/Home";
+import SystemHealth from "./components/SystemHealth";
+import MenuBar from "./components/MenuBar";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    // Main container: full viewport height, light background, and padding at bottom
-    <div className="min-h-screen bg-gray-100 pb-20">
-      
-      {/* Main Content */}
-      <Home />
+    <BrowserRouter>
+      <div className="min-h-screen bg-app-surface pb-20 font-mono">
+        <SystemHealth status="Nominal" />
+        {/* Main Content */}
+        <Home />
 
-      {/* Spacer to prevent content overlap with Dock */}
-      <div className="h-20 sm:h-24"></div>
-
-      {/* Fixed Dock navigation at the bottom */}
-      <DockMenu position="bottom" />
-    </div>
+        {/* Fixed Dock navigation at the bottom */}
+        <MenuBar />
+        {/* <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/tickets" element={<Tickets />} />
+          <Route path="/logs" element={<Logs />} />
+        </Routes> */}
+      </div>
+    </BrowserRouter>
   );
 }
 

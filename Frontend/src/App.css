@@ -3,23 +3,38 @@
 @theme {
   /* --- Custom Background Image --- */
   /* This generates a utility class: bg-app-surface */
-  --background-image-app-surface: linear-gradient(345deg, #0D0B1A 0%, #1F1A3B 100%);
-  
+  --background-image-app-surface: linear-gradient(
+    345deg,
+    #0d0b1a 0%,
+    #1f1a3b 100%
+  );
+
   /* --- Accent Glows / Gradients --- */
-  --color-nebula-magenta: #9F70FD;
-  --color-nebula-cyan: #79E8DD;
-  --color-nebula-blue: #55B4FF; 
+  --color-nebula-magenta: #9f70fd;
+  --color-nebula-cyan: #79e8dd;
+  --color-nebula-blue: #55b4ff;
 
   /* --- Primary and secondary --- */
-  --color-primary: #1C1363;
-  --color-secondary: #F9F6EE;
+  --color-primary: #1c1363;
+  --color-secondary: #f9f6ee;
 
   /* --- Primary/Secondary Text --- */
-  --color-text-primary: #EAE8FF; 
-  --color-text-secondary: #8B89A1; 
-  
+  --color-text-primary: #eae8ff;
+  --color-text-secondary: #8b89a1;
+
   /* --- System Health Indicators --- */
-  --color-indicator-nominal: #3EFFDC; 
-  --color-indicator-warning: #FFD23E; 
-  --color-indicator-critical: #FF6B6B; 
+  --color-indicator-nominal: #2e9267;
+  --color-indicator-warning: #ffd23e;
+  --color-indicator-critical: #ff6b6b;
+
+  /* --- Typography Tokens (Tailwind v4 style) --- */
+  --font-serif: "Lora", "Playfair Display", serif;
+  --font-sans: "Inter", "Manrope", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+@layer base {
+  :root {
+    font-family: var(--font-mono);
+  }
 }
