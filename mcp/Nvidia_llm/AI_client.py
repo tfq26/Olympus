@@ -214,6 +214,7 @@ Provide a clear summary in 2-3 sentences focusing on:
 def analyze_metrics_for_issues(resource):
     """
     Analyzes resource metrics and determines if there are any issues that require tickets
+    Uses historical logs to establish normal behavior baseline, then compares current metrics
     Returns structured JSON with issue detection, severity, and type
     Args: resource - Resource object with metrics data
     Returns: Dictionary with has_issue, severity, issue_type, description, recommendations
@@ -225,16 +226,106 @@ def analyze_metrics_for_issues(resource):
     metrics = resource.get("metrics", {})
     resource_id = resource.get("id", "unknown")
     resource_name = resource.get("name", "unknown")
+    instance_id = resource.get("instance_id")
+    
+    # Load historical logs for this resource to establish normal behavior baseline
+    try:
+        from ..monitor.log_data import get_logs_by_resource, load_logs
+        # Try to get logs by resource_id first
+        historical_logs = get_logs_by_resource(resource_id)
+        
+        # If no logs found by resource_id and we have instance_id, try to filter by instance
+        if not historical_logs and instance_id:
+            all_logs = load_logs()
+            if all_logs:
+                # Filter logs that might be related to this instance
+                # Look for logs with matching customer name or resource patterns
+                customer_name = resource.get("tags", {}).get("Name") or resource.get("tags", {}).get("customer")
+                if customer_name:
+                    historical_logs = [
+                        log for log in all_logs
+                        if log.get("customer_name") == customer_name
+                        and log.get("status") == "OK"  # Only use OK logs for baseline
+                        and resource_id in log.get("resources_affected", [])
+                    ]
+        
+        # Limit to last 500 logs to avoid token limits, and only use OK logs for baseline
+        baseline_logs = [
+            log for log in historical_logs
+            if log.get("status") == "OK"
+        ][-500:] if historical_logs else []
+        
+    except Exception as e:
+        # If loading logs fails, continue without baseline (fallback to threshold-based analysis)
+        baseline_logs = []
     
     # Convert metrics to JSON string for the prompt
     metrics_json = json.dumps(metrics, indent=2, default=str)
     
-    # Create prompt that asks for structured JSON response
-    prompt = f"""Analyze the following resource metrics and determine if there are any issues that require a support ticket.
+    # Prepare historical logs for the prompt (limit to avoid token limits)
+    logs_sample = baseline_logs[:100] if baseline_logs else []  # Use first 100 for prompt
+    logs_json = json.dumps(logs_sample, indent=2, default=str) if logs_sample else "No historical logs available"
+    
+    # Create prompt that asks for structured JSON response with baseline comparison
+    if baseline_logs:
+        prompt = f"""Analyze the following resource metrics and determine if there are any issues that require a support ticket.
+
+Step 1: Establish Normal Behavior Baseline
+First, analyze the historical logs (showing {len(baseline_logs)} normal operations) to understand what is normal for this resource:
+{logs_json}
+
+From these historical logs, determine the normal behavior patterns:
+- What is the normal CPU usage range? (analyze logs with subtype "cpu_usage")
+- What is the normal memory usage range? (analyze logs with subtype "memory_check")
+- What is the normal disk usage range? (analyze logs with subtype "disk_io")
+- What is the normal network traffic pattern? (analyze logs with subtype "network_traffic")
+- What are the normal service health patterns? (analyze logs with subtype "service_health")
+
+Step 2: Compare Current Metrics Against Baseline
+Resource: {resource_name} (ID: {resource_id})
+Current Metrics Data:
+{metrics_json}
+
+Compare the current metrics against the normal behavior baseline you established from the historical logs.
+
+Step 3: Determine if Issue Exists
+- If current metrics match normal behavior (within normal range) → has_issue: false, severity: "OK"
+- If current metrics deviate significantly from normal behavior → has_issue: true with appropriate severity
+- Severity should be based on how much the current metrics deviate from normal:
+  * CRITICAL: Metrics are severely outside normal range (e.g., CPU 3x normal, memory 2x normal)
+  * HIGH: Metrics are significantly outside normal range (e.g., CPU 2x normal)
+  * MEDIUM: Metrics are moderately outside normal range (e.g., CPU 1.5x normal)
+  * LOW: Metrics are slightly outside normal range (e.g., CPU 1.2x normal)
+  * OK: Metrics are within normal range
+
+Return a JSON response with the following structure:
+{{
+  "has_issue": true or false,
+  "severity": "CRITICAL" or "HIGH" or "MEDIUM" or "LOW" or "OK",
+  "issue_type": "cpu_spike" or "memory_leak" or "disk_full" or "network_issue" or "performance" or null,
+  "description": "Brief description of the issue compared to normal behavior" or null,
+  "recommendations": "What should be done" or null
+}}
+
+Important:
+- Use the historical logs to understand what is normal for THIS specific resource
+- Compare current metrics against THIS resource's normal behavior, not generic thresholds
+- If no historical logs are available, use fallback thresholds:
+  * CPU > 95%: CRITICAL, > 90%: HIGH, > 80%: MEDIUM, > 70%: LOW, <= 70%: OK
+  * Memory > 95%: CRITICAL, > 90%: HIGH, > 80%: MEDIUM, > 70%: LOW, <= 70%: OK
+  * Disk > 95%: CRITICAL, > 90%: HIGH, > 80%: MEDIUM, > 70%: LOW, <= 70%: OK
+- Only return JSON, no additional text
+
+Return only the JSON response:"""
+    else:
+        # Fallback to threshold-based analysis if no historical logs
+        prompt = f"""Analyze the following resource metrics and determine if there are any issues that require a support ticket.
 
 Resource: {resource_name} (ID: {resource_id})
 Metrics Data:
 {metrics_json}
+
+Note: No historical logs available for this resource. Using standard thresholds.
 
 Analyze the metrics and return a JSON response with the following structure:
 {{
@@ -296,7 +387,7 @@ Return only the JSON response:"""
                 }
             ],
             temperature=0.3,  # Lower temperature for more consistent JSON responses
-            max_tokens=300,   # Shorter response for structured JSON
+            max_tokens=400,   # Increased tokens for baseline comparison analysis
             stream=False
         )
         
