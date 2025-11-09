@@ -18,9 +18,10 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 import { WebSocketServer } from "ws";
 import { interpretMessage } from "./model/router.js";
-import { callTerraformTool, listTerraformTools } from "./tools/terraformClient.js";
+import { callTerraformTool, listTerraformTools, diagnoseTerraformInfra } from "./tools/terraformClient.js";
 import axios from "axios";
 
 // Flask backend URL for monitoring tools
@@ -154,12 +155,35 @@ const server = new McpServer({ tools });
 
 // 3️⃣ Express + WebSocket setup
 const app = express();
+
+// CORS configuration
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:5173";
+app.use(
+  cors({
+    origin: FRONTEND_ORIGIN,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
+app.options("*", cors());
+
 app.use(bodyParser.json());
 const wss = new WebSocketServer({ noServer: true });
 const PORT = 8080;
 
 app.get("/", (req, res) => {
   res.send("✅ MCP Server is running on ws://localhost:" + PORT);
+});
+
+// Lightweight health endpoint (does not invoke Docker / Terraform)
+app.get("/health", (req, res) => {
+  res.json({
+    ok: true,
+    service: "node-mcp",
+    terraformPersistent: process.env.PERSIST_TERRAFORM === "1",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // --------------------
@@ -170,7 +194,17 @@ app.get("/terraform/ping", async (req, res) => {
     const result = await callTerraformTool("ping", {});
     res.json({ ok: true, result });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    // Differentiate infrastructure / protocol failure from generic error
+    const isProtocol = /validation errors for JSONRP/i.test(e.message || "");
+    const payload = {
+      ok: false,
+      infraUnavailable: !isProtocol, // treat non-protocol errors as infra/container issues
+      protocolError: isProtocol,
+      error: e.message,
+      diagnostics: diagnoseTerraformInfra(),
+    };
+    // Return 503 for infra/container issues, 500 for protocol parsing
+    res.status(isProtocol ? 500 : 503).json(payload);
   }
 });
 
@@ -183,9 +217,19 @@ app.get("/terraform/tools", async (req, res) => {
   }
 });
 
+// Infra diagnostics endpoint
+app.get("/infra/terraform", (req, res) => {
+  try {
+    const diag = diagnoseTerraformInfra();
+    res.json({ ok: true, diagnostics: diag });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 // --------------------
 // Unified NLP endpoint - natural language → tool routing via NVIDIA
-// Returns INTENT for user confirmation, does NOT execute automatically
+// Auto-executes read-only operations, returns intent for destructive ops
 // --------------------
 app.post("/nlp", async (req, res) => {
   try {
@@ -204,24 +248,35 @@ app.post("/nlp", async (req, res) => {
     const destructiveTools = [
       'createS3Bucket', 'destroyS3Bucket',
       'createEC2', 'destroyEC2',
-      'createLambda', 'destroyLambda'
+      'createLambda', 'destroyLambda',
+      'createTicket'  // Tickets modify state
     ];
     
     const requiresConfirmation = destructiveTools.includes(tool);
     
-    // Return intent WITHOUT executing
-    res.json({
-      ok: true,
-      intent: {
+    if (requiresConfirmation) {
+      // Return intent WITHOUT executing for destructive operations
+      res.json({
+        ok: true,
+        intent: {
+          tool,
+          args,
+          description: tools[tool].description,
+          requiresConfirmation: true
+        },
+        message: "⚠️ This operation requires confirmation. Use /nlp/execute to proceed."
+      });
+    } else {
+      // Auto-execute read-only operations and return result
+      const result = await tools[tool].run(args);
+      res.json({
+        ok: true,
         tool,
         args,
-        description: tools[tool].description,
-        requiresConfirmation
-      },
-      message: requiresConfirmation 
-        ? "⚠️ This operation requires confirmation. Use /nlp/execute to proceed."
-        : "This is a read-only operation and can be executed safely."
-    });
+        result,
+        message: "Executed successfully"
+      });
+    }
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
   }

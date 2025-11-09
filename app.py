@@ -13,11 +13,14 @@ import os
 frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:5173")
 CORS(
     app,
-    resources={r"/*": {"origins": [frontend_origin, "http://127.0.0.1:5173"]}},
+    resources={r"/*": {"origins": [frontend_origin, "http://127.0.0.1:5173", "http://localhost:8080", "http://127.0.0.1:8080"]}},
     supports_credentials=True,
 )
 app.register_blueprint(monitor_bp, url_prefix="/monitor")
 app.register_blueprint(infra_bp, url_prefix="/infra")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    port = int(os.getenv("FLASK_PORT", "5000"))
+    # Run without debug to avoid TTY suspension and bind on all interfaces
+    app.run(host="0.0.0.0", debug=False, port=port)

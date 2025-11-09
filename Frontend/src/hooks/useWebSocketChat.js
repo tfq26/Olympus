@@ -17,6 +17,9 @@ export function useWebSocketChat() {
   const MAX_RECONNECT_ATTEMPTS = 5;
   const RECONNECT_DELAY = 3000;
 
+  // WebSocket URL (available across scopes)
+  const WS_URL = import.meta.env.VITE_NODE_WS_URL || "ws://localhost:8080";
+
   // Generate unique message ID
   const generateMessageId = useCallback(() => {
     return `msg-${Date.now()}-${++messageIdCounter.current}`;
@@ -43,7 +46,7 @@ export function useWebSocketChat() {
     connectionStateRef.current = "connecting";
     console.log("🔄 Attempting to connect to WebSocket server...");
 
-    try {
+  try {
       // Close existing connection if any
       if (wsRef.current) {
         wsRef.current.removeAllListeners?.();
@@ -51,9 +54,7 @@ export function useWebSocketChat() {
           wsRef.current.close();
         }
       }
-
-  const wsUrl = import.meta.env.VITE_NODE_WS_URL || "ws://localhost:8080";
-  const ws = new WebSocket(wsUrl);
+  const ws = new WebSocket(WS_URL);
       wsRef.current = ws;
 
       ws.onopen = () => {
@@ -152,7 +153,7 @@ export function useWebSocketChat() {
                 {
                   id: generateMessageId(),
                   role: "assistant",
-                  content: `⚠️ Unable to connect to server. Please make sure the server is running on ${wsUrl}`,
+                  content: `⚠️ Unable to connect to server. Please make sure the server is running on ${WS_URL}`,
                 },
               ];
             }
@@ -178,7 +179,7 @@ export function useWebSocketChat() {
                 {
                   id: generateMessageId(),
                   role: "assistant",
-                  content: `⚠️ Connection error. Please make sure the server is running on ${wsUrl}`,
+                  content: `⚠️ Connection error. Please make sure the server is running on ${WS_URL}`,
                 },
               ];
             }

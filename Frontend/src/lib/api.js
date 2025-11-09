@@ -17,7 +17,7 @@ export async function nlp(message) {
   });
   if (!res.ok) {
     let detail = '';
-    try { detail = await res.text(); } catch {}
+    try { detail = await res.text(); } catch (e) { /* ignore read error */ }
     throw new Error(`NLP failed: ${res.status} ${detail}`);
   }
   return res.json();
@@ -31,7 +31,7 @@ export async function executeIntent(tool, args) {
   });
   if (!res.ok) {
     let detail = '';
-    try { detail = await res.text(); } catch {}
+    try { detail = await res.text(); } catch (e) { /* ignore read error */ }
     throw new Error(`Execute failed: ${res.status} ${detail}`);
   }
   return res.json();
