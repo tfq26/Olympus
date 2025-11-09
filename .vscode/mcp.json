@@ -1,0 +1,26 @@
+{
+	"servers": {
+		"time": {
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"mcp/time"
+			],
+			"type": "stdio"
+		},
+		"terraform": {
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"--env-file",
+				"${workspaceFolder}/.env",
+				"mcps-terraform"
+			],
+			"type": "stdio"
+		}
+	},
+}
