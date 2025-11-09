@@ -11,6 +11,7 @@ export default function SmallerChatBox({
   onActionClick = null,
   selectedContext = [],
   systemPrompt = "",
+  hidden = false,
 }) {
   const [chatValue, setChatValue] = useState("");
   const [showChat, setShowChat] = useState(false);
@@ -18,6 +19,9 @@ export default function SmallerChatBox({
   const textareaRef = useRef(null);
 
   const { messages, append, isLoading } = useWebSocketChat();
+
+  // Don't render if hidden prop is true
+  if (hidden) return null;
 
   const handleSend = (customMessage = null) => {
     const messageToSend = customMessage || chatValue;
@@ -27,7 +31,7 @@ export default function SmallerChatBox({
 
     // Build context-aware message
     let finalMessage = messageToSend;
-    if (selectedContext.length > 0) {
+    if (selectedContext.length > 0 && !customMessage) {
       finalMessage = `Context: ${selectedContext.join(
         ", "
       )}\n\n${messageToSend}`;
@@ -50,7 +54,7 @@ export default function SmallerChatBox({
         message += ` ${selectedContext.join(", ")}`;
       }
     }
-    console.log("Action selected, sending message:", message);
+
     handleSend(message);
     op.current?.hide();
   };

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { RefreshCcw, Send } from "lucide-react"; // <-- lightweight icons
+import { RefreshCcw, MessageSquare, X } from "lucide-react";
 import SmallerChatBox from "../../components/SmallerChatBot";
 
 export default function LogsDashboard() {
+  const [chatHidden, setChatHidden] = useState(false);
   const [logs, setLogs] = useState([
     {
       id: "LOG-003",
@@ -41,7 +42,6 @@ export default function LogsDashboard() {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-  const [chatValue, setChatValue] = useState("");
   const [sortKey, setSortKey] = useState("timestamp");
   const [sortOrder, setSortOrder] = useState("desc");
 
@@ -66,20 +66,6 @@ export default function LogsDashboard() {
     return map[type] || "bg-gray-700/40 text-gray-300";
   };
 
-  // Chat send handler
-  const handleSend = () => {
-    if (!chatValue.trim()) return;
-    const newLog = {
-      id: `LOG-${String(logs.length + 1).padStart(3, "0")}`,
-      source: "System",
-      type: "Info",
-      message: chatValue,
-      timestamp: formatTimestamp(new Date()), // ✅ uniform format
-    };
-    setLogs([newLog, ...logs]);
-    setChatValue("");
-  };
-
   return (
     <main className="p-6 md:p-10 space-y-8 transition-colors duration-300">
       {/* Header */}
@@ -92,6 +78,28 @@ export default function LogsDashboard() {
         <h1 className="text-3xl font-extrabold text-gray-100">
           Logs Dashboard
         </h1>
+
+        {/* Chat Toggle Button */}
+        <button
+          onClick={() => setChatHidden(!chatHidden)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow-md transition-all font-medium ${
+            chatHidden
+              ? "bg-indigo-600 text-white hover:bg-indigo-700"
+              : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+          }`}
+        >
+          {chatHidden ? (
+            <>
+              <MessageSquare size={18} />
+              <span>Show Chat</span>
+            </>
+          ) : (
+            <>
+              <X size={18} />
+              <span>Hide Chat</span>
+            </>
+          )}
+        </button>
       </motion.div>
 
       {/* Logs Table */}
@@ -149,43 +157,58 @@ export default function LogsDashboard() {
         </table>
       </div>
 
-      {/* Chat Input */}
-      <div className="flex items-center w-full gap-3 pt-4 border-t border-gray-800/50">
-        {/* Left Refresh Button */}
-        <button
-          className="h-10 w-10 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all active:scale-95"
-          onClick={() =>
-            setLogs([
-              {
-                id: `LOG-${String(logs.length + 1).padStart(3, "0")}`,
-                source: "Manual Action",
-                type: "Info",
-                message: "Manual refresh triggered.",
-                timestamp: formatTimestamp(new Date()), // ✅ same uniform format
-              },
-              ...logs,
-            ])
-          }
+      {/* Chat Section */}
+      {!chatHidden && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.3 }}
+          className="pt-4 border-t border-gray-800/50"
         >
-          <RefreshCcw size={18} strokeWidth={2} />
-        </button>
+          <div className="flex items-start w-full gap-3">
+            {/* Left Refresh Button */}
+            <button
+              className="h-10 w-10 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all active:scale-95"
+              onClick={() =>
+                setLogs([
+                  {
+                    id: `LOG-${String(logs.length + 1).padStart(3, "0")}`,
+                    source: "Manual Action",
+                    type: "Info",
+                    message: "Manual refresh triggered.",
+                    timestamp: formatTimestamp(new Date()),
+                  },
+                  ...logs,
+                ])
+              }
+            >
+              <RefreshCcw size={18} strokeWidth={2} />
+            </button>
 
-        <SmallerChatBox
-          placeholder="Ask about logs or type a command..."
-          actions={[
-            {
-              label: "Add Log Alert",
-              icon: "pi pi-bell",
-              templatePrompt: "Add a new log alert for [INSERT_LOG_TYPE].",
-            },
-            {
-              label: "Filter Logs",
-              icon: "pi pi-filter",
-              templatePrompt: "Filter logs by [INSERT_FILTER_CRITERIA].",
-            },
-          ]}
-        />
-      </div>
+            <div className="flex-1">
+              <SmallerChatBox
+                placeholder="Ask about logs or type a command..."
+                actions={[
+                  {
+                    label: "Add Log Alert",
+                    icon: "pi pi-bell",
+                  },
+                  {
+                    label: "Filter Logs",
+                    icon: "pi pi-filter",
+                  },
+                  {
+                    label: "Analyze Errors",
+                    icon: "pi pi-exclamation-triangle",
+                  },
+                ]}
+                hidden={chatHidden}
+              />
+            </div>
+          </div>
+        </motion.div>
+      )}
     </main>
   );
 }
