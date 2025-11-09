@@ -135,7 +135,9 @@ def destroy_s3_bucket(auto_approve: bool = True) -> str:
 def create_lambda_function(
     function_name: str,
     aws_region: str = "us-east-1",
-    source_code: str = None,
+    source_code_file: str | None = None,
+    source_code: str | None = None,
+    handler: str = "lambda_function.handler",
     auto_approve: bool = True
 ) -> str:
     """
@@ -144,14 +146,41 @@ def create_lambda_function(
     Args:
         function_name: Name of the Lambda function
         aws_region: AWS region for the function (default: us-east-1)
-        source_code: Source code for the Lambda function. If not provided, uses default hello world
+        source_code_file: Path to a Python file with the Lambda code. If provided, used directly.
+        source_code: Inline source code string. If provided, written to a temp file and used.
+        handler: Lambda handler in module.function format. Defaults to "lambda_function.handler"
         auto_approve: Skip interactive approval (default: True)
     
     Returns:
         The output from terraform apply including function details
     """
-    if source_code is None:
-        source_code = "def handler(event, context):\n    return {'statusCode': 200, 'body': 'Hello from Lambda!'}"
+    # Determine source code strategy
+    created_temp_file = False
+    temp_filename = None
+    default_file_path = os.path.join(TERRAFORM_LAMBDA_DIR, "lambda_function.py")
+
+    if source_code_file and source_code:
+        raise ValueError("Provide either source_code_file or source_code, not both.")
+
+    if source_code:
+        # Write inline source to a temp file inside lambda module directory
+        temp_filename = "_inline_lambda.py"
+        temp_path = os.path.join(TERRAFORM_LAMBDA_DIR, temp_filename)
+        with open(temp_path, 'w') as f:
+            f.write(source_code.rstrip("\n") + "\n")
+        source_code_file = temp_filename
+        created_temp_file = True
+        # If handler still default, adjust to match module name
+        if handler == "lambda_function.handler":
+            handler = "_inline_lambda.handler"
+    elif source_code_file is None:
+        # Generate a default minimal handler file if none specified
+        if not os.path.exists(default_file_path):
+            with open(default_file_path, 'w') as f:
+                f.write("def handler(event, context):\n    return {'statusCode': 200, 'body': 'Hello from Lambda!'}\n")
+            created_temp_file = True
+            temp_filename = "lambda_function.py"
+        source_code_file = "lambda_function.py"  # relative reference
     
     init_output = tf_with_output(["terraform", "init", "-input=false"], TERRAFORM_LAMBDA_DIR)
     
@@ -159,9 +188,9 @@ def create_lambda_function(
     with open(tfvars_file, 'w') as f:
         f.write(f'function_name = "{function_name}"\n')
         f.write(f'aws_region = "{aws_region}"\n')
-        f.write('source_code = <<-EOT\n')
-        f.write(source_code)
-        f.write('\nEOT\n')
+        # If the provided path is absolute, write it as-is; otherwise treat as relative to module dir
+        f.write(f'source_code_file = "{source_code_file}"\n')
+        f.write(f'handler = "{handler}"\n')
     
     try:
         cmd = ["terraform", "apply", "-var-file", "terraform.tfvars"]
@@ -175,6 +204,18 @@ def create_lambda_function(
     finally:
         if os.path.exists(tfvars_file):
             os.remove(tfvars_file)
+        # Clean up the default file only if we created it here
+        if created_temp_file:
+            # Remove whichever temp file we created
+            try:
+                if temp_filename:
+                    temp_path = os.path.join(TERRAFORM_LAMBDA_DIR, temp_filename)
+                    if os.path.exists(temp_path):
+                        os.remove(temp_path)
+                elif os.path.exists(default_file_path):
+                    os.remove(default_file_path)
+            except Exception:
+                pass
 
 @mcp.tool()
 def destroy_lambda_function(auto_approve: bool = True) -> str:

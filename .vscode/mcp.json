@@ -18,6 +18,8 @@
 				"--rm",
 				"--env-file",
 				"${workspaceFolder}/.env",
+				"-v",
+				"mcps_terraform-state:/app/server/terraform",
 				"mcps-terraform"
 			],
 			"type": "stdio"

@@ -12,4 +12,6 @@ RUN pip install -r requirements.txt
 
 COPY server ./server
 
+VOLUME ["/app/server/terraform"]
+
 ENTRYPOINT ["python", "server/mcp_server.py"]

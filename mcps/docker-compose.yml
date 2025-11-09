@@ -1,8 +1,11 @@
-version: "3.9"
-
 services:
   terraform:
     build: ./terraform
     env_file: ../.env
     stdin_open: true
     tty: true
+    volumes:
+      - terraform-state:/app/server/terraform
+
+volumes:
+  terraform-state:
