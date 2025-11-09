@@ -99,6 +99,8 @@ export default function SmallerChatBox({
 
         {/* Message Input */}
         <InputTextarea
+          id="chat-input"
+          name="chatMessage"
           className="flex-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-lg shadow border border-transparent focus:ring-4 focus:ring-indigo-500/40 resize-none"
           autoResize
           ref={textareaRef}

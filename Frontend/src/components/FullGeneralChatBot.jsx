@@ -48,6 +48,8 @@ export default function ChatBot({
 
             <div className="flex items-center w-full gap-3">
               <textarea
+                id="welcome-input"
+                name="welcomeMessage"
                 className="flex-1 bg-white/5 p-4 rounded-xl shadow-lg border-2 border-primary resize-none transition-all duration-200 "
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -109,6 +111,8 @@ export default function ChatBot({
 
             <div className="rounded-b-xl p-4 shadow-lg space-y-3 backdrop-blur-sm bg-[rgba(255,255,255,0.03)] border-b border-l border-r border-[rgba(255,255,255,0.1)]">
               <textarea
+                id="chat-message-input"
+                name="chatMessage"
                 className="w-full rounded-lg p-3 resize-none border-2  bg-[rgba(255,255,255,0.05)] text-text-primary border-primary"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
