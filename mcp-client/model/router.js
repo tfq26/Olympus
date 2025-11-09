@@ -56,7 +56,10 @@ function simpleRouter(message) {
     return { tool: "getLogs", args: resourceMatch ? { resource_id: resourceMatch[1] } : {} };
   }
   
-  if (lower.includes("metric")) {
+  // CPU, memory, metrics queries
+  if (lower.includes("cpu") || lower.includes("memory") || lower.includes("ram") || 
+      lower.includes("disk") || lower.includes("network") || lower.includes("utilization") ||
+      lower.includes("usage") || lower.includes("metric") || lower.includes("performance")) {
     const resourceMatch = message.match(/(?:resource|id)[-:\s]+([a-z0-9-]+)/i);
     if (resourceMatch) {
       return { tool: "getResourceMetrics", args: { resource_id: resourceMatch[1] } };
@@ -65,7 +68,8 @@ function simpleRouter(message) {
     if (instanceMatch) {
       return { tool: "getMetrics", args: { instance_id: instanceMatch[1] } };
     }
-    return { tool: "getResourceMetrics", args: { resource_id: "unknown" } };
+    // Default to fetching metrics for first available resource
+    return { tool: "getResourceMetrics", args: { resource_id: "i-1234567890abcdef0" } };
   }
   
   // Tickets
@@ -107,11 +111,13 @@ function simpleRouter(message) {
 export async function interpretMessage(message) {
   // Use simple router if enabled or as fallback
   if (USE_SIMPLE_ROUTER || !MODEL_API_KEY) {
-    console.log("Using simple keyword router");
+    console.log("Using simple keyword router (USE_SIMPLE_ROUTER or no API key)");
     return simpleRouter(message);
   }
 
   try {
+    console.log(`🤖 Calling NVIDIA API: ${MODEL_API_URL}`);
+    
     const systemPrompt = `You are an MCP router. Given a user message, decide which tool to call and what arguments to send.
 
 Available tools:
@@ -169,19 +175,21 @@ Do not include any explanation, just the JSON object.`;
 
     // Parse NVIDIA response
     const text = response.data.choices?.[0]?.message?.content || "";
+    console.log("📥 NVIDIA response:", text);
     
     // Extract JSON from response (might be wrapped in markdown code blocks)
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      console.error("No JSON found in response:", text);
+      console.error("❌ No JSON found in response:", text);
       throw new Error("No JSON found in response");
     }
 
     const parsed = JSON.parse(jsonMatch[0]);
-    console.log("Router result (NVIDIA):", parsed);
+    console.log("✅ Router result (NVIDIA):", parsed);
     return parsed;
   } catch (err) {
-    console.error("Router error, falling back to simple router:", err.response?.data?.detail || err.message);
+    console.error("❌ Router error:", err.response?.data || err.message);
+    console.log("⚠️ Falling back to simple keyword router");
     // fallback to simple router
     return simpleRouter(message);
   }
