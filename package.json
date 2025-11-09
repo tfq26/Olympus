@@ -1,0 +1,37 @@
+{
+  "name": "olympus",
+  "version": "1.0.0",
+  "description": "Full-stack infrastructure management platform",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n \"FLASK,NODE,FRONTEND,OPEN\" -c \"blue,green,magenta,cyan\" \"npm run dev:flask\" \"npm run dev:node\" \"npm run dev:frontend\" \"sh -c 'npx wait-on tcp:5000 tcp:8080 http://localhost:5173 && npx open-cli http://localhost:5173'\"",
+      "dev:flask": "python3 app.py",
+    "dev:node": "cd mcp-client && node server.js",
+    "dev:frontend": "cd Frontend && npm run dev",
+    "install:all": "npm install && cd mcp-client && npm install && cd ../Frontend && npm install",
+    "build": "cd Frontend && npm run build",
+    "test": "npm run test:node && npm run test:frontend",
+    "test:node": "cd mcp-client && npm test",
+    "test:frontend": "cd Frontend && npm run lint",
+    "sync-env": "node scripts/sync-env.mjs",
+    "setup": "npm run install:all && pip3 install -r requirements.txt && npm run sync-env",
+    "install:python": "pip3 install -r requirements.txt",
+      "kill-ports": "npx kill-port 5000 8080 5173 || true",
+      "demo": "npm run kill-ports && npm run setup && npm run dev"
+  },
+  "keywords": [
+    "infrastructure",
+    "terraform",
+    "aws",
+    "mcp",
+    "monitoring"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "dotenv": "^16.4.5",
+    "open-cli": "^7.0.1",
+    "wait-on": "^7.2.0"
+  }
+}

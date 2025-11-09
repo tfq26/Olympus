@@ -52,7 +52,8 @@ export function useWebSocketChat() {
         }
       }
 
-      const ws = new WebSocket("ws://localhost:8080");
+  const wsUrl = import.meta.env.VITE_NODE_WS_URL || "ws://localhost:8080";
+  const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
       ws.onopen = () => {
@@ -76,7 +77,20 @@ export function useWebSocketChat() {
         try {
           const data = JSON.parse(event.data);
           
-          if (data.reply) {
+          if (data.needsConfirmation) {
+            // Server is asking for confirmation before executing
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: generateMessageId(),
+                role: "assistant",
+                content: data.message,
+                needsConfirmation: true,
+                intent: data.intent,
+              },
+            ]);
+            setIsLoading(false);
+          } else if (data.reply) {
             // Add assistant message
             setMessages((prev) => [
               ...prev,
@@ -138,7 +152,7 @@ export function useWebSocketChat() {
                 {
                   id: generateMessageId(),
                   role: "assistant",
-                  content: "⚠️ Unable to connect to server. Please make sure the server is running on ws://localhost:8080",
+                  content: `⚠️ Unable to connect to server. Please make sure the server is running on ${wsUrl}`,
                 },
               ];
             }
@@ -164,7 +178,7 @@ export function useWebSocketChat() {
                 {
                   id: generateMessageId(),
                   role: "assistant",
-                  content: "⚠️ Connection error. Please make sure the server is running on ws://localhost:8080",
+                  content: `⚠️ Connection error. Please make sure the server is running on ${wsUrl}`,
                 },
               ];
             }
@@ -287,6 +301,22 @@ export function useWebSocketChat() {
       setIsLoading(false);
     },
     setMessages,
+    // New: Confirm an intent
+    confirm: useCallback(
+      (intent) => {
+        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+          console.error("WebSocket not connected");
+          return;
+        }
+        setIsLoading(true);
+        const confirmData = JSON.stringify({
+          intent,
+          userConfirmed: true,
+        });
+        wsRef.current.send(confirmData);
+      },
+      []
+    ),
   };
 }
 

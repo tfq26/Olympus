@@ -1,5 +1,16 @@
 // server.js
 import dotenv from "dotenv";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+// Load env from repo root first (unified env), then local .env for overrides
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootEnvPath = path.resolve(__dirname, "..", ".env");
+if (fs.existsSync(rootEnvPath)) {
+  dotenv.config({ path: rootEnvPath });
+}
 dotenv.config();
 
 // ✅ Import the correct MCP server class
@@ -174,6 +185,7 @@ app.get("/terraform/tools", async (req, res) => {
 
 // --------------------
 // Unified NLP endpoint - natural language → tool routing via NVIDIA
+// Returns INTENT for user confirmation, does NOT execute automatically
 // --------------------
 app.post("/nlp", async (req, res) => {
   try {
@@ -183,11 +195,58 @@ app.post("/nlp", async (req, res) => {
     // Use NVIDIA router to determine tool and args
     const { tool, args } = await interpretMessage(message);
     
-    // Execute the mapped tool
+    // Check if tool exists
     if (!tools[tool]) {
       return res.status(404).json({ ok: false, error: `Unknown tool: ${tool}` });
     }
     
+    // Determine if this is a destructive/infrastructure operation requiring confirmation
+    const destructiveTools = [
+      'createS3Bucket', 'destroyS3Bucket',
+      'createEC2', 'destroyEC2',
+      'createLambda', 'destroyLambda'
+    ];
+    
+    const requiresConfirmation = destructiveTools.includes(tool);
+    
+    // Return intent WITHOUT executing
+    res.json({
+      ok: true,
+      intent: {
+        tool,
+        args,
+        description: tools[tool].description,
+        requiresConfirmation
+      },
+      message: requiresConfirmation 
+        ? "⚠️ This operation requires confirmation. Use /nlp/execute to proceed."
+        : "This is a read-only operation and can be executed safely."
+    });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+// --------------------
+// Execute confirmed NLP intent
+// --------------------
+app.post("/nlp/execute", async (req, res) => {
+  try {
+    const { tool, args, userConfirmed } = req.body;
+    
+    if (!userConfirmed) {
+      return res.status(400).json({ ok: false, error: "userConfirmed must be true" });
+    }
+    
+    if (!tool || !args) {
+      return res.status(400).json({ ok: false, error: "tool and args required" });
+    }
+    
+    if (!tools[tool]) {
+      return res.status(404).json({ ok: false, error: `Unknown tool: ${tool}` });
+    }
+    
+    // Execute the tool
     const result = await tools[tool].run(args);
     res.json({ ok: true, tool, args, result });
   } catch (e) {
@@ -254,6 +313,75 @@ app.delete("/terraform/lambda", async (req, res) => {
   }
 });
 
+// --------------------
+// Monitoring Endpoints (proxy to Flask)
+// --------------------
+app.get("/monitor/metrics/:instance_id", async (req, res) => {
+  try {
+    const { instance_id } = req.params;
+    const result = await axios.get(`${FLASK_URL}/monitor/metrics`, { params: { instance_id } });
+    res.json(result.data);
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.get("/monitor/metrics/enriched/:instance_id", async (req, res) => {
+  try {
+    const { instance_id } = req.params;
+    const { resource_id, auto_update } = req.query;
+    const result = await axios.get(`${FLASK_URL}/monitor/metrics/enriched`, { 
+      params: { instance_id, resource_id, auto_update } 
+    });
+    res.json(result.data);
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.get("/monitor/resources", async (req, res) => {
+  try {
+    const result = await axios.get(`${FLASK_URL}/monitor/mock/metrics`);
+    res.json(result.data);
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.get("/monitor/resource/:resource_id", async (req, res) => {
+  try {
+    const { resource_id } = req.params;
+    const result = await axios.get(`${FLASK_URL}/monitor/mock/metrics/${resource_id}`);
+    res.json(result.data);
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.get("/monitor/logs", async (req, res) => {
+  try {
+    const { resource_id, status } = req.query;
+    const result = await axios.get(`${FLASK_URL}/monitor/mock/logs`, { 
+      params: { resource_id, status } 
+    });
+    res.json(result.data);
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.get("/monitor/logs/analysis", async (req, res) => {
+  try {
+    const { resource_id, status } = req.query;
+    const result = await axios.get(`${FLASK_URL}/monitor/mock/logs/analysis`, { 
+      params: { resource_id, status } 
+    });
+    res.json(result.data);
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 const httpServer = app.listen(PORT, () =>
   console.log(`🚀 MCP Server ready on ws://localhost:${PORT}`)
 );
@@ -263,24 +391,60 @@ httpServer.on("upgrade", (req, socket, head) => {
   wss.handleUpgrade(req, socket, head, (ws) => {
     ws.on("message", async (data) => {
       try {
-        const { message } = JSON.parse(data.toString());
-        console.log("🗣️ User:", message);
+        const payload = JSON.parse(data.toString());
+        const { message, intent, userConfirmed } = payload;
+        
+        // Two-phase: 1) Get intent, 2) Execute with confirmation
+        if (intent && userConfirmed) {
+          // Phase 2: User confirmed, execute the intent
+          console.log("✅ User confirmed:", intent);
+          
+          if (!tools[intent.tool]) {
+            throw new Error(`Unknown tool: ${intent.tool}`);
+          }
+          
+          const result = await tools[intent.tool].run(intent.args);
+          console.log("✅ Tool result:", result);
+          
+          ws.send(JSON.stringify({ 
+            reply: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
+            intent: intent.tool 
+          }));
+        } else if (message) {
+          // Phase 1: Parse user message and return intent
+          console.log("🗣️ User:", message);
 
-        // Ask your NVIDIA model how to route it
-        const { tool, args } = await interpretMessage(message);
-        console.log("🧩 Routed to:", tool, args);
+          // Ask NVIDIA model to route it
+          const { tool, args } = await interpretMessage(message);
+          console.log("🧩 Routed to:", tool, args);
 
-        // Run the mapped tool
-        // ✅ NEW — call the tool manually
-        if (!tools[tool]) {
-          throw new Error(`Unknown tool: ${tool}`);
+          // Check if tool is destructive
+          const destructiveTools = [
+            'createS3Bucket', 'destroyS3Bucket',
+            'createEC2', 'destroyEC2',
+            'createLambda', 'destroyLambda'
+          ];
+          
+          const requiresConfirmation = destructiveTools.includes(tool);
+          
+          if (requiresConfirmation) {
+            // Send confirmation request to user
+            ws.send(JSON.stringify({
+              needsConfirmation: true,
+              intent: { tool, args, description: tools[tool]?.description },
+              message: `⚠️ This will execute: ${tool} with args ${JSON.stringify(args)}. Confirm to proceed.`
+            }));
+          } else {
+            // Safe operation, execute immediately
+            const result = await tools[tool].run(args);
+            console.log("✅ Tool result:", result);
+            ws.send(JSON.stringify({ 
+              reply: typeof result === 'string' ? result : JSON.stringify(result, null, 2)
+            }));
+          }
+        } else {
+          throw new Error("Invalid message format");
         }
-
-        const result = await tools[tool].run(args);
-        console.log("✅ Tool result:", result);
-
-        // Send result back to client
-        ws.send(JSON.stringify({ reply: result }));
       } catch (err) {
         console.error("❌ Error processing message:", err);
         ws.send(JSON.stringify({ error: err.message }));

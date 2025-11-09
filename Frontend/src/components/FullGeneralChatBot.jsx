@@ -13,7 +13,7 @@ export default function ChatBot({
   const [input, setInput] = useState("");
   const [isStarted, setIsStarted] = useState(false);
 
-  const { messages, append, isLoading } = useWebSocketChat();
+  const { messages, append, isLoading, confirm } = useWebSocketChat();
 
   const handleSubmit = () => {
     if (!input.trim()) return;
@@ -21,6 +21,10 @@ export default function ChatBot({
 
     append({ role: "user", content: input });
     setInput("");
+  };
+
+  const handleConfirm = (intent) => {
+    confirm(intent);
   };
 
   const handleKeyDown = (e) => {
@@ -96,6 +100,29 @@ export default function ChatBot({
                   }`}
                 >
                   {m.content}
+                  
+                  {/* Confirmation buttons for destructive operations */}
+                  {m.needsConfirmation && m.intent && (
+                    <div className="mt-4 pt-4 border-t border-nebula-magenta/30 flex gap-3">
+                      <button
+                        onClick={() => handleConfirm(m.intent)}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                      >
+                        ✓ Confirm & Execute
+                      </button>
+                      <button
+                        onClick={() => {
+                          // Just acknowledge, don't execute
+                        }}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors"
+                      >
+                        ✗ Cancel
+                      </button>
+                      <div className="text-xs text-gray-400 self-center ml-2">
+                        Tool: <code className="bg-black/30 px-2 py-1 rounded">{m.intent.tool}</code>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
 

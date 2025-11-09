@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Card } from "primereact/card";
 import { Chart } from "primereact/chart";
 import { Button } from "primereact/button";
 import SmallerChatBox from "../../components/SmallerChatBot";
 import { motion } from "framer-motion";
+import { getResources, getResourceMetrics } from "../../lib/api";
 import "primeicons/primeicons.css";
 
 const actions = [
@@ -76,18 +77,120 @@ const itemVariants = {
 // --- Main Component ---
 export default function CloudDashboard() {
   const [selectedGraphs, setSelectedGraphs] = useState([]);
+  const [resources, setResources] = useState([]);
+  const [selectedResource, setSelectedResource] = useState(null);
+  const [liveMetrics, setLiveMetrics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const op = useRef(null);
+
+  // Fetch available resources on mount
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        setLoading(true);
+        const data = await getResources();
+        setResources(data.resources || []);
+        // Auto-select first resource
+        if (data.resources && data.resources.length > 0) {
+          setSelectedResource(data.resources[0]);
+        }
+        setError(null);
+      } catch (err) {
+        console.error('Failed to fetch resources:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchResources();
+  }, []);
+
+  // Fetch metrics for selected resource
+  useEffect(() => {
+    if (!selectedResource) return;
+
+    const fetchMetrics = async () => {
+      try {
+        const data = await getResourceMetrics(selectedResource.id);
+        setLiveMetrics(data.resource || data);
+      } catch (err) {
+        console.error('Failed to fetch metrics:', err);
+        setError(err.message);
+      }
+    };
+
+    fetchMetrics();
+    // Poll every 10 seconds for live updates
+    const interval = setInterval(fetchMetrics, 10000);
+    return () => clearInterval(interval);
+  }, [selectedResource]);
+
+  // Generate chart data from live metrics or fallback to mock
+  const generateChartDataFromMetrics = (metricKey, label, color) => {
+    if (!liveMetrics || !liveMetrics.metrics) {
+      // Fallback to mock data
+      return generateChartData(label, color);
+    }
+
+    const metrics = liveMetrics.metrics;
+    let value = 0;
+
+    switch (metricKey) {
+      case 'cpu':
+        value = metrics.cpu_usage_percent || 0;
+        break;
+      case 'ram':
+        value = metrics.memory_usage_percent || 0;
+        break;
+      case 'networkIn':
+        value = metrics.network_in_mbps || 0;
+        break;
+      case 'diskIops':
+        value = metrics.disk_iops || 0;
+        break;
+      case 'metric5':
+        value = Math.random() * 100; // Placeholder
+        break;
+      case 'metric6':
+        value = Math.random() * 100; // Placeholder
+        break;
+      default:
+        value = 0;
+    }
+
+    // Create historical data with current value as latest point
+    const dataPoints = Array.from({ length: 11 }, () => 
+      Math.max(0, value + (Math.random() - 0.5) * 20)
+    );
+    dataPoints.push(value);
+
+    return {
+      labels: Array.from({ length: 12 }, (_, i) => `${(11 - i) * 5}s ago`),
+      datasets: [
+        {
+          label,
+          data: dataPoints,
+          fill: false,
+          borderColor: color,
+          tension: 0.4,
+          borderWidth: 2,
+          pointRadius: 0,
+        },
+      ],
+    };
+  };
 
   const chartData = useMemo(
     () => ({
-      cpu: generateChartData("CPU Utilization", "#6366F1"),
-      ram: generateChartData("RAM Usage", "#10B981"),
-      networkIn: generateChartData("Network In (Mbps)", "#F59E0B"),
-      diskIops: generateChartData("Disk IOPS", "#EF4444"),
-      metric5: generateChartData("Load Balancer Latency", "#3B82F6"),
-      metric6: generateChartData("Request Queue Depth", "#8B5CF6"),
+      cpu: generateChartDataFromMetrics("cpu", "CPU Utilization", "#6366F1"),
+      ram: generateChartDataFromMetrics("ram", "RAM Usage", "#10B981"),
+      networkIn: generateChartDataFromMetrics("networkIn", "Network In (Mbps)", "#F59E0B"),
+      diskIops: generateChartDataFromMetrics("diskIops", "Disk IOPS", "#EF4444"),
+      metric5: generateChartDataFromMetrics("metric5", "Load Balancer Latency", "#3B82F6"),
+      metric6: generateChartDataFromMetrics("metric6", "Request Queue Depth", "#8B5CF6"),
     }),
-    []
+    [liveMetrics]
   );
 
   const graphMetadata = {
@@ -124,6 +227,33 @@ export default function CloudDashboard() {
     const options = getChartOptions(title);
     const isSelected = selectedGraphs.includes(metricKey);
 
+    // Get current value for display
+    let currentValue = 'N/A';
+    let unit = '%';
+    if (liveMetrics?.metrics) {
+      const metrics = liveMetrics.metrics;
+      switch (metricKey) {
+        case 'cpu':
+          currentValue = metrics.cpu_usage_percent?.toFixed(1) || 'N/A';
+          break;
+        case 'ram':
+          currentValue = metrics.memory_usage_percent?.toFixed(1) || 'N/A';
+          break;
+        case 'networkIn':
+          currentValue = metrics.network_in_mbps?.toFixed(2) || 'N/A';
+          unit = 'Mbps';
+          break;
+        case 'diskIops':
+          currentValue = metrics.disk_iops || 'N/A';
+          unit = 'IOPS';
+          break;
+        default:
+          currentValue = data.datasets[0].data[data.datasets[0].data.length - 1]?.toFixed(1) || 'N/A';
+      }
+    } else {
+      currentValue = data.datasets[0].data[data.datasets[0].data.length - 1]?.toFixed(1) || 'N/A';
+    }
+
     return (
       <motion.div key={metricKey} variants={itemVariants} className="h-full">
         <Card
@@ -135,9 +265,14 @@ export default function CloudDashboard() {
           onClick={() => toggleGraphSelection(metricKey)}
           header={
             <div className="p-3 border-b border-gray-100/60 dark:border-gray-700/50 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">
-                {title}
-              </h3>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">
+                  {title}
+                </h3>
+                <div className="text-2xl font-bold text-indigo-400 mt-1">
+                  {currentValue} <span className="text-sm text-gray-400">{unit}</span>
+                </div>
+              </div>
               {isSelected && (
                 <span className="pi pi-check-circle text-indigo-500 text-lg" />
               )}
@@ -182,8 +317,43 @@ export default function CloudDashboard() {
         className="text-3xl md:text-4xl font-extrabold text-gray-100 text-center tracking-tight"
       >
         Resource Dashboard:{" "}
-        <span className="text-indigo-400">production-api</span>
+        <span className="text-indigo-400">
+          {loading ? 'Loading...' : (selectedResource?.name || selectedResource?.id || 'N/A')}
+        </span>
       </motion.h1>
+
+      {/* Resource Selector & Status */}
+      <div className="flex flex-wrap justify-center items-center gap-4">
+        {resources.length > 1 && (
+          <select
+            value={selectedResource?.id || ''}
+            onChange={(e) => {
+              const resource = resources.find(r => r.id === e.target.value);
+              setSelectedResource(resource);
+            }}
+            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-200"
+          >
+            {resources.map(r => (
+              <option key={r.id} value={r.id}>
+                {r.name || r.id} ({r.type})
+              </option>
+            ))}
+          </select>
+        )}
+        
+        {liveMetrics && (
+          <div className="flex items-center gap-2 px-4 py-2 bg-green-900/20 border border-green-500/30 rounded-lg">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span className="text-sm text-green-400">Live Data</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="px-4 py-2 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            ⚠️ {error}
+          </div>
+        )}
+      </div>
 
       {/* Selection Info */}
       {selectedGraphs.length > 0 && (

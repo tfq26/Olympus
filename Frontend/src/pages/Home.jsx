@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getRandomWelcome } from "../data/welcomeMessages";
 import { motion } from "framer-motion";
 import ChatBot from "../components/FullGeneralChatBot";
+import BackendTester from "../components/BackendTester";
 
 export default function Home() {
   const [value, setValue] = useState("");
@@ -32,6 +33,8 @@ export default function Home() {
         welcomeMessage={welcomeMessage}
         placeholder="Ask me anything about your infrastructure..."
       />
+      {/* Backend connectivity tester (Flask) */}
+      <BackendTester />
     </main>
   );
 }
