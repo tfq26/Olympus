@@ -1,0 +1,127 @@
+{
+  "employees": [
+    {
+      "employee_id": "EMP001",
+      "name": "Alice Johnson",
+      "email": "alice.johnson@company.com",
+      "skills": [
+        "AWS",
+        "Python",
+        "DevOps",
+        "CloudWatch",
+        "EC2"
+      ],
+      "credentials": [
+        "AWS Certified Solutions Architect",
+        "AWS Certified DevOps Engineer"
+      ],
+      "experience_level": "senior",
+      "specializations": [
+        "performance",
+        "infrastructure",
+        "monitoring"
+      ],
+      "current_workload": 2,
+      "availability_status": "available",
+      "max_workload": 5,
+      "response_time_avg_minutes": 10
+    },
+    {
+      "employee_id": "EMP002",
+      "name": "Bob Smith",
+      "email": "bob.smith@company.com",
+      "skills": [
+        "AWS",
+        "Python",
+        "Security",
+        "Compliance",
+        "DevOps"
+      ],
+      "credentials": [
+        "AWS Certified Security Specialist",
+        "CISSP"
+      ],
+      "experience_level": "senior",
+      "specializations": [
+        "security",
+        "compliance",
+        "infrastructure"
+      ],
+      "current_workload": 2,
+      "availability_status": "available",
+      "max_workload": 5,
+      "response_time_avg_minutes": 15
+    },
+    {
+      "employee_id": "EMP003",
+      "name": "Carol Williams",
+      "email": "carol.williams@company.com",
+      "skills": [
+        "AWS",
+        "Python",
+        "DevOps",
+        "Troubleshooting",
+        "Monitoring"
+      ],
+      "credentials": [
+        "AWS Certified Developer"
+      ],
+      "experience_level": "mid",
+      "specializations": [
+        "troubleshooting",
+        "performance",
+        "monitoring"
+      ],
+      "current_workload": 3,
+      "availability_status": "available",
+      "max_workload": 5,
+      "response_time_avg_minutes": 20
+    },
+    {
+      "employee_id": "EMP004",
+      "name": "David Brown",
+      "email": "david.brown@company.com",
+      "skills": [
+        "AWS",
+        "DevOps",
+        "Infrastructure",
+        "CloudWatch",
+        "EC2"
+      ],
+      "credentials": [
+        "AWS Certified SysOps Administrator"
+      ],
+      "experience_level": "mid",
+      "specializations": [
+        "infrastructure",
+        "performance",
+        "monitoring"
+      ],
+      "current_workload": 1,
+      "availability_status": "available",
+      "max_workload": 5,
+      "response_time_avg_minutes": 25
+    },
+    {
+      "employee_id": "EMP005",
+      "name": "Eve Davis",
+      "email": "eve.davis@company.com",
+      "skills": [
+        "Python",
+        "AWS",
+        "DevOps",
+        "Troubleshooting"
+      ],
+      "credentials": [],
+      "experience_level": "junior",
+      "specializations": [
+        "troubleshooting",
+        "monitoring"
+      ],
+      "current_workload": 0,
+      "availability_status": "available",
+      "max_workload": 3,
+      "response_time_avg_minutes": 30
+    }
+  ]
+}

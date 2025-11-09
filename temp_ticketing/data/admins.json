@@ -1,0 +1,21 @@
+{
+  "admins": [
+    {
+      "admin_id": "ADMIN001",
+      "name": "Admin User",
+      "email": "admin@company.com",
+      "role": "admin",
+      "permissions": ["approve_tickets", "assign_tickets", "reject_tickets", "view_all_tickets"],
+      "active": true
+    },
+    {
+      "admin_id": "ADMIN002",
+      "name": "Super Admin",
+      "email": "superadmin@company.com",
+      "role": "super_admin",
+      "permissions": ["approve_tickets", "assign_tickets", "reject_tickets", "view_all_tickets", "manage_employees", "manage_admins"],
+      "active": true
+    }
+  ]
+}
+

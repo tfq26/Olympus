@@ -1,0 +1,18 @@
+{
+  "servers": {
+    "terraform": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--env-file",
+        "${workspaceFolder}/server/.env",
+        "-v",
+        "${workspaceFolder}/mcps:/app",
+        "mcps-terraform"
+      ],
+      "type": "stdio"
+    }
+  }
+}

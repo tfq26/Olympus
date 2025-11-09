@@ -1,0 +1,26 @@
+{
+  "name": "mcp-client",
+  "version": "1.0.0",
+  "description": "MCP integration for MCP client",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test-endpoints.js",
+    "start": "node server.js",
+    "test:router": "node -e \"import('./model/router.js').then(m => m.interpretMessage(process.argv[1]).then(r => console.log(JSON.stringify(r, null, 2))).catch(e => console.error(e.message)))\"",
+    "test:cors": "node test-cors.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.21.1",
+    "@aws-sdk/client-sts": "^3.679.0",
+    "@aws-sdk/client-dynamodb": "^3.679.0",
+    "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.19.2",
+    "ws": "^8.17.1"
+  }
+}
