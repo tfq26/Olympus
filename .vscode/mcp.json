@@ -1,24 +1,18 @@
 {
-	"servers": {
-		"time": {
-			"command": "docker",
-			"args": [
-				"run",
-				"-i",
-				"--rm",
-				"mcp/time"
-			],
-			"type": "stdio"
-		},
-		"terraform": {
-			"command": "${workspaceFolder}/.venv/bin/python",
-			"args": [
-				"${workspaceFolder}/mcps/terraform/server/mcp_server.py"
-			],
-			"type": "stdio",
-			"env": {
-				"PYTHONUNBUFFERED": "1"
-			}
-		}
-	}
+  "servers": {
+    "terraform": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--env-file",
+        "${workspaceFolder}/server/.env",
+        "-v",
+        "${workspaceFolder}/mcps:/app",
+        "mcps-terraform"
+      ],
+      "type": "stdio"
+    }
+  }
 }
