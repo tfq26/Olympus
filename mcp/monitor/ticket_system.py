@@ -1,12 +1,17 @@
 """
 Ticket System Module
 Handles automatic ticket creation, assignment, and admin approval for CRITICAL tickets
+Uses DynamoDB with JSON fallback
 """
 import json
 import os
 import uuid
 from datetime import datetime
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Calculate project root directory (3 levels up from this file)
 BASE_DIR = Path(__file__).parent.parent.parent
@@ -14,13 +19,49 @@ TICKETS_FILE = BASE_DIR / "tickets.json"
 EMPLOYEES_FILE = BASE_DIR / "employees.json"
 ADMINS_FILE = BASE_DIR / "admins.json"
 
+# Try to import DynamoDB client
+USE_DYNAMODB = False
+try:
+    import boto3
+    from botocore.exceptions import ClientError
+    
+    DYNAMODB_REGION = os.getenv("DYNAMODB_REGION", "us-east-1")
+    TICKETS_TABLE_NAME = os.getenv("DYNAMODB_TABLE_TICKETS", "tickets-table")
+    EMPLOYEES_TABLE_NAME = os.getenv("DYNAMODB_TABLE_EMPLOYEES", "employees-table")
+    ADMINS_TABLE_NAME = os.getenv("DYNAMODB_TABLE_ADMINS", "admins-table")
+    
+    # Initialize DynamoDB resource
+    dynamodb = boto3.resource("dynamodb", region_name=DYNAMODB_REGION)
+    tickets_table = dynamodb.Table(TICKETS_TABLE_NAME)
+    employees_table = dynamodb.Table(EMPLOYEES_TABLE_NAME)
+    admins_table = dynamodb.Table(ADMINS_TABLE_NAME)
+    
+    USE_DYNAMODB = True
+    print(f"✅ Ticket System: Using DynamoDB (tickets: {TICKETS_TABLE_NAME})")
+except Exception as e:
+    USE_DYNAMODB = False
+    print(f"⚠️  Ticket System: DynamoDB unavailable, using JSON files. Error: {e}")
+
 
 # ============================================================================
-# Employee Database Functions
+# Employee Database Functions (DynamoDB + JSON Fallback)
 # ============================================================================
 
 def load_employees():
-    """Load employees from employees.json"""
+    """Load employees from DynamoDB or JSON fallback"""
+    if USE_DYNAMODB:
+        try:
+            response = employees_table.scan()
+            employees_list = response.get("Items", [])
+            # Handle pagination
+            while "LastEvaluatedKey" in response:
+                response = employees_table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+                employees_list.extend(response.get("Items", []))
+            return {"employees": employees_list}
+        except Exception as e:
+            print(f"Error loading employees from DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     try:
         if EMPLOYEES_FILE.exists():
             with open(EMPLOYEES_FILE, 'r') as f:
@@ -32,7 +73,18 @@ def load_employees():
 
 
 def save_employees(data):
-    """Save employees to employees.json"""
+    """Save employees to DynamoDB or JSON fallback"""
+    if USE_DYNAMODB:
+        try:
+            # Update all employees in DynamoDB
+            with employees_table.batch_writer() as batch:
+                for employee in data.get("employees", []):
+                    batch.put_item(Item=employee)
+            return True
+        except Exception as e:
+            print(f"Error saving employees to DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     try:
         with open(EMPLOYEES_FILE, 'w') as f:
             json.dump(data, f, indent=2)
@@ -43,7 +95,15 @@ def save_employees(data):
 
 
 def get_employee_by_id(employee_id):
-    """Get employee by ID"""
+    """Get employee by ID from DynamoDB or JSON"""
+    if USE_DYNAMODB:
+        try:
+            response = employees_table.get_item(Key={"employee_id": employee_id})
+            return response.get("Item")
+        except Exception as e:
+            print(f"Error getting employee from DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     data = load_employees()
     for employee in data.get("employees", []):
         if employee.get("employee_id") == employee_id:
@@ -64,11 +124,24 @@ def update_employee_workload(employee_id, increment=1):
 
 
 # ============================================================================
-# Admin Database Functions
+# Admin Database Functions (DynamoDB + JSON Fallback)
 # ============================================================================
 
 def load_admins():
-    """Load admins from admins.json"""
+    """Load admins from DynamoDB or JSON fallback"""
+    if USE_DYNAMODB:
+        try:
+            response = admins_table.scan()
+            admins_list = response.get("Items", [])
+            # Handle pagination
+            while "LastEvaluatedKey" in response:
+                response = admins_table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+                admins_list.extend(response.get("Items", []))
+            return {"admins": admins_list}
+        except Exception as e:
+            print(f"Error loading admins from DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     try:
         if ADMINS_FILE.exists():
             with open(ADMINS_FILE, 'r') as f:
@@ -80,7 +153,17 @@ def load_admins():
 
 
 def save_admins(data):
-    """Save admins to admins.json"""
+    """Save admins to DynamoDB or JSON fallback"""
+    if USE_DYNAMODB:
+        try:
+            with admins_table.batch_writer() as batch:
+                for admin in data.get("admins", []):
+                    batch.put_item(Item=admin)
+            return True
+        except Exception as e:
+            print(f"Error saving admins to DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     try:
         with open(ADMINS_FILE, 'w') as f:
             json.dump(data, f, indent=2)
@@ -91,7 +174,15 @@ def save_admins(data):
 
 
 def get_admin_by_id(admin_id):
-    """Get admin by ID"""
+    """Get admin by ID from DynamoDB or JSON"""
+    if USE_DYNAMODB:
+        try:
+            response = admins_table.get_item(Key={"admin_id": admin_id})
+            return response.get("Item")
+        except Exception as e:
+            print(f"Error getting admin from DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     data = load_admins()
     for admin in data.get("admins", []):
         if admin.get("admin_id") == admin_id:
@@ -100,11 +191,24 @@ def get_admin_by_id(admin_id):
 
 
 # ============================================================================
-# Ticket Database Functions
+# Ticket Database Functions (DynamoDB + JSON Fallback)
 # ============================================================================
 
 def load_tickets():
-    """Load tickets from tickets.json"""
+    """Load tickets from DynamoDB or JSON fallback"""
+    if USE_DYNAMODB:
+        try:
+            response = tickets_table.scan()
+            tickets_list = response.get("Items", [])
+            # Handle pagination
+            while "LastEvaluatedKey" in response:
+                response = tickets_table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+                tickets_list.extend(response.get("Items", []))
+            return {"tickets": tickets_list}
+        except Exception as e:
+            print(f"Error loading tickets from DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     try:
         if TICKETS_FILE.exists():
             with open(TICKETS_FILE, 'r') as f:
@@ -116,7 +220,17 @@ def load_tickets():
 
 
 def save_tickets(data):
-    """Save tickets to tickets.json"""
+    """Save tickets to DynamoDB or JSON fallback (deprecated - use create_ticket instead)"""
+    if USE_DYNAMODB:
+        try:
+            with tickets_table.batch_writer() as batch:
+                for ticket in data.get("tickets", []):
+                    batch.put_item(Item=ticket)
+            return True
+        except Exception as e:
+            print(f"Error saving tickets to DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     try:
         with open(TICKETS_FILE, 'w') as f:
             json.dump(data, f, indent=2)
@@ -127,7 +241,15 @@ def save_tickets(data):
 
 
 def get_ticket_by_id(ticket_id):
-    """Get ticket by ID"""
+    """Get ticket by ID from DynamoDB or JSON"""
+    if USE_DYNAMODB:
+        try:
+            response = tickets_table.get_item(Key={"ticket_id": ticket_id})
+            return response.get("Item")
+        except Exception as e:
+            print(f"Error getting ticket from DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     data = load_tickets()
     for ticket in data.get("tickets", []):
         if ticket.get("ticket_id") == ticket_id:
@@ -136,7 +258,16 @@ def get_ticket_by_id(ticket_id):
 
 
 def create_ticket(ticket_data):
-    """Create a new ticket"""
+    """Create a new ticket in DynamoDB or JSON"""
+    if USE_DYNAMODB:
+        try:
+            tickets_table.put_item(Item=ticket_data)
+            print(f"✅ Ticket {ticket_data.get('ticket_id')} saved to DynamoDB")
+            return True
+        except Exception as e:
+            print(f"Error creating ticket in DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     data = load_tickets()
     if "tickets" not in data:
         data["tickets"] = []
@@ -146,7 +277,21 @@ def create_ticket(ticket_data):
 
 
 def update_ticket(ticket_id, updates):
-    """Update ticket with new data"""
+    """Update ticket with new data in DynamoDB or JSON"""
+    if USE_DYNAMODB:
+        try:
+            # Get existing ticket
+            ticket = get_ticket_by_id(ticket_id)
+            if ticket:
+                ticket.update(updates)
+                tickets_table.put_item(Item=ticket)
+                print(f"✅ Ticket {ticket_id} updated in DynamoDB")
+                return True
+            return False
+        except Exception as e:
+            print(f"Error updating ticket in DynamoDB, falling back to JSON: {e}")
+    
+    # Fallback to JSON
     data = load_tickets()
     for ticket in data.get("tickets", []):
         if ticket.get("ticket_id") == ticket_id:
@@ -186,8 +331,9 @@ def score_employee(employee, required_skills, issue_type, specialization_match):
     score += experience_scores.get(experience_level, 10)
     
     # Current workload (20% weight) - lower is better
-    current_workload = employee.get("current_workload", 0)
-    max_workload = employee.get("max_workload", 5)
+    # Convert to float to handle DynamoDB Decimal types
+    current_workload = float(employee.get("current_workload", 0))
+    max_workload = float(employee.get("max_workload", 5))
     workload_percentage = 1 - (current_workload / max_workload) if max_workload > 0 else 1
     score += workload_percentage * 20
     
@@ -209,11 +355,11 @@ def find_best_employee(required_skills, issue_type, specialization):
     data = load_employees()
     employees = data.get("employees", [])
     
-    # Filter available employees
+    # Filter available employees (convert Decimal to float for comparison)
     available_employees = [
         emp for emp in employees
         if emp.get("availability_status", "unavailable").lower() == "available"
-        and emp.get("current_workload", 0) < emp.get("max_workload", 5)
+        and float(emp.get("current_workload", 0)) < float(emp.get("max_workload", 5))
     ]
     
     if not available_employees:

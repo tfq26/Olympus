@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../contexts/authContext.jsx";
 import { canPerform } from "../../lib/permissions.js";
-import { getResources } from "../../lib/api.js";
+import { getResources, createResource, deleteResource, createS3, createEC2, createLambda, destroyS3, destroyEC2, destroyLambda, checkAwsCredentials } from "../../lib/api.js";
 
 export default function ManageResources() {
   const { user } = useAuth();
@@ -41,19 +41,60 @@ export default function ManageResources() {
     }
 
     try {
-      // Call create resource API
-      const tags = formData.tags ? formData.tags.split(",").map(t => t.trim()) : [];
-      console.log("Creating resource:", { ...formData, tags });
+      // Parse tags from comma-separated string
+      const tags = formData.tags ? formData.tags.split(",").map(t => t.trim()).filter(t => t) : [];
       
-      // TODO: Implement actual API call
-      alert("Resource creation will be implemented via backend API");
-      
+      // 0) Check AWS credentials first to determine status color
+      let status = "running";
+      try {
+        const creds = await checkAwsCredentials();
+        if (!creds.ok) status = "warning"; // degraded yellow state
+      } catch (e) {
+        status = "warning"; // treat inability to check as warning
+      }
+
+      // 1) Create via Terraform depending on type
+      let tfResult;
+      if (formData.type === 'S3') {
+        tfResult = await createS3(formData.name, formData.region);
+      } else if (formData.type === 'EC2') {
+        tfResult = await createEC2({ instance_count: 1, instance_name_prefix: formData.name, aws_region: formData.region });
+      } else if (formData.type === 'Lambda') {
+        tfResult = await createLambda(formData.name, formData.region, null);
+      } else {
+        throw new Error(`Unsupported type for Terraform creation: ${formData.type}`);
+      }
+
+      // Provide concise success/failure feedback (backend returns parsed message)
+      if (tfResult?.ok === false) {
+        throw new Error(tfResult.error || 'Terraform creation failed');
+      }
+
+      // 2) Register the resource in monitoring DB for tracking
+      // Attempt to extract IDs/ARNs from raw result for tagging
+      const raw = tfResult.result || '';
+      const instanceIds = [...raw.matchAll(/i-[a-f0-9]+/gi)].map(m => m[0]);
+      const publicIps = [...raw.matchAll(/(\d+\.\d+\.\d+\.\d+)/g)].map(m => m[0]).filter(ip => /\d+\.\d+\.\d+\.\d+/.test(ip));
+      const arnMatches = [...raw.matchAll(/arn:aws:[^\s"']+/g)].map(m => m[0]);
+      const extraTags = [...instanceIds, ...publicIps.slice(0,3), ...arnMatches.slice(0,1)];
+
+      const resourceData = {
+        name: formData.name,
+        type: formData.type,
+        region: formData.region,
+        tags: [...tags, ...extraTags],
+        status,
+        created_by: user.email || "admin"
+      };
+      await createResource(resourceData);
+
+      alert(`✅ ${formData.type} created via Terraform. Registered in monitoring.`);
       setShowCreateModal(false);
       setFormData({ name: "", type: "EC2", region: "us-east-1", tags: "" });
       fetchResources();
     } catch (error) {
       console.error("Failed to create resource:", error);
-      alert("Failed to create resource");
+      alert(`Failed to create resource: ${error.message}`);
     }
   };
 
@@ -68,13 +109,28 @@ export default function ManageResources() {
     }
 
     try {
-      // TODO: Implement actual API call
-      console.log("Deleting resource:", resourceId);
-      alert("Resource deletion will be implemented via backend API");
-      fetchResources();
+      const resource = resources.find(r => r.id === resourceId);
+      if (!resource) throw new Error("Resource not found in current list");
+
+      // Terraform destroy first based on type
+      if (resource.type === 'S3') {
+        await destroyS3(resource.name);
+      } else if (resource.type === 'Lambda') {
+        await destroyLambda(); // current endpoint destroys configured lambda
+      } else if (resource.type === 'EC2') {
+        await destroyEC2(); // destroys the managed EC2 instance(s)
+      } // RDS or others could be added later
+
+      const response = await deleteResource(resourceId);
+      if (response.success) {
+        alert(`Resource destroyed and removed.`);
+        fetchResources();
+      } else {
+        alert(`Terraform destroy complete but DB removal failed: ${response.error || "Unknown error"}`);
+      }
     } catch (error) {
       console.error("Failed to delete resource:", error);
-      alert("Failed to delete resource");
+      alert(`Failed to delete resource: ${error.message}`);
     }
   };
 
@@ -146,7 +202,7 @@ export default function ManageResources() {
                     <div>
                       <span className="text-gray-400">Status:</span>
                       <span className={`ml-2 px-2 py-1 rounded text-xs font-semibold ${
-                        resource.status === "running" ? "bg-green-900/30 text-green-400" : "bg-gray-700 text-gray-300"
+                        resource.status === "running" ? "bg-green-900/30 text-green-400" : resource.status === 'warning' ? 'bg-yellow-900/30 text-yellow-400' : "bg-gray-700 text-gray-300"
                       }`}>
                         {resource.status || "unknown"}
                       </span>

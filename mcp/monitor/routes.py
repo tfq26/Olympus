@@ -741,3 +741,188 @@ def analyze_metrics_and_create_tickets():
         },
         "results": results
     })
+
+
+# ============================================================================
+# Resource Management Endpoints
+# ============================================================================
+
+@monitor_bp.route("/resources", methods=["POST"])
+def create_resource():
+    """
+    Create a new resource in metrics table
+    Request body: {name, type, region?, tags?, instance_id?}
+    Returns: Created resource with generated ID
+    """
+    from .dynamodb_client import metrics_table
+    from datetime import datetime
+    import uuid
+    
+    data = request.json
+    if not data or not data.get("name") or not data.get("type"):
+        return jsonify({"error": "name and type are required"}), 400
+    
+    # Generate resource ID
+    resource_id = f"res_{data['type'].lower()}_{uuid.uuid4().hex[:8]}"
+    
+    # Build resource object
+    resource = {
+        "id": resource_id,
+        "name": data["name"],
+        "type": data["type"],
+        "provider": "aws",
+        "region": data.get("region", "us-east-1"),
+        "status": data.get("status", "running"),
+        "created_at": datetime.utcnow().isoformat(),
+        "created_by": data.get("created_by", "admin"),
+        "health_score": 100,
+        "metrics": {},
+        "dependencies": [],
+        "tags": data.get("tags", []),
+        "estimated_monthly_cost": 0,
+        "security": {},
+    }
+    
+    # Add optional fields
+    if data.get("instance_id"):
+        resource["instance_id"] = data["instance_id"]
+    
+    if data.get("batch_group"):
+        resource["batch_group"] = data["batch_group"]
+    
+    if data.get("customer_name"):
+        resource["customer_name"] = data["customer_name"]
+    
+    # Try to save to DynamoDB
+    try:
+        if metrics_table:
+            metrics_table.put_item(Item=resource)
+            return jsonify({
+                "success": True,
+                "message": "Resource created successfully",
+                "resource": resource
+            }), 201
+        else:
+            return jsonify({"error": "DynamoDB not available"}), 503
+    except Exception as e:
+        return jsonify({"error": f"Failed to create resource: {str(e)}"}), 500
+
+
+@monitor_bp.route("/resources", methods=["GET"])
+def list_resources():
+    """
+    List all resources from DynamoDB metrics table
+    Query params: 
+        customer_name (optional) - Filter by customer name
+        type (optional) - Filter by resource type (e.g., EC2, S3, Lambda)
+        batch_group (optional) - Filter by batch group ID
+    Returns: List of resources matching filters
+    """
+    from .dynamodb_client import metrics_table
+    
+    customer_name = request.args.get("customer_name")
+    resource_type = request.args.get("type")
+    batch_group = request.args.get("batch_group")
+    
+    try:
+        if metrics_table:
+            # Scan all resources (DynamoDB scan - for production consider using indexes)
+            response = metrics_table.scan()
+            resources = response.get("Items", [])
+            
+            # Apply filters (case-insensitive for type)
+            if customer_name:
+                resources = [r for r in resources if r.get("customer_name") == customer_name]
+            
+            if resource_type:
+                resources = [r for r in resources if r.get("type", "").upper() == resource_type.upper()]
+            
+            if batch_group:
+                resources = [r for r in resources if r.get("batch_group") == batch_group]
+            
+            return jsonify({
+                "success": True,
+                "resources": resources,
+                "total": len(resources),
+                "filters": {
+                    "customer_name": customer_name,
+                    "type": resource_type,
+                    "batch_group": batch_group
+                }
+            })
+        else:
+            return jsonify({"error": "DynamoDB not available"}), 503
+    except Exception as e:
+        return jsonify({"error": f"Failed to list resources: {str(e)}"}), 500
+
+
+@monitor_bp.route("/resources/<resource_id>", methods=["DELETE"])
+def delete_resource(resource_id):
+    """
+    Delete a resource from metrics table
+    Path param: resource_id - Resource ID to delete
+    Returns: Success message
+    """
+    from .dynamodb_client import metrics_table
+    
+    try:
+        if metrics_table:
+            # Check if resource exists
+            response = metrics_table.get_item(Key={"id": resource_id})
+            if "Item" not in response:
+                return jsonify({"error": f"Resource {resource_id} not found"}), 404
+            
+            # Delete the resource
+            metrics_table.delete_item(Key={"id": resource_id})
+            
+            return jsonify({
+                "success": True,
+                "message": f"Resource {resource_id} deleted successfully"
+            })
+        else:
+            return jsonify({"error": "DynamoDB not available"}), 503
+    except Exception as e:
+        return jsonify({"error": f"Failed to delete resource: {str(e)}"}), 500
+
+
+@monitor_bp.route("/resources/<resource_id>", methods=["PUT"])
+def update_resource(resource_id):
+    """
+    Update resource metrics or properties
+    Path param: resource_id - Resource ID to update
+    Request body: {metrics?, status?, health_score?, ...}
+    Returns: Updated resource
+    """
+    from .dynamodb_client import metrics_table
+    
+    data = request.json
+    if not data:
+        return jsonify({"error": "Request body required"}), 400
+    
+    try:
+        if metrics_table:
+            # Get existing resource
+            response = metrics_table.get_item(Key={"id": resource_id})
+            if "Item" not in response:
+                return jsonify({"error": f"Resource {resource_id} not found"}), 404
+            
+            resource = response["Item"]
+            
+            # Update allowed fields
+            updatable_fields = ["status", "health_score", "metrics", "tags", "estimated_monthly_cost"]
+            for field in updatable_fields:
+                if field in data:
+                    resource[field] = data[field]
+            
+            # Save updated resource
+            metrics_table.put_item(Item=resource)
+            
+            return jsonify({
+                "success": True,
+                "message": "Resource updated successfully",
+                "resource": resource
+            })
+        else:
+            return jsonify({"error": "DynamoDB not available"}), 503
+    except Exception as e:
+        return jsonify({"error": f"Failed to update resource: {str(e)}"}), 500

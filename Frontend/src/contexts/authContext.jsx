@@ -22,7 +22,14 @@ export const AuthProvider = ({ children }) => {
         try {
           // Fetch token claims for role
           const tokenResult = await getIdTokenResult(firebaseUser);
-          const role = tokenResult.claims.role || "viewer"; // default lowest privilege
+          let role = tokenResult.claims.role || "viewer"; // default lowest privilege
+          
+          // Check for demo admin override from localStorage
+          const demoAdmin = localStorage.getItem("demoAdmin") === "true";
+          if (demoAdmin) {
+            role = "admin";
+          }
+          
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -32,12 +39,17 @@ export const AuthProvider = ({ children }) => {
           });
         } catch (e) {
           console.error("Failed to load custom claims", e);
+          
+          // Check for demo admin override even on error
+          const demoAdmin = localStorage.getItem("demoAdmin") === "true";
+          const role = demoAdmin ? "admin" : "viewer";
+          
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
             displayName: firebaseUser.displayName,
             photoURL: firebaseUser.photoURL,
-            role: "viewer",
+            role,
           });
         }
       } else {

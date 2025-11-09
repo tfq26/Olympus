@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "primereact/button";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { InputTextarea } from "primereact/inputtextarea";
-import { useWebSocketChat } from "../hooks/useWebSocketChat";
+import { useAIParsedChat } from "../hooks/useAIParsedChat";
 import { useAuth } from "../contexts/authContext.jsx";
 import { canPerform } from "../lib/permissions.js";
 
@@ -14,13 +14,16 @@ export default function SmallerChatBox({
   selectedContext = [],
   systemPrompt = "",
   hidden = false,
+  enableAIParsing = true,
 }) {
   const [chatValue, setChatValue] = useState("");
   const [showChat, setShowChat] = useState(false);
   const op = useRef(null);
   const textareaRef = useRef(null);
 
-  const { messages, append, isLoading, confirm, setMessages } = useWebSocketChat();
+  const { messages, append, isLoading, confirm, setMessages, isParsing } = useAIParsedChat({
+    autoParseResponses: enableAIParsing,
+  });
   const { user } = useAuth();
   const [toast, setToast] = useState(null); // { type, message }
 
@@ -86,6 +89,12 @@ export default function SmallerChatBox({
                   }`}
                 >
                   {m.content}
+                  {m.isParsed && (
+                    <div className="mt-2 text-xs text-gray-400 italic flex items-center gap-1">
+                      <span className="pi pi-sparkles" />
+                      <span>AI-enhanced response</span>
+                    </div>
+                  )}
                 </div>
                 {m.needsConfirmation && m.intent && (
                   <div className="flex gap-2 pl-2">
@@ -121,7 +130,7 @@ export default function SmallerChatBox({
             {isLoading && (
               <div className="text-sm opacity-70 italic flex items-center gap-2">
                 <span className="pi pi-spin pi-spinner" />
-                Thinking...
+                {isParsing ? 'Enhancing response with AI...' : 'Thinking...'}
               </div>
             )}
           </motion.div>

@@ -82,6 +82,7 @@ export default function CloudDashboard() {
   const [liveMetrics, setLiveMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [customerFilter, setCustomerFilter] = useState('all');
   const op = useRef(null);
 
   // Fetch available resources on mount
@@ -105,6 +106,35 @@ export default function CloudDashboard() {
     };
     fetchResources();
   }, []);
+
+  // Extract unique customer names from resources
+  const uniqueCustomers = useMemo(() => {
+    const customers = resources
+      .map(r => {
+        // Extract customer name from resource name pattern: {customer}-{type}-{id}
+        const match = r.name?.match(/^([^-]+)-/);
+        return match ? match[1] : null;
+      })
+      .filter(c => c !== null);
+    return ['all', ...new Set(customers)];
+  }, [resources]);
+
+  // Filter resources by customer
+  const filteredResources = useMemo(() => {
+    if (customerFilter === 'all') return resources;
+    return resources.filter(r => {
+      const match = r.name?.match(/^([^-]+)-/);
+      const customer = match ? match[1] : null;
+      return customer === customerFilter;
+    });
+  }, [resources, customerFilter]);
+
+  // Update selected resource when filter changes
+  useEffect(() => {
+    if (filteredResources.length > 0 && !filteredResources.find(r => r.id === selectedResource?.id)) {
+      setSelectedResource(filteredResources[0]);
+    }
+  }, [filteredResources]);
 
   // Fetch metrics for selected resource
   useEffect(() => {
@@ -324,21 +354,43 @@ export default function CloudDashboard() {
 
       {/* Resource Selector & Status */}
       <div className="flex flex-wrap justify-center items-center gap-4">
-        {resources.length > 1 && (
-          <select
-            value={selectedResource?.id || ''}
-            onChange={(e) => {
-              const resource = resources.find(r => r.id === e.target.value);
-              setSelectedResource(resource);
-            }}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-200"
-          >
-            {resources.map(r => (
-              <option key={r.id} value={r.id}>
-                {r.name || r.id} ({r.type})
-              </option>
-            ))}
-          </select>
+        {/* Customer Filter */}
+        {uniqueCustomers.length > 1 && (
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-400">Customer:</label>
+            <select
+              value={customerFilter}
+              onChange={(e) => setCustomerFilter(e.target.value)}
+              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 capitalize"
+            >
+              {uniqueCustomers.map(customer => (
+                <option key={customer} value={customer} className="capitalize">
+                  {customer === 'all' ? 'All Customers' : customer}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Resource Selector */}
+        {filteredResources.length > 1 && (
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-400">Resource:</label>
+            <select
+              value={selectedResource?.id || ''}
+              onChange={(e) => {
+                const resource = filteredResources.find(r => r.id === e.target.value);
+                setSelectedResource(resource);
+              }}
+              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-200"
+            >
+              {filteredResources.map(r => (
+                <option key={r.id} value={r.id}>
+                  {r.name || r.id} ({r.type})
+                </option>
+              ))}
+            </select>
+          </div>
         )}
         
         {liveMetrics && (

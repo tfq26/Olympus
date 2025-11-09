@@ -1,11 +1,15 @@
 import { NavLink } from "react-router-dom";
 import { Badge } from "primereact/badge";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { checkAwsCredentials } from "../lib/api.js";
 import { useAuth } from "../contexts/authContext.jsx";
 import { canPerform } from "../lib/permissions.js";
 
 export default function TopNav() {
   const { user } = useAuth();
+  const [status, setStatus] = useState("Nominal");
+  const [indicatorColor, setIndicatorColor] = useState("rgb(16, 185, 129)");
   const linkBase =
     "px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150";
   const inactive = "text-gray-300 hover:text-white hover:bg-gray-800";
@@ -28,14 +32,46 @@ export default function TopNav() {
     });
   }
 
-  const status = "Nominal";
   const colorMap = {
     Nominal: "rgb(16, 185, 129)", // emerald-500
     Warning: "rgb(245, 158, 11)", // amber-500
     Critical: "rgb(239, 68, 68)", // red-500
   };
 
-  const indicatorColor = colorMap[status];
+  useEffect(() => {
+    let cancelled = false;
+
+    const compute = (res) => {
+      // If basic STS ok but Dynamo error -> Warning; if both ok -> Nominal; if credentials missing -> Warning
+      if (!res.ok) return "Warning";
+      if (res.dynamo && res.dynamo !== 'ok' && res.dynamo !== 'skipped') return 'Warning';
+      return 'Nominal';
+    };
+
+    const checkNow = async () => {
+      try {
+        const res = await checkAwsCredentials();
+        const s = compute(res);
+        if (!cancelled) {
+          setStatus(s);
+          setIndicatorColor(colorMap[s]);
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setStatus("Critical");
+          setIndicatorColor(colorMap["Critical"]);
+        }
+      }
+    };
+
+    // initial check and interval refresh
+    checkNow();
+    const id = setInterval(checkNow, 30_000);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, []);
 
   return (
     <nav className="w-full border-b border-gray-800 bg-gray-900/80 backdrop-blur supports-backdrop-filter:bg-gray-900/60">
@@ -44,8 +80,7 @@ export default function TopNav() {
           {/* Left: Logo + System Health */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-sm font-semibold tracking-wide text-white">
+             <span className="text-sm font-semibold tracking-wide text-white">
                 Olympus
               </span>
             </div>

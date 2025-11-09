@@ -8,8 +8,21 @@ terraform {
 }
 
 variable "bucket_name" {
-  description = "Name of the S3 bucket"
+  description = "Name of the S3 bucket (used when bucket_count is 1)"
   type        = string
+  default     = ""
+}
+
+variable "bucket_name_prefix" {
+  description = "Prefix for bucket names when creating multiple buckets"
+  type        = string
+  default     = ""
+}
+
+variable "bucket_count" {
+  description = "Number of S3 buckets to create"
+  type        = number
+  default     = 1
 }
 
 variable "aws_region" {
@@ -23,21 +36,22 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "bucket" {
-  bucket = var.bucket_name
+  count  = var.bucket_count
+  bucket = var.bucket_count > 1 ? "${var.bucket_name_prefix}-${count.index + 1}" : coalesce(var.bucket_name, "${var.bucket_name_prefix}-1")
 
   tags = {
-    Name = var.bucket_name
+    Name = var.bucket_count > 1 ? "${var.bucket_name_prefix}-${count.index + 1}" : coalesce(var.bucket_name, "${var.bucket_name_prefix}-1")
   }
 }
 
 output "bucket_name" {
-  value = aws_s3_bucket.bucket.id
+  value = [for b in aws_s3_bucket.bucket : b.id]
 }
 
 output "bucket_arn" {
-  value = aws_s3_bucket.bucket.arn
+  value = [for b in aws_s3_bucket.bucket : b.arn]
 }
 
 output "bucket_region" {
-  value = aws_s3_bucket.bucket.region
+  value = [for b in aws_s3_bucket.bucket : b.region]
 }

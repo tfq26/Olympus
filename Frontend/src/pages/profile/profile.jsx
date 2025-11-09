@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../contexts/authContext.jsx";
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
+  const [isDemoAdmin, setIsDemoAdmin] = useState(false);
+
+  // Load demo admin status from localStorage on mount
+  useEffect(() => {
+    const demoAdminStatus = localStorage.getItem("demoAdmin") === "true";
+    setIsDemoAdmin(demoAdminStatus);
+  }, []);
+
+  // Toggle demo admin mode
+  const handleAdminToggle = () => {
+    const newStatus = !isDemoAdmin;
+    setIsDemoAdmin(newStatus);
+    localStorage.setItem("demoAdmin", newStatus.toString());
+    // Reload page to apply role changes throughout the app
+    window.location.reload();
+  };
+
+  // Get effective role (demo override or actual role)
+  const effectiveRole = isDemoAdmin ? "admin" : (user?.role || "viewer");
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -70,7 +89,7 @@ export default function ProfilePage() {
             </h2>
             <p className="text-gray-400">{user.email}</p>
             <p className="text-sm text-indigo-400 font-medium uppercase">
-              {user.role || "viewer"}
+              {effectiveRole}
             </p>
           </div>
         </motion.div>
@@ -93,7 +112,7 @@ export default function ProfilePage() {
           <div className="bg-white/5 border border-gray-700/40 rounded-xl p-4">
             <p className="text-sm text-gray-400">Role</p>
             <p className="text-lg font-semibold text-gray-200 uppercase">
-              {user.role || "viewer"}
+              {effectiveRole}
             </p>
           </div>
         </motion.div>
@@ -107,6 +126,37 @@ export default function ProfilePage() {
           <p className="text-gray-400 text-sm">
             Manage your preferences and connected integrations here.
           </p>
+
+          {/* Demo Admin Toggle */}
+          <div className="bg-white/5 border border-gray-700/40 rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-md font-semibold text-gray-100">Demo Admin Mode</h4>
+                <p className="text-xs text-gray-400">Toggle admin access for demonstration</p>
+              </div>
+              <button
+                onClick={handleAdminToggle}
+                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                  isDemoAdmin ? "bg-indigo-600" : "bg-gray-600"
+                }`}
+              >
+                <span
+                  className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                    isDemoAdmin ? "translate-x-7" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className={`px-2 py-1 rounded-md font-semibold ${
+                isDemoAdmin 
+                  ? "bg-green-500/20 text-green-400 border border-green-500/40" 
+                  : "bg-gray-500/20 text-gray-400 border border-gray-500/40"
+              }`}>
+                {isDemoAdmin ? "ADMIN MODE ACTIVE" : "USER MODE"}
+              </span>
+            </div>
+          </div>
 
           <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold shadow-md hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-500/40 transition-all active:scale-95">
             Edit Profile

@@ -12,8 +12,21 @@ terraform {
 }
 
 variable "function_name" {
-	description = "Name of the Lambda function"
+	description = "Name of the Lambda function (used when function_count is 1)"
 	type        = string
+	default     = ""
+}
+
+variable "function_name_prefix" {
+	description = "Prefix for function names when creating multiple functions"
+	type        = string
+	default     = ""
+}
+
+variable "function_count" {
+	description = "Number of Lambda functions to create"
+	type        = number
+	default     = 1
 }
 
 variable "aws_region" {
@@ -44,7 +57,8 @@ data "archive_file" "lambda_zip" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-	name = "${var.function_name}-exec-role"
+	count = var.function_count
+	name = var.function_count > 1 ? "${var.function_name_prefix}-${count.index + 1}-exec-role" : "${coalesce(var.function_name, "${var.function_name_prefix}-1")}-exec-role"
 	assume_role_policy = jsonencode({
 		Version = "2012-10-17"
 		Statement = [{
@@ -56,13 +70,15 @@ resource "aws_iam_role" "lambda_exec" {
 }
 
 resource "aws_iam_role_policy_attachment" "basic_logs" {
-	role       = aws_iam_role.lambda_exec.name
+	count      = var.function_count
+	role       = aws_iam_role.lambda_exec[count.index].name
 	policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_lambda_function" "this" {
-	function_name = var.function_name
-	role          = aws_iam_role.lambda_exec.arn
+	count         = var.function_count
+	function_name = var.function_count > 1 ? "${var.function_name_prefix}-${count.index + 1}" : coalesce(var.function_name, "${var.function_name_prefix}-1")
+	role          = aws_iam_role.lambda_exec[count.index].arn
 	handler       = var.handler
 	runtime       = "python3.11"
 	filename      = data.archive_file.lambda_zip.output_path
@@ -72,11 +88,11 @@ resource "aws_lambda_function" "this" {
 }
 
 output "function_name" {
-	value = aws_lambda_function.this.function_name
+	value = [for f in aws_lambda_function.this : f.function_name]
 }
 
 output "function_arn" {
-	value = aws_lambda_function.this.arn
+	value = [for f in aws_lambda_function.this : f.arn]
 }
 
 output "function_region" {

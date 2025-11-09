@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { RefreshCcw, MessageSquare, X, Filter } from "lucide-react";
+import { RefreshCcw, MessageSquare, X, Filter, Users } from "lucide-react";
 import SmallerChatBox from "../../components/SmallerChatBot";
-import { getLogs, getLogsAnalysis, getResources } from "../../lib/api";
+import { getLogs, getLogsAnalysis, getResources, getCustomersSummary, parseWithAI } from "../../lib/api";
 
 export default function LogsDashboard() {
   const [chatHidden, setChatHidden] = useState(false);
   const [logs, setLogs] = useState([]);
+  const [displayedLogs, setDisplayedLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
@@ -14,6 +15,14 @@ export default function LogsDashboard() {
   const [resources, setResources] = useState([]);
   const [analysis, setAnalysis] = useState(null);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [customerSummary, setCustomerSummary] = useState(null);
+  const [showCustomerSummary, setShowCustomerSummary] = useState(false);
+  const [aiParsedResponse, setAiParsedResponse] = useState(null);
+  const [parsingAI, setParsingAI] = useState(false);
+  
+  // Lazy loading state
+  const [displayCount, setDisplayCount] = useState(50);
+  const tableContainerRef = useRef(null);
 
   // Fetch resources for filter dropdown
   useEffect(() => {
@@ -59,6 +68,23 @@ export default function LogsDashboard() {
     return () => clearInterval(interval);
   }, [statusFilter, resourceFilter]);
 
+  // Update displayed logs when logs or displayCount changes
+  useEffect(() => {
+    setDisplayedLogs(logs.slice(0, displayCount));
+  }, [logs, displayCount]);
+
+  // Lazy loading on scroll
+  const handleScroll = useCallback(() => {
+    const container = tableContainerRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    // Load more when scrolled to 80% of the container
+    if (scrollTop + clientHeight >= scrollHeight * 0.8 && displayCount < logs.length) {
+      setDisplayCount(prev => Math.min(prev + 50, logs.length));
+    }
+  }, [displayCount, logs.length]);
+
   // Map log status to UI type
   const mapStatusToType = (status) => {
     const map = {
@@ -77,11 +103,47 @@ export default function LogsDashboard() {
   const handleAnalyze = async () => {
     try {
       setShowAnalysis(true);
+      setParsingAI(true);
       const data = await getLogsAnalysis(resourceFilter || null, statusFilter || null);
       setAnalysis(data);
+
+      // Parse response with AI (defensive: tolerate non-JSON errors)
+      try {
+        const parsed = await parseWithAI(data, "User requested log analysis. Provide insights about patterns, issues, and recommendations.");
+        setAiParsedResponse(parsed?.parsed_response ?? "AI returned no summary. Showing raw analysis below.");
+      } catch (aiErr) {
+        console.warn('AI parsing failed, falling back to raw analysis:', aiErr?.message || aiErr);
+        setAiParsedResponse(null); // fall back to rendering raw analysis block
+      }
     } catch (err) {
       console.error('Failed to analyze logs:', err);
-      setError(err.message);
+      setError(err.message || String(err));
+    } finally {
+      setParsingAI(false);
+    }
+  };
+
+  // Fetch customer summary
+  const handleCustomerSummary = async () => {
+    try {
+      setShowCustomerSummary(true);
+      setParsingAI(true);
+      const data = await getCustomersSummary();
+      setCustomerSummary(data);
+
+      // Parse response with AI with defensive fallback
+      try {
+        const parsed = await parseWithAI(data, "User requested customer health summary. Provide a clear overview of each customer's status, highlight critical issues, and give actionable recommendations.");
+        setAiParsedResponse(parsed?.parsed_response ?? "AI returned no summary. Showing raw customer data below.");
+      } catch (aiErr) {
+        console.warn('AI parsing failed for customer summary:', aiErr?.message || aiErr);
+        setAiParsedResponse(null);
+      }
+    } catch (err) {
+      console.error('Failed to fetch customer summary:', err);
+      setError(err.message || String(err));
+    } finally {
+      setParsingAI(false);
     }
   };
 
@@ -205,6 +267,15 @@ export default function LogsDashboard() {
           <span>🔍</span>
           <span>AI Analysis</span>
         </button>
+
+        {/* Customer Summary Button */}
+        <button
+          onClick={handleCustomerSummary}
+          className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-all font-medium flex items-center gap-2"
+        >
+          <Users size={18} />
+          <span>Customer Summary</span>
+        </button>
       </motion.div>
 
       {/* Loading/Error States */}
@@ -220,81 +291,154 @@ export default function LogsDashboard() {
       )}
 
       {/* AI Analysis Panel */}
-      {showAnalysis && analysis && (
+      {showAnalysis && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6 space-y-4"
         >
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-purple-300">AI Analysis</h2>
+            <h2 className="text-xl font-bold text-purple-300">AI Log Analysis</h2>
             <button
-              onClick={() => setShowAnalysis(false)}
+              onClick={() => {
+                setShowAnalysis(false);
+                setAiParsedResponse(null);
+              }}
               className="text-gray-400 hover:text-gray-200 transition"
             >
               <X size={20} />
             </button>
           </div>
-          <div className="text-gray-300 whitespace-pre-wrap">
-            {analysis.analysis || JSON.stringify(analysis, null, 2)}
+          
+          {parsingAI ? (
+            <div className="flex items-center gap-3 text-gray-400">
+              <span className="pi pi-spin pi-spinner text-xl" />
+              <span>AI is analyzing the data...</span>
+            </div>
+          ) : aiParsedResponse ? (
+            <div className="prose prose-invert max-w-none">
+              <div className="text-gray-200 whitespace-pre-wrap leading-relaxed">
+                {aiParsedResponse}
+              </div>
+            </div>
+          ) : (
+            <div className="text-gray-300 whitespace-pre-wrap">
+              {analysis?.analysis || JSON.stringify(analysis, null, 2)}
+            </div>
+          )}
+        </motion.div>
+      )}
+
+      {/* Customer Summary Panel */}
+      {showCustomerSummary && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-6 space-y-4"
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-emerald-300 flex items-center gap-2">
+              <Users size={24} />
+              Customer Health Summary
+            </h2>
+            <button
+              onClick={() => {
+                setShowCustomerSummary(false);
+                setAiParsedResponse(null);
+              }}
+              className="text-gray-400 hover:text-gray-200 transition"
+            >
+              <X size={20} />
+            </button>
           </div>
+          
+          {parsingAI ? (
+            <div className="flex items-center gap-3 text-gray-400">
+              <span className="pi pi-spin pi-spinner text-xl" />
+              <span>AI is analyzing customer data...</span>
+            </div>
+          ) : aiParsedResponse ? (
+            <div className="prose prose-invert max-w-none">
+              <div className="text-gray-200 whitespace-pre-wrap leading-relaxed">
+                {aiParsedResponse}
+              </div>
+            </div>
+          ) : (
+            <div className="text-gray-300 whitespace-pre-wrap">
+              {customerSummary ? JSON.stringify(customerSummary, null, 2) : 'No data available'}
+            </div>
+          )}
         </motion.div>
       )}
 
       {/* Logs Table */}
       {!loading && logs.length > 0 && (
-        <div className="overflow-x-auto rounded-2xl border border-gray-700/50 bg-white/10 dark:bg-zinc-900/60 backdrop-blur-md shadow-lg">
-          <table className="w-full text-left text-sm md:text-base text-gray-200">
-            <thead>
-              <tr className="bg-white/5 border-b border-gray-700/40 text-indigo-300 text-sm uppercase">
-                {[
-                  { key: "id", label: "ID" },
-                  { key: "source", label: "Source" },
-                  { key: "type", label: "Type" },
-                  { key: "message", label: "Message" },
-                  { key: "timestamp", label: "Timestamp" },
-                ].map((col) => (
-                  <th
-                    key={col.key}
-                    onClick={() => handleSort(col.key)}
-                    className="px-4 py-3 cursor-pointer select-none font-semibold"
-                  >
-                    <div className="flex items-center gap-2">
-                      {col.label}
-                      {sortKey === col.key && (
-                        <span className="text-xs opacity-70">
-                          {sortOrder === "asc" ? "▲" : "▼"}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {logs.map((log) => (
-                <tr
-                  key={log.id}
-                  className="border-b border-gray-800/50 hover:bg-white/10 transition"
-                >
-                  <td className="px-4 py-3 font-mono">{log.id}</td>
-                  <td className="px-4 py-3">{log.source}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-3 py-1 text-xs rounded-full font-medium ${getLogTypeStyle(
-                        log.type
-                      )}`}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center text-sm text-gray-400">
+            <span>Showing {displayedLogs.length} of {logs.length} logs</span>
+            {displayedLogs.length < logs.length && (
+              <span className="text-indigo-400">Scroll down to load more...</span>
+            )}
+          </div>
+          
+          <div 
+            ref={tableContainerRef}
+            onScroll={handleScroll}
+            className="overflow-auto rounded-2xl border border-gray-700/50 bg-white/10 dark:bg-zinc-900/60 backdrop-blur-md shadow-lg"
+            style={{ maxHeight: '500px' }}
+          >
+            <table className="w-full text-left text-sm text-gray-200">
+              <thead className="sticky top-0 z-10 bg-gray-900/95 backdrop-blur-sm">
+                <tr className="border-b border-gray-700/40 text-indigo-300 text-xs uppercase">
+                  {[
+                    { key: "id", label: "ID" },
+                    { key: "source", label: "Source" },
+                    { key: "type", label: "Type" },
+                    { key: "message", label: "Message" },
+                    { key: "timestamp", label: "Timestamp" },
+                  ].map((col) => (
+                    <th
+                      key={col.key}
+                      onClick={() => handleSort(col.key)}
+                      className="px-4 py-3 cursor-pointer select-none font-semibold"
                     >
-                      {log.type}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-300">{log.message}</td>
-                  <td className="px-4 py-3 text-gray-400">{log.timestamp}</td>
+                      <div className="flex items-center gap-2">
+                        {col.label}
+                        {sortKey === col.key && (
+                          <span className="text-xs opacity-70">
+                            {sortOrder === "asc" ? "▲" : "▼"}
+                          </span>
+                        )}
+                      </div>
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {displayedLogs.map((log) => (
+                  <tr
+                    key={log.id}
+                    className="border-b border-gray-800/50 hover:bg-white/10 transition"
+                  >
+                    <td className="px-4 py-3 font-mono text-xs">{log.id}</td>
+                    <td className="px-4 py-3">{log.source}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full font-medium ${getLogTypeStyle(
+                          log.type
+                        )}`}
+                      >
+                        {log.type}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-gray-300 text-sm">{log.message}</td>
+                    <td className="px-4 py-3 text-gray-400 text-xs">{log.timestamp}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

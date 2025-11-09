@@ -54,14 +54,29 @@ def ping() -> str:
 # EC2 Tools
 # ----------------------------------------------------------------------
 @mcp.tool()
-def create_ec2_instance(auto_approve: bool = True) -> str:
-    """Create an EC2 instance using Terraform."""
+def create_ec2_instance(instance_count: int = 1, name_prefix: str = "mcp-demo-instance", auto_approve: bool = True) -> str:
+    """Create one or more EC2 instances using Terraform with count and name prefix."""
+    # Init terraform
     init_output = tf_with_output(["terraform", "init", "-input=false"], TERRAFORM_EC2_DIR)
-    plan_output = tf_with_output(["terraform", "plan"], TERRAFORM_EC2_DIR)
-    apply_cmd = ["terraform", "apply"]
+
+    # Plan with variables (plan is optional informational)
+    plan_cmd = [
+        "terraform", "plan",
+        "-var", f"instance_count={instance_count}",
+        "-var", f"instance_name_prefix={name_prefix}",
+    ]
+    plan_output = tf_with_output(plan_cmd, TERRAFORM_EC2_DIR)
+
+    # Apply with variables
+    apply_cmd = [
+        "terraform", "apply",
+        "-var", f"instance_count={instance_count}",
+        "-var", f"instance_name_prefix={name_prefix}",
+    ]
     if auto_approve:
         apply_cmd.append("-auto-approve")
     apply_output = tf_with_output(apply_cmd, TERRAFORM_EC2_DIR)
+
     output = tf_with_output(["terraform", "output", "-json"], TERRAFORM_EC2_DIR)
     return f"INIT:\n{init_output}\nPLAN:\n{plan_output}\nAPPLY:\n{apply_output}\nOUTPUTS:\n{output}"
 
@@ -84,17 +99,37 @@ def destroy_ec2() -> str:
 # S3 Tools
 # ----------------------------------------------------------------------
 @mcp.tool()
-def create_s3_bucket(bucket_name: str, aws_region: str = "us-east-1", auto_approve: bool = True) -> str:
-    """Create an S3 bucket using Terraform."""
-    logging.info(f"Creating S3 bucket: {bucket_name} in {aws_region}")
+def create_s3_bucket(
+    bucket_name: str = "",
+    bucket_name_prefix: str = "",
+    bucket_count: int = 1,
+    aws_region: str = "us-east-1",
+    auto_approve: bool = True
+) -> str:
+    """Create S3 bucket(s) using Terraform. Use bucket_name for single bucket, or bucket_name_prefix + bucket_count for multiple."""
+    # Support both old (single bucket) and new (batch) interface
+    if bucket_count > 1 and not bucket_name_prefix:
+        raise ValueError("bucket_name_prefix is required when bucket_count > 1")
+    if bucket_count == 1 and not bucket_name and not bucket_name_prefix:
+        raise ValueError("Either bucket_name or bucket_name_prefix is required")
+    
+    logging.info(f"Creating {bucket_count} S3 bucket(s) in {aws_region}")
     init_output = tf_with_output(["terraform", "init", "-input=false"], TERRAFORM_S3_DIR)
-    cmd = [
-        "terraform", "apply",
-        "-var", f"bucket_name={bucket_name}",
-        "-var", f"aws_region={aws_region}",
-    ]
+    
+    cmd = ["terraform", "apply"]
+    if bucket_count > 1:
+        cmd.extend(["-var", f"bucket_name_prefix={bucket_name_prefix}"])
+        cmd.extend(["-var", f"bucket_count={bucket_count}"])
+    else:
+        # Single bucket mode (backward compatible)
+        name = bucket_name or bucket_name_prefix
+        cmd.extend(["-var", f"bucket_name={name}"])
+        cmd.extend(["-var", "bucket_count=1"])
+    
+    cmd.extend(["-var", f"aws_region={aws_region}"])
     if auto_approve:
         cmd.append("-auto-approve")
+    
     apply_output = tf_with_output(cmd, TERRAFORM_S3_DIR)
     output = tf_with_output(["terraform", "output", "-json"], TERRAFORM_S3_DIR)
     return f"{init_output}\n{apply_output}\nOutputs:\n{output}"
@@ -127,18 +162,46 @@ def destroy_s3_bucket(bucket_name: str, auto_approve: bool = True) -> str:
 # Lambda Tools
 # ----------------------------------------------------------------------
 @mcp.tool()
-def create_lambda_function(function_name: str, aws_region: str = "us-east-1", source_code: str = None, auto_approve: bool = True) -> str:
-    """Create a Lambda function using Terraform."""
+def create_lambda_function(
+    function_name: str = "",
+    function_name_prefix: str = "",
+    function_count: int = 1,
+    aws_region: str = "us-east-1",
+    source_code: str = None,
+    auto_approve: bool = True
+) -> str:
+    """Create Lambda function(s) using Terraform. Use function_name for single function, or function_name_prefix + function_count for multiple."""
+    # Support both old (single function) and new (batch) interface
+    if function_count > 1 and not function_name_prefix:
+        raise ValueError("function_name_prefix is required when function_count > 1")
+    if function_count == 1 and not function_name and not function_name_prefix:
+        raise ValueError("Either function_name or function_name_prefix is required")
+    
     if source_code is None:
         source_code = "def handler(event, context):\n    return {'statusCode': 200, 'body': 'Hello from Lambda!'}"
+    
+    logging.info(f"Creating {function_count} Lambda function(s) in {aws_region}")
     init_output = tf_with_output(["terraform", "init", "-input=false"], TERRAFORM_LAMBDA_DIR)
+    
     tfvars_file = os.path.join(TERRAFORM_LAMBDA_DIR, "terraform.tfvars")
     with open(tfvars_file, 'w') as f:
-        f.write(f'function_name = "{function_name}"\n')
+        if function_count > 1:
+            f.write(f'function_name_prefix = "{function_name_prefix}"\n')
+            f.write(f'function_count = {function_count}\n')
+        else:
+            # Single function mode (backward compatible)
+            name = function_name or function_name_prefix
+            f.write(f'function_name = "{name}"\n')
+            f.write(f'function_count = 1\n')
+        
         f.write(f'aws_region = "{aws_region}"\n')
-        f.write('source_code = <<-EOT\n')
+        f.write('source_code_file = "/app/terraform/lambda/lambda_function.py"\n')
+    
+    # Also write the source code file
+    source_file = os.path.join(TERRAFORM_LAMBDA_DIR, "lambda_function.py")
+    with open(source_file, 'w') as f:
         f.write(source_code)
-        f.write('\nEOT\n')
+    
     try:
         cmd = ["terraform", "apply", "-var-file", "terraform.tfvars"]
         if auto_approve:
@@ -149,6 +212,8 @@ def create_lambda_function(function_name: str, aws_region: str = "us-east-1", so
     finally:
         if os.path.exists(tfvars_file):
             os.remove(tfvars_file)
+        if os.path.exists(source_file):
+            os.remove(source_file)
 
 @mcp.tool()
 def destroy_lambda_function(auto_approve: bool = True) -> str:
