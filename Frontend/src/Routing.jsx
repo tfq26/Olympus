@@ -48,7 +48,7 @@ const AppRouter = () => {
 
   return (
     <Router>
-      <div className="min-h-screen pb-20 text-text-primary bg-zinc-950 font-mono">
+      <div className="min-h-screen pb-20 text-text-primary bg-app-surface font-mono">
         <Routes>
           {appRoutes.map((route, i) => {
             if (route.public) {

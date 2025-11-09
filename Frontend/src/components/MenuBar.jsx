@@ -1,16 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Dock } from "primereact/dock";
 import { Tooltip } from "primereact/tooltip";
 import "primeicons/primeicons.css";
-import "primereact/resources/themes/lara-light-indigo/theme.css"; // or your chosen theme
+import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 
 export default function MenuBar() {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Define navigation items
   const items = [
     {
       label: "Home",
@@ -39,42 +38,41 @@ export default function MenuBar() {
     navigate(path);
   };
 
-  // Custom dock item templates (for styling and tooltips)
-  const itemTemplate = (item, options) => {
+  const itemTemplate = (item) => {
     const isActive = items[activeIndex].label === item.label;
 
     return (
-      <>
-        <Tooltip target={`.dock-icon-${item.label}`} content={item.label} position="top" />
-
-        <div
-          className={`dock-icon-${item.label} flex flex-col items-center justify-center transition-all duration-200 ${
-            isActive ? "scale-110" : "scale-100"
-          }`}
-          onClick={item.command}
-        >
-          <i
-            className={`${item.icon} text-2xl sm:text-3xl transition-colors duration-300 ${
-              isActive
-                ? "text-indigo-500 dark:text-indigo-400"
-                : "text-gray-700 dark:text-gray-300"
-            }`}
-          />
-        </div>
-      </>
+      <i
+        className={`${
+          item.icon
+        } text-2xl sm:text-3xl transition-all duration-200 cursor-pointer ${
+          isActive ? "scale-110" : "scale-100"
+        } ${
+          isActive
+            ? "text-indigo-500 dark:text-indigo-400"
+            : "text-gray-700 dark:text-gray-300"
+        }`}
+        onClick={item.command}
+        data-pr-tooltip={item.label}
+        data-pr-position="top"
+      />
     );
   };
 
   return (
-    <div className="fixed bottom-2 left-0 right-0 flex justify-center z-50 pointer-events-none">
-      <div className="pointer-events-auto">
-        <Dock
-          model={items}
-          position="bottom"
-          itemTemplate={itemTemplate}
-          className="backdrop-blur-lg rounded-2xl shadow-lg px-4 py-2"
-        />
+    <>
+      <Tooltip target="[data-pr-tooltip]" position="top" />
+      <div className="fixed bottom-2 left-0 right-0 flex justify-center z-50 pointer-events-none">
+        <div className="pointer-events-auto">
+          <Dock
+            model={items}
+            position="bottom"
+            itemTemplate={itemTemplate}
+            magnification={false}
+            className="backdrop-blur-lg rounded-2xl shadow-lg px-4 py-2"
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

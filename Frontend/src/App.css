@@ -33,19 +33,17 @@
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 }
 
-@layer base {
-  :root {
-    font-family: var(--font-mono);
-  }
-
-  html, body, #root {
-    height: 100%;
-  }
-
-  body {
-    background-image: linear-gradient(345deg, #0d0b1a 0%, #1f1a3b 100%);
-    background-attachment: fixed;
-    background-size: cover;
-    color: var(--color-text-primary, #eae8ff);
+/* PrimeReact tooltip overrides - ensure visibility and allow a white-text variant */
+@layer components {
+  .p-tooltip,
+  .p-tooltip .p-tooltip-text {
+    background: rgba(0, 0, 0, 0.85) !important;
+    color: #ffffff !important;
+    border-radius: 0.5rem !important;
+    padding: 0.25rem 0.5rem !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35) !important;
+    z-index: 9999 !important;
+    white-space: nowrap !important;
+    font-family: var(--font-mono) !important;
   }
 }
