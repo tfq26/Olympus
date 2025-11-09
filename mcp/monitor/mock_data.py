@@ -35,10 +35,13 @@ def load_logs():
     if DYNAMODB_AVAILABLE:
         try:
             logs = dynamodb_get_all_logs()
-            # Return logs even if empty (DynamoDB is working, just no data)
-            return logs if logs is not None else []
+            # If logs is not None, return it (even if empty list - DynamoDB is working)
+            # If logs is None, table doesn't exist, so fall back to JSON
+            if logs is not None:
+                return logs
         except Exception as e:
-            print(f"DynamoDB error, falling back to JSON: {e}")
+            # If exception occurs, fall back to JSON
+            pass
     
     # Fall back to JSON file
     try:
@@ -58,10 +61,13 @@ def load_metrics():
     if DYNAMODB_AVAILABLE:
         try:
             resources = dynamodb_get_all_resources()
-            # Return resources even if empty (DynamoDB is working, just no data)
-            return resources if resources is not None else []
+            # If resources is not None, return it (even if empty list - DynamoDB is working)
+            # If resources is None, table doesn't exist, so fall back to JSON
+            if resources is not None:
+                return resources
         except Exception as e:
-            print(f"DynamoDB error, falling back to JSON: {e}")
+            # If exception occurs, fall back to JSON
+            pass
     
     # Fall back to JSON file
     try:
@@ -85,7 +91,8 @@ def get_resource_by_id(resource_id):
             if resource:
                 return resource
         except Exception as e:
-            print(f"DynamoDB error, falling back to JSON: {e}")
+            # If table doesn't exist or other error, fall back to JSON
+            pass
     
     # Fall back to JSON file
     resources = load_metrics()
@@ -105,10 +112,13 @@ def get_logs_by_resource(resource_id):
     if DYNAMODB_AVAILABLE:
         try:
             logs = dynamodb_get_logs_by_resource(resource_id)
-            # Return logs even if empty (DynamoDB is working, just no matching data)
-            return logs if logs is not None else []
+            # If logs is not None, return it (even if empty list - DynamoDB is working)
+            # If logs is None, table doesn't exist, so fall back to JSON
+            if logs is not None:
+                return logs
         except Exception as e:
-            print(f"DynamoDB error, falling back to JSON: {e}")
+            # If exception occurs, fall back to JSON
+            pass
     
     # Fall back to JSON file
     logs = load_logs()

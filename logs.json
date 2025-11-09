@@ -109999,10 +109999,5510 @@
         "res_compute_002"
       ],
       "status": "OK"
+    },
+    {
+      "id": "log_10001",
+      "time": "2025-11-07T22:40:00Z",
+      "log_code": "STG_0001",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10002",
+      "time": "2025-11-07T22:50:00Z",
+      "log_code": "STG_0002",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10003",
+      "time": "2025-11-07T23:00:00Z",
+      "log_code": "CMP_0003",
+      "subtype": "thread_starvation",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10004",
+      "time": "2025-11-07T23:10:00Z",
+      "log_code": "STG_0004",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10005",
+      "time": "2025-11-07T23:20:00Z",
+      "log_code": "VM_0005",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10006",
+      "time": "2025-11-07T23:30:00Z",
+      "log_code": "VM_0006",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10007",
+      "time": "2025-11-07T23:40:00Z",
+      "log_code": "STG_0007",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10008",
+      "time": "2025-11-07T23:50:00Z",
+      "log_code": "STG_0008",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10009",
+      "time": "2025-11-08T00:00:00Z",
+      "log_code": "VM_0009",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10010",
+      "time": "2025-11-08T00:10:00Z",
+      "log_code": "VM_0010",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10011",
+      "time": "2025-11-08T00:20:00Z",
+      "log_code": "VM_0011",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10012",
+      "time": "2025-11-08T00:30:00Z",
+      "log_code": "VM_0012",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10013",
+      "time": "2025-11-08T00:40:00Z",
+      "log_code": "VM_0013",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10014",
+      "time": "2025-11-08T00:50:00Z",
+      "log_code": "VM_0014",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10015",
+      "time": "2025-11-08T01:00:00Z",
+      "log_code": "VM_0015",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10016",
+      "time": "2025-11-08T01:10:00Z",
+      "log_code": "VM_0016",
+      "subtype": "process_hang",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10017",
+      "time": "2025-11-08T01:20:00Z",
+      "log_code": "VM_0017",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10018",
+      "time": "2025-11-08T01:30:00Z",
+      "log_code": "STG_0018",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10019",
+      "time": "2025-11-08T01:40:00Z",
+      "log_code": "VM_0019",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10020",
+      "time": "2025-11-08T01:50:00Z",
+      "log_code": "VM_0020",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10021",
+      "time": "2025-11-08T02:00:00Z",
+      "log_code": "STG_0021",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10022",
+      "time": "2025-11-08T02:10:00Z",
+      "log_code": "VM_0022",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10023",
+      "time": "2025-11-08T02:20:00Z",
+      "log_code": "STG_0023",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10024",
+      "time": "2025-11-08T02:30:00Z",
+      "log_code": "VM_0024",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10025",
+      "time": "2025-11-08T02:40:00Z",
+      "log_code": "VM_0025",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10026",
+      "time": "2025-11-08T02:50:00Z",
+      "log_code": "STG_0026",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10027",
+      "time": "2025-11-08T03:00:00Z",
+      "log_code": "CMP_0027",
+      "subtype": "process_hang",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10028",
+      "time": "2025-11-08T03:10:00Z",
+      "log_code": "VM_0028",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10029",
+      "time": "2025-11-08T03:20:00Z",
+      "log_code": "VM_0029",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10030",
+      "time": "2025-11-08T03:30:00Z",
+      "log_code": "VM_0030",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10031",
+      "time": "2025-11-08T03:40:00Z",
+      "log_code": "STG_0031",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10032",
+      "time": "2025-11-08T03:50:00Z",
+      "log_code": "CMP_0032",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10033",
+      "time": "2025-11-08T04:00:00Z",
+      "log_code": "CMP_0033",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10034",
+      "time": "2025-11-08T04:10:00Z",
+      "log_code": "CMP_0034",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10035",
+      "time": "2025-11-08T04:20:00Z",
+      "log_code": "STG_0035",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10036",
+      "time": "2025-11-08T04:30:00Z",
+      "log_code": "VM_0036",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10037",
+      "time": "2025-11-08T04:40:00Z",
+      "log_code": "STG_0037",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10038",
+      "time": "2025-11-08T04:50:00Z",
+      "log_code": "VM_0038",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10039",
+      "time": "2025-11-08T05:00:00Z",
+      "log_code": "STG_0039",
+      "subtype": "process_hang",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10040",
+      "time": "2025-11-08T05:10:00Z",
+      "log_code": "CMP_0040",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10041",
+      "time": "2025-11-08T05:20:00Z",
+      "log_code": "STG_0041",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10042",
+      "time": "2025-11-08T05:30:00Z",
+      "log_code": "VM_0042",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10043",
+      "time": "2025-11-08T05:40:00Z",
+      "log_code": "VM_0043",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10044",
+      "time": "2025-11-08T05:50:00Z",
+      "log_code": "VM_0044",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10045",
+      "time": "2025-11-08T06:00:00Z",
+      "log_code": "VM_0045",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10046",
+      "time": "2025-11-08T06:10:00Z",
+      "log_code": "CMP_0046",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10047",
+      "time": "2025-11-08T06:20:00Z",
+      "log_code": "VM_0047",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10048",
+      "time": "2025-11-08T06:30:00Z",
+      "log_code": "STG_0048",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10049",
+      "time": "2025-11-08T06:40:00Z",
+      "log_code": "VM_0049",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10050",
+      "time": "2025-11-08T06:50:00Z",
+      "log_code": "VM_0050",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10051",
+      "time": "2025-11-08T07:00:00Z",
+      "log_code": "VM_0051",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10052",
+      "time": "2025-11-08T07:10:00Z",
+      "log_code": "CMP_0052",
+      "subtype": "process_hang",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10053",
+      "time": "2025-11-08T07:20:00Z",
+      "log_code": "VM_0053",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10054",
+      "time": "2025-11-08T07:30:00Z",
+      "log_code": "CMP_0054",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10055",
+      "time": "2025-11-08T07:40:00Z",
+      "log_code": "CMP_0055",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10056",
+      "time": "2025-11-08T07:50:00Z",
+      "log_code": "VM_0056",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10057",
+      "time": "2025-11-08T08:00:00Z",
+      "log_code": "CMP_0057",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10058",
+      "time": "2025-11-08T08:10:00Z",
+      "log_code": "VM_0058",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10059",
+      "time": "2025-11-08T08:20:00Z",
+      "log_code": "CMP_0059",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10060",
+      "time": "2025-11-08T08:30:00Z",
+      "log_code": "VM_0060",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10061",
+      "time": "2025-11-08T08:40:00Z",
+      "log_code": "VM_0061",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10062",
+      "time": "2025-11-08T08:50:00Z",
+      "log_code": "STG_0062",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10063",
+      "time": "2025-11-08T09:00:00Z",
+      "log_code": "STG_0063",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10064",
+      "time": "2025-11-08T09:10:00Z",
+      "log_code": "VM_0064",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10065",
+      "time": "2025-11-08T09:20:00Z",
+      "log_code": "VM_0065",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10066",
+      "time": "2025-11-08T09:30:00Z",
+      "log_code": "STG_0066",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10067",
+      "time": "2025-11-08T09:40:00Z",
+      "log_code": "STG_0067",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10068",
+      "time": "2025-11-08T09:50:00Z",
+      "log_code": "CMP_0068",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10069",
+      "time": "2025-11-08T10:00:00Z",
+      "log_code": "STG_0069",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10070",
+      "time": "2025-11-08T10:10:00Z",
+      "log_code": "CMP_0070",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10071",
+      "time": "2025-11-08T10:20:00Z",
+      "log_code": "STG_0071",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10072",
+      "time": "2025-11-08T10:30:00Z",
+      "log_code": "STG_0072",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10073",
+      "time": "2025-11-08T10:40:00Z",
+      "log_code": "STG_0073",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10074",
+      "time": "2025-11-08T10:50:00Z",
+      "log_code": "STG_0074",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10075",
+      "time": "2025-11-08T11:00:00Z",
+      "log_code": "VM_0075",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10076",
+      "time": "2025-11-08T11:10:00Z",
+      "log_code": "STG_0076",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10077",
+      "time": "2025-11-08T11:20:00Z",
+      "log_code": "CMP_0077",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10078",
+      "time": "2025-11-08T11:30:00Z",
+      "log_code": "VM_0078",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10079",
+      "time": "2025-11-08T11:40:00Z",
+      "log_code": "STG_0079",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10080",
+      "time": "2025-11-08T11:50:00Z",
+      "log_code": "STG_0080",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10081",
+      "time": "2025-11-08T12:00:00Z",
+      "log_code": "STG_0081",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10082",
+      "time": "2025-11-08T12:10:00Z",
+      "log_code": "VM_0082",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10083",
+      "time": "2025-11-08T12:20:00Z",
+      "log_code": "STG_0083",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10084",
+      "time": "2025-11-08T12:30:00Z",
+      "log_code": "VM_0084",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10085",
+      "time": "2025-11-08T12:40:00Z",
+      "log_code": "VM_0085",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10086",
+      "time": "2025-11-08T12:50:00Z",
+      "log_code": "STG_0086",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10087",
+      "time": "2025-11-08T13:00:00Z",
+      "log_code": "VM_0087",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10088",
+      "time": "2025-11-08T13:10:00Z",
+      "log_code": "VM_0088",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10089",
+      "time": "2025-11-08T13:20:00Z",
+      "log_code": "STG_0089",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10090",
+      "time": "2025-11-08T13:30:00Z",
+      "log_code": "STG_0090",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10091",
+      "time": "2025-11-08T13:40:00Z",
+      "log_code": "CMP_0091",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10092",
+      "time": "2025-11-08T13:50:00Z",
+      "log_code": "VM_0092",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10093",
+      "time": "2025-11-08T14:00:00Z",
+      "log_code": "VM_0093",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10094",
+      "time": "2025-11-08T14:10:00Z",
+      "log_code": "STG_0094",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10095",
+      "time": "2025-11-08T14:20:00Z",
+      "log_code": "STG_0095",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10096",
+      "time": "2025-11-08T14:30:00Z",
+      "log_code": "VM_0096",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10097",
+      "time": "2025-11-08T14:40:00Z",
+      "log_code": "VM_0097",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10098",
+      "time": "2025-11-08T14:50:00Z",
+      "log_code": "CMP_0098",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10099",
+      "time": "2025-11-08T15:00:00Z",
+      "log_code": "CMP_0099",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10100",
+      "time": "2025-11-08T15:10:00Z",
+      "log_code": "CMP_0100",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10101",
+      "time": "2025-11-08T15:20:00Z",
+      "log_code": "STG_0101",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10102",
+      "time": "2025-11-08T15:30:00Z",
+      "log_code": "VM_0102",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10103",
+      "time": "2025-11-08T15:40:00Z",
+      "log_code": "VM_0103",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10104",
+      "time": "2025-11-08T15:50:00Z",
+      "log_code": "CMP_0104",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10105",
+      "time": "2025-11-08T16:00:00Z",
+      "log_code": "VM_0105",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10106",
+      "time": "2025-11-08T16:10:00Z",
+      "log_code": "VM_0106",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10107",
+      "time": "2025-11-08T16:20:00Z",
+      "log_code": "STG_0107",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10108",
+      "time": "2025-11-08T16:30:00Z",
+      "log_code": "STG_0108",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10109",
+      "time": "2025-11-08T16:40:00Z",
+      "log_code": "VM_0109",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10110",
+      "time": "2025-11-08T16:50:00Z",
+      "log_code": "VM_0110",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10111",
+      "time": "2025-11-08T17:00:00Z",
+      "log_code": "STG_0111",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10112",
+      "time": "2025-11-08T17:10:00Z",
+      "log_code": "CMP_0112",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10113",
+      "time": "2025-11-08T17:20:00Z",
+      "log_code": "VM_0113",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10114",
+      "time": "2025-11-08T17:30:00Z",
+      "log_code": "STG_0114",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10115",
+      "time": "2025-11-08T17:40:00Z",
+      "log_code": "VM_0115",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10116",
+      "time": "2025-11-08T17:50:00Z",
+      "log_code": "CMP_0116",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10117",
+      "time": "2025-11-08T18:00:00Z",
+      "log_code": "STG_0117",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10118",
+      "time": "2025-11-08T18:10:00Z",
+      "log_code": "CMP_0118",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10119",
+      "time": "2025-11-08T18:20:00Z",
+      "log_code": "VM_0119",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10120",
+      "time": "2025-11-08T18:30:00Z",
+      "log_code": "VM_0120",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10121",
+      "time": "2025-11-08T18:40:00Z",
+      "log_code": "STG_0121",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10122",
+      "time": "2025-11-08T18:50:00Z",
+      "log_code": "STG_0122",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10123",
+      "time": "2025-11-08T19:00:00Z",
+      "log_code": "CMP_0123",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10124",
+      "time": "2025-11-08T19:10:00Z",
+      "log_code": "VM_0124",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10125",
+      "time": "2025-11-08T19:20:00Z",
+      "log_code": "VM_0125",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10126",
+      "time": "2025-11-08T19:30:00Z",
+      "log_code": "VM_0126",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10127",
+      "time": "2025-11-08T19:40:00Z",
+      "log_code": "STG_0127",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10128",
+      "time": "2025-11-08T19:50:00Z",
+      "log_code": "VM_0128",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10129",
+      "time": "2025-11-08T20:00:00Z",
+      "log_code": "STG_0129",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10130",
+      "time": "2025-11-08T20:10:00Z",
+      "log_code": "CMP_0130",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10131",
+      "time": "2025-11-08T20:20:00Z",
+      "log_code": "STG_0131",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10132",
+      "time": "2025-11-08T20:30:00Z",
+      "log_code": "VM_0132",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10133",
+      "time": "2025-11-08T20:40:00Z",
+      "log_code": "VM_0133",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10134",
+      "time": "2025-11-08T20:50:00Z",
+      "log_code": "STG_0134",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10135",
+      "time": "2025-11-08T21:00:00Z",
+      "log_code": "CMP_0135",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10136",
+      "time": "2025-11-08T21:10:00Z",
+      "log_code": "VM_0136",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10137",
+      "time": "2025-11-08T21:20:00Z",
+      "log_code": "VM_0137",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10138",
+      "time": "2025-11-08T21:30:00Z",
+      "log_code": "CMP_0138",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10139",
+      "time": "2025-11-08T21:40:00Z",
+      "log_code": "VM_0139",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10140",
+      "time": "2025-11-08T21:50:00Z",
+      "log_code": "STG_0140",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10141",
+      "time": "2025-11-08T22:00:00Z",
+      "log_code": "STG_0141",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10142",
+      "time": "2025-11-08T22:10:00Z",
+      "log_code": "VM_0142",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10143",
+      "time": "2025-11-08T22:20:00Z",
+      "log_code": "VM_0143",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10144",
+      "time": "2025-11-08T22:30:00Z",
+      "log_code": "VM_0144",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10145",
+      "time": "2025-11-08T22:40:00Z",
+      "log_code": "STG_0145",
+      "subtype": "thread_starvation",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10146",
+      "time": "2025-11-08T22:50:00Z",
+      "log_code": "STG_0146",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10147",
+      "time": "2025-11-08T23:00:00Z",
+      "log_code": "VM_0147",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10148",
+      "time": "2025-11-08T23:10:00Z",
+      "log_code": "CMP_0148",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10149",
+      "time": "2025-11-08T23:20:00Z",
+      "log_code": "VM_0149",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10150",
+      "time": "2025-11-08T23:30:00Z",
+      "log_code": "STG_0150",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10151",
+      "time": "2025-11-08T23:40:00Z",
+      "log_code": "CMP_0151",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10152",
+      "time": "2025-11-08T23:50:00Z",
+      "log_code": "CMP_0152",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10153",
+      "time": "2025-11-09T00:00:00Z",
+      "log_code": "VM_0153",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10154",
+      "time": "2025-11-09T00:10:00Z",
+      "log_code": "STG_0154",
+      "subtype": "process_hang",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10155",
+      "time": "2025-11-09T00:20:00Z",
+      "log_code": "VM_0155",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10156",
+      "time": "2025-11-09T00:30:00Z",
+      "log_code": "VM_0156",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10157",
+      "time": "2025-11-09T00:40:00Z",
+      "log_code": "VM_0157",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10158",
+      "time": "2025-11-09T00:50:00Z",
+      "log_code": "STG_0158",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10159",
+      "time": "2025-11-09T01:00:00Z",
+      "log_code": "STG_0159",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10160",
+      "time": "2025-11-09T01:10:00Z",
+      "log_code": "STG_0160",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10161",
+      "time": "2025-11-09T01:20:00Z",
+      "log_code": "VM_0161",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10162",
+      "time": "2025-11-09T01:30:00Z",
+      "log_code": "VM_0162",
+      "subtype": "process_hang",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10163",
+      "time": "2025-11-09T01:40:00Z",
+      "log_code": "STG_0163",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10164",
+      "time": "2025-11-09T01:50:00Z",
+      "log_code": "VM_0164",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10165",
+      "time": "2025-11-09T02:00:00Z",
+      "log_code": "VM_0165",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10166",
+      "time": "2025-11-09T02:10:00Z",
+      "log_code": "STG_0166",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10167",
+      "time": "2025-11-09T02:20:00Z",
+      "log_code": "STG_0167",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10168",
+      "time": "2025-11-09T02:30:00Z",
+      "log_code": "CMP_0168",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10169",
+      "time": "2025-11-09T02:40:00Z",
+      "log_code": "VM_0169",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10170",
+      "time": "2025-11-09T02:50:00Z",
+      "log_code": "CMP_0170",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10171",
+      "time": "2025-11-09T03:00:00Z",
+      "log_code": "STG_0171",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10172",
+      "time": "2025-11-09T03:10:00Z",
+      "log_code": "VM_0172",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10173",
+      "time": "2025-11-09T03:20:00Z",
+      "log_code": "STG_0173",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10174",
+      "time": "2025-11-09T03:30:00Z",
+      "log_code": "VM_0174",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10175",
+      "time": "2025-11-09T03:40:00Z",
+      "log_code": "STG_0175",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10176",
+      "time": "2025-11-09T03:50:00Z",
+      "log_code": "VM_0176",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10177",
+      "time": "2025-11-09T04:00:00Z",
+      "log_code": "CMP_0177",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10178",
+      "time": "2025-11-09T04:10:00Z",
+      "log_code": "CMP_0178",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10179",
+      "time": "2025-11-09T04:20:00Z",
+      "log_code": "VM_0179",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10180",
+      "time": "2025-11-09T04:30:00Z",
+      "log_code": "CMP_0180",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10181",
+      "time": "2025-11-09T04:40:00Z",
+      "log_code": "STG_0181",
+      "subtype": "process_hang",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10182",
+      "time": "2025-11-09T04:50:00Z",
+      "log_code": "CMP_0182",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10183",
+      "time": "2025-11-09T05:00:00Z",
+      "log_code": "VM_0183",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10184",
+      "time": "2025-11-09T05:10:00Z",
+      "log_code": "STG_0184",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10185",
+      "time": "2025-11-09T05:20:00Z",
+      "log_code": "CMP_0185",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10186",
+      "time": "2025-11-09T05:30:00Z",
+      "log_code": "CMP_0186",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10187",
+      "time": "2025-11-09T05:40:00Z",
+      "log_code": "VM_0187",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10188",
+      "time": "2025-11-09T05:50:00Z",
+      "log_code": "CMP_0188",
+      "subtype": "circular_dependency",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10189",
+      "time": "2025-11-09T06:00:00Z",
+      "log_code": "VM_0189",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10190",
+      "time": "2025-11-09T06:10:00Z",
+      "log_code": "STG_0190",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10191",
+      "time": "2025-11-09T06:20:00Z",
+      "log_code": "STG_0191",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10192",
+      "time": "2025-11-09T06:30:00Z",
+      "log_code": "VM_0192",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10193",
+      "time": "2025-11-09T06:40:00Z",
+      "log_code": "VM_0193",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10194",
+      "time": "2025-11-09T06:50:00Z",
+      "log_code": "CMP_0194",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10195",
+      "time": "2025-11-09T07:00:00Z",
+      "log_code": "CMP_0195",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10196",
+      "time": "2025-11-09T07:10:00Z",
+      "log_code": "CMP_0196",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10197",
+      "time": "2025-11-09T07:20:00Z",
+      "log_code": "VM_0197",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10198",
+      "time": "2025-11-09T07:30:00Z",
+      "log_code": "CMP_0198",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10199",
+      "time": "2025-11-09T07:40:00Z",
+      "log_code": "VM_0199",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10200",
+      "time": "2025-11-09T07:50:00Z",
+      "log_code": "CMP_0200",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10201",
+      "time": "2025-11-09T08:00:00Z",
+      "log_code": "VM_0201",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10202",
+      "time": "2025-11-09T08:10:00Z",
+      "log_code": "VM_0202",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10203",
+      "time": "2025-11-09T08:20:00Z",
+      "log_code": "STG_0203",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10204",
+      "time": "2025-11-09T08:30:00Z",
+      "log_code": "VM_0204",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10205",
+      "time": "2025-11-09T08:40:00Z",
+      "log_code": "VM_0205",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10206",
+      "time": "2025-11-09T08:50:00Z",
+      "log_code": "VM_0206",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10207",
+      "time": "2025-11-09T09:00:00Z",
+      "log_code": "VM_0207",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10208",
+      "time": "2025-11-09T09:10:00Z",
+      "log_code": "STG_0208",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10209",
+      "time": "2025-11-09T09:20:00Z",
+      "log_code": "VM_0209",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10210",
+      "time": "2025-11-09T09:30:00Z",
+      "log_code": "VM_0210",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10211",
+      "time": "2025-11-09T09:40:00Z",
+      "log_code": "STG_0211",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10212",
+      "time": "2025-11-09T09:50:00Z",
+      "log_code": "VM_0212",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10213",
+      "time": "2025-11-09T10:00:00Z",
+      "log_code": "STG_0213",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10214",
+      "time": "2025-11-09T10:10:00Z",
+      "log_code": "CMP_0214",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10215",
+      "time": "2025-11-09T10:20:00Z",
+      "log_code": "VM_0215",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10216",
+      "time": "2025-11-09T10:30:00Z",
+      "log_code": "VM_0216",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10217",
+      "time": "2025-11-09T10:40:00Z",
+      "log_code": "STG_0217",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10218",
+      "time": "2025-11-09T10:50:00Z",
+      "log_code": "STG_0218",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10219",
+      "time": "2025-11-09T11:00:00Z",
+      "log_code": "VM_0219",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10220",
+      "time": "2025-11-09T11:10:00Z",
+      "log_code": "STG_0220",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10221",
+      "time": "2025-11-09T11:20:00Z",
+      "log_code": "STG_0221",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10222",
+      "time": "2025-11-09T11:30:00Z",
+      "log_code": "STG_0222",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10223",
+      "time": "2025-11-09T11:40:00Z",
+      "log_code": "CMP_0223",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10224",
+      "time": "2025-11-09T11:50:00Z",
+      "log_code": "VM_0224",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10225",
+      "time": "2025-11-09T12:00:00Z",
+      "log_code": "CMP_0225",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10226",
+      "time": "2025-11-09T12:10:00Z",
+      "log_code": "VM_0226",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10227",
+      "time": "2025-11-09T12:20:00Z",
+      "log_code": "VM_0227",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10228",
+      "time": "2025-11-09T12:30:00Z",
+      "log_code": "CMP_0228",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10229",
+      "time": "2025-11-09T12:40:00Z",
+      "log_code": "VM_0229",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10230",
+      "time": "2025-11-09T12:50:00Z",
+      "log_code": "VM_0230",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10231",
+      "time": "2025-11-09T13:00:00Z",
+      "log_code": "VM_0231",
+      "subtype": "process_hang",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10232",
+      "time": "2025-11-09T13:10:00Z",
+      "log_code": "VM_0232",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10233",
+      "time": "2025-11-09T13:20:00Z",
+      "log_code": "VM_0233",
+      "subtype": "process_hang",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10234",
+      "time": "2025-11-09T13:30:00Z",
+      "log_code": "STG_0234",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10235",
+      "time": "2025-11-09T13:40:00Z",
+      "log_code": "STG_0235",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10236",
+      "time": "2025-11-09T13:50:00Z",
+      "log_code": "CMP_0236",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10237",
+      "time": "2025-11-09T14:00:00Z",
+      "log_code": "VM_0237",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10238",
+      "time": "2025-11-09T14:10:00Z",
+      "log_code": "VM_0238",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10239",
+      "time": "2025-11-09T14:20:00Z",
+      "log_code": "STG_0239",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10240",
+      "time": "2025-11-09T14:30:00Z",
+      "log_code": "VM_0240",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10241",
+      "time": "2025-11-09T14:40:00Z",
+      "log_code": "STG_0241",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10242",
+      "time": "2025-11-09T14:50:00Z",
+      "log_code": "VM_0242",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10243",
+      "time": "2025-11-09T15:00:00Z",
+      "log_code": "CMP_0243",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10244",
+      "time": "2025-11-09T15:10:00Z",
+      "log_code": "STG_0244",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10245",
+      "time": "2025-11-09T15:20:00Z",
+      "log_code": "VM_0245",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10246",
+      "time": "2025-11-09T15:30:00Z",
+      "log_code": "STG_0246",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10247",
+      "time": "2025-11-09T15:40:00Z",
+      "log_code": "STG_0247",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10248",
+      "time": "2025-11-09T15:50:00Z",
+      "log_code": "CMP_0248",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10249",
+      "time": "2025-11-09T16:00:00Z",
+      "log_code": "VM_0249",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10250",
+      "time": "2025-11-09T16:10:00Z",
+      "log_code": "STG_0250",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10251",
+      "time": "2025-11-09T16:20:00Z",
+      "log_code": "CMP_0251",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10252",
+      "time": "2025-11-09T16:30:00Z",
+      "log_code": "VM_0252",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10253",
+      "time": "2025-11-09T16:40:00Z",
+      "log_code": "VM_0253",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10254",
+      "time": "2025-11-09T16:50:00Z",
+      "log_code": "VM_0254",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10255",
+      "time": "2025-11-09T17:00:00Z",
+      "log_code": "STG_0255",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10256",
+      "time": "2025-11-09T17:10:00Z",
+      "log_code": "VM_0256",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10257",
+      "time": "2025-11-09T17:20:00Z",
+      "log_code": "VM_0257",
+      "subtype": "process_hang",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10258",
+      "time": "2025-11-09T17:30:00Z",
+      "log_code": "STG_0258",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10259",
+      "time": "2025-11-09T17:40:00Z",
+      "log_code": "CMP_0259",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10260",
+      "time": "2025-11-09T17:50:00Z",
+      "log_code": "CMP_0260",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10261",
+      "time": "2025-11-09T18:00:00Z",
+      "log_code": "CMP_0261",
+      "subtype": "thread_starvation",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10262",
+      "time": "2025-11-09T18:10:00Z",
+      "log_code": "CMP_0262",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10263",
+      "time": "2025-11-09T18:20:00Z",
+      "log_code": "STG_0263",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10264",
+      "time": "2025-11-09T18:30:00Z",
+      "log_code": "STG_0264",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10265",
+      "time": "2025-11-09T18:40:00Z",
+      "log_code": "CMP_0265",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10266",
+      "time": "2025-11-09T18:50:00Z",
+      "log_code": "VM_0266",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10267",
+      "time": "2025-11-09T19:00:00Z",
+      "log_code": "STG_0267",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10268",
+      "time": "2025-11-09T19:10:00Z",
+      "log_code": "STG_0268",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10269",
+      "time": "2025-11-09T19:20:00Z",
+      "log_code": "VM_0269",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10270",
+      "time": "2025-11-09T19:30:00Z",
+      "log_code": "VM_0270",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10271",
+      "time": "2025-11-09T19:40:00Z",
+      "log_code": "VM_0271",
+      "subtype": "process_hang",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10272",
+      "time": "2025-11-09T19:50:00Z",
+      "log_code": "STG_0272",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10273",
+      "time": "2025-11-09T20:00:00Z",
+      "log_code": "VM_0273",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10274",
+      "time": "2025-11-09T20:10:00Z",
+      "log_code": "STG_0274",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10275",
+      "time": "2025-11-09T20:20:00Z",
+      "log_code": "STG_0275",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10276",
+      "time": "2025-11-09T20:30:00Z",
+      "log_code": "VM_0276",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10277",
+      "time": "2025-11-09T20:40:00Z",
+      "log_code": "CMP_0277",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10278",
+      "time": "2025-11-09T20:50:00Z",
+      "log_code": "STG_0278",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10279",
+      "time": "2025-11-09T21:00:00Z",
+      "log_code": "VM_0279",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10280",
+      "time": "2025-11-09T21:10:00Z",
+      "log_code": "CMP_0280",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10281",
+      "time": "2025-11-09T21:20:00Z",
+      "log_code": "STG_0281",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10282",
+      "time": "2025-11-09T21:30:00Z",
+      "log_code": "VM_0282",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10283",
+      "time": "2025-11-09T21:40:00Z",
+      "log_code": "VM_0283",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10284",
+      "time": "2025-11-09T21:50:00Z",
+      "log_code": "CMP_0284",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10285",
+      "time": "2025-11-09T22:00:00Z",
+      "log_code": "VM_0285",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10286",
+      "time": "2025-11-09T22:10:00Z",
+      "log_code": "VM_0286",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10287",
+      "time": "2025-11-09T22:20:00Z",
+      "log_code": "VM_0287",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10288",
+      "time": "2025-11-09T22:30:00Z",
+      "log_code": "STG_0288",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10289",
+      "time": "2025-11-09T22:40:00Z",
+      "log_code": "STG_0289",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10290",
+      "time": "2025-11-09T22:50:00Z",
+      "log_code": "VM_0290",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10291",
+      "time": "2025-11-09T23:00:00Z",
+      "log_code": "VM_0291",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10292",
+      "time": "2025-11-09T23:10:00Z",
+      "log_code": "CMP_0292",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10293",
+      "time": "2025-11-09T23:20:00Z",
+      "log_code": "VM_0293",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10294",
+      "time": "2025-11-09T23:30:00Z",
+      "log_code": "VM_0294",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10295",
+      "time": "2025-11-09T23:40:00Z",
+      "log_code": "VM_0295",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10296",
+      "time": "2025-11-09T23:50:00Z",
+      "log_code": "STG_0296",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10297",
+      "time": "2025-11-10T00:00:00Z",
+      "log_code": "CMP_0297",
+      "subtype": "thread_starvation",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10298",
+      "time": "2025-11-10T00:10:00Z",
+      "log_code": "VM_0298",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10299",
+      "time": "2025-11-10T00:20:00Z",
+      "log_code": "VM_0299",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10300",
+      "time": "2025-11-10T00:30:00Z",
+      "log_code": "VM_0300",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10301",
+      "time": "2025-11-10T00:40:00Z",
+      "log_code": "VM_0301",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10302",
+      "time": "2025-11-10T00:50:00Z",
+      "log_code": "VM_0302",
+      "subtype": "circular_dependency",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10303",
+      "time": "2025-11-10T01:00:00Z",
+      "log_code": "VM_0303",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10304",
+      "time": "2025-11-10T01:10:00Z",
+      "log_code": "CMP_0304",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10305",
+      "time": "2025-11-10T01:20:00Z",
+      "log_code": "VM_0305",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10306",
+      "time": "2025-11-10T01:30:00Z",
+      "log_code": "VM_0306",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10307",
+      "time": "2025-11-10T01:40:00Z",
+      "log_code": "VM_0307",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10308",
+      "time": "2025-11-10T01:50:00Z",
+      "log_code": "VM_0308",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10309",
+      "time": "2025-11-10T02:00:00Z",
+      "log_code": "VM_0309",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10310",
+      "time": "2025-11-10T02:10:00Z",
+      "log_code": "VM_0310",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10311",
+      "time": "2025-11-10T02:20:00Z",
+      "log_code": "VM_0311",
+      "subtype": "circular_dependency",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10312",
+      "time": "2025-11-10T02:30:00Z",
+      "log_code": "VM_0312",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10313",
+      "time": "2025-11-10T02:40:00Z",
+      "log_code": "STG_0313",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10314",
+      "time": "2025-11-10T02:50:00Z",
+      "log_code": "STG_0314",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10315",
+      "time": "2025-11-10T03:00:00Z",
+      "log_code": "VM_0315",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10316",
+      "time": "2025-11-10T03:10:00Z",
+      "log_code": "VM_0316",
+      "subtype": "thread_starvation",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10317",
+      "time": "2025-11-10T03:20:00Z",
+      "log_code": "STG_0317",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10318",
+      "time": "2025-11-10T03:30:00Z",
+      "log_code": "STG_0318",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10319",
+      "time": "2025-11-10T03:40:00Z",
+      "log_code": "VM_0319",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10320",
+      "time": "2025-11-10T03:50:00Z",
+      "log_code": "STG_0320",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10321",
+      "time": "2025-11-10T04:00:00Z",
+      "log_code": "VM_0321",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10322",
+      "time": "2025-11-10T04:10:00Z",
+      "log_code": "VM_0322",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10323",
+      "time": "2025-11-10T04:20:00Z",
+      "log_code": "STG_0323",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10324",
+      "time": "2025-11-10T04:30:00Z",
+      "log_code": "VM_0324",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10325",
+      "time": "2025-11-10T04:40:00Z",
+      "log_code": "VM_0325",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10326",
+      "time": "2025-11-10T04:50:00Z",
+      "log_code": "VM_0326",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10327",
+      "time": "2025-11-10T05:00:00Z",
+      "log_code": "VM_0327",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10328",
+      "time": "2025-11-10T05:10:00Z",
+      "log_code": "CMP_0328",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10329",
+      "time": "2025-11-10T05:20:00Z",
+      "log_code": "STG_0329",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10330",
+      "time": "2025-11-10T05:30:00Z",
+      "log_code": "STG_0330",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10331",
+      "time": "2025-11-10T05:40:00Z",
+      "log_code": "VM_0331",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10332",
+      "time": "2025-11-10T05:50:00Z",
+      "log_code": "STG_0332",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10333",
+      "time": "2025-11-10T06:00:00Z",
+      "log_code": "CMP_0333",
+      "subtype": "process_hang",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10334",
+      "time": "2025-11-10T06:10:00Z",
+      "log_code": "VM_0334",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10335",
+      "time": "2025-11-10T06:20:00Z",
+      "log_code": "VM_0335",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10336",
+      "time": "2025-11-10T06:30:00Z",
+      "log_code": "CMP_0336",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10337",
+      "time": "2025-11-10T06:40:00Z",
+      "log_code": "CMP_0337",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10338",
+      "time": "2025-11-10T06:50:00Z",
+      "log_code": "VM_0338",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10339",
+      "time": "2025-11-10T07:00:00Z",
+      "log_code": "CMP_0339",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10340",
+      "time": "2025-11-10T07:10:00Z",
+      "log_code": "STG_0340",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10341",
+      "time": "2025-11-10T07:20:00Z",
+      "log_code": "VM_0341",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10342",
+      "time": "2025-11-10T07:30:00Z",
+      "log_code": "VM_0342",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10343",
+      "time": "2025-11-10T07:40:00Z",
+      "log_code": "VM_0343",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10344",
+      "time": "2025-11-10T07:50:00Z",
+      "log_code": "VM_0344",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10345",
+      "time": "2025-11-10T08:00:00Z",
+      "log_code": "CMP_0345",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10346",
+      "time": "2025-11-10T08:10:00Z",
+      "log_code": "VM_0346",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10347",
+      "time": "2025-11-10T08:20:00Z",
+      "log_code": "STG_0347",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10348",
+      "time": "2025-11-10T08:30:00Z",
+      "log_code": "VM_0348",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10349",
+      "time": "2025-11-10T08:40:00Z",
+      "log_code": "STG_0349",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10350",
+      "time": "2025-11-10T08:50:00Z",
+      "log_code": "CMP_0350",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10351",
+      "time": "2025-11-10T09:00:00Z",
+      "log_code": "VM_0351",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10352",
+      "time": "2025-11-10T09:10:00Z",
+      "log_code": "VM_0352",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10353",
+      "time": "2025-11-10T09:20:00Z",
+      "log_code": "STG_0353",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10354",
+      "time": "2025-11-10T09:30:00Z",
+      "log_code": "VM_0354",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10355",
+      "time": "2025-11-10T09:40:00Z",
+      "log_code": "VM_0355",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10356",
+      "time": "2025-11-10T09:50:00Z",
+      "log_code": "VM_0356",
+      "subtype": "thread_starvation",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10357",
+      "time": "2025-11-10T10:00:00Z",
+      "log_code": "VM_0357",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10358",
+      "time": "2025-11-10T10:10:00Z",
+      "log_code": "CMP_0358",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10359",
+      "time": "2025-11-10T10:20:00Z",
+      "log_code": "VM_0359",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10360",
+      "time": "2025-11-10T10:30:00Z",
+      "log_code": "STG_0360",
+      "subtype": "circular_dependency",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10361",
+      "time": "2025-11-10T10:40:00Z",
+      "log_code": "VM_0361",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10362",
+      "time": "2025-11-10T10:50:00Z",
+      "log_code": "STG_0362",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10363",
+      "time": "2025-11-10T11:00:00Z",
+      "log_code": "VM_0363",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10364",
+      "time": "2025-11-10T11:10:00Z",
+      "log_code": "STG_0364",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10365",
+      "time": "2025-11-10T11:20:00Z",
+      "log_code": "STG_0365",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10366",
+      "time": "2025-11-10T11:30:00Z",
+      "log_code": "STG_0366",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10367",
+      "time": "2025-11-10T11:40:00Z",
+      "log_code": "VM_0367",
+      "subtype": "process_hang",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10368",
+      "time": "2025-11-10T11:50:00Z",
+      "log_code": "VM_0368",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10369",
+      "time": "2025-11-10T12:00:00Z",
+      "log_code": "VM_0369",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10370",
+      "time": "2025-11-10T12:10:00Z",
+      "log_code": "CMP_0370",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10371",
+      "time": "2025-11-10T12:20:00Z",
+      "log_code": "VM_0371",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10372",
+      "time": "2025-11-10T12:30:00Z",
+      "log_code": "STG_0372",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10373",
+      "time": "2025-11-10T12:40:00Z",
+      "log_code": "CMP_0373",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10374",
+      "time": "2025-11-10T12:50:00Z",
+      "log_code": "VM_0374",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10375",
+      "time": "2025-11-10T13:00:00Z",
+      "log_code": "CMP_0375",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10376",
+      "time": "2025-11-10T13:10:00Z",
+      "log_code": "STG_0376",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10377",
+      "time": "2025-11-10T13:20:00Z",
+      "log_code": "VM_0377",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10378",
+      "time": "2025-11-10T13:30:00Z",
+      "log_code": "VM_0378",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10379",
+      "time": "2025-11-10T13:40:00Z",
+      "log_code": "VM_0379",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10380",
+      "time": "2025-11-10T13:50:00Z",
+      "log_code": "STG_0380",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10381",
+      "time": "2025-11-10T14:00:00Z",
+      "log_code": "VM_0381",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10382",
+      "time": "2025-11-10T14:10:00Z",
+      "log_code": "VM_0382",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10383",
+      "time": "2025-11-10T14:20:00Z",
+      "log_code": "VM_0383",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10384",
+      "time": "2025-11-10T14:30:00Z",
+      "log_code": "VM_0384",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10385",
+      "time": "2025-11-10T14:40:00Z",
+      "log_code": "CMP_0385",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10386",
+      "time": "2025-11-10T14:50:00Z",
+      "log_code": "STG_0386",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10387",
+      "time": "2025-11-10T15:00:00Z",
+      "log_code": "VM_0387",
+      "subtype": "thread_starvation",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10388",
+      "time": "2025-11-10T15:10:00Z",
+      "log_code": "VM_0388",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10389",
+      "time": "2025-11-10T15:20:00Z",
+      "log_code": "CMP_0389",
+      "subtype": "circular_dependency",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10390",
+      "time": "2025-11-10T15:30:00Z",
+      "log_code": "CMP_0390",
+      "subtype": "process_hang",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10391",
+      "time": "2025-11-10T15:40:00Z",
+      "log_code": "VM_0391",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10392",
+      "time": "2025-11-10T15:50:00Z",
+      "log_code": "STG_0392",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10393",
+      "time": "2025-11-10T16:00:00Z",
+      "log_code": "VM_0393",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10394",
+      "time": "2025-11-10T16:10:00Z",
+      "log_code": "STG_0394",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10395",
+      "time": "2025-11-10T16:20:00Z",
+      "log_code": "STG_0395",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10396",
+      "time": "2025-11-10T16:30:00Z",
+      "log_code": "STG_0396",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10397",
+      "time": "2025-11-10T16:40:00Z",
+      "log_code": "CMP_0397",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10398",
+      "time": "2025-11-10T16:50:00Z",
+      "log_code": "VM_0398",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10399",
+      "time": "2025-11-10T17:00:00Z",
+      "log_code": "STG_0399",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10400",
+      "time": "2025-11-10T17:10:00Z",
+      "log_code": "VM_0400",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10401",
+      "time": "2025-11-10T17:20:00Z",
+      "log_code": "VM_0401",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10402",
+      "time": "2025-11-10T17:30:00Z",
+      "log_code": "CMP_0402",
+      "subtype": "deadlock_condition",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10403",
+      "time": "2025-11-10T17:40:00Z",
+      "log_code": "STG_0403",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10404",
+      "time": "2025-11-10T17:50:00Z",
+      "log_code": "VM_0404",
+      "subtype": "thread_starvation",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10405",
+      "time": "2025-11-10T18:00:00Z",
+      "log_code": "STG_0405",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10406",
+      "time": "2025-11-10T18:10:00Z",
+      "log_code": "STG_0406",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10407",
+      "time": "2025-11-10T18:20:00Z",
+      "log_code": "VM_0407",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10408",
+      "time": "2025-11-10T18:30:00Z",
+      "log_code": "STG_0408",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10409",
+      "time": "2025-11-10T18:40:00Z",
+      "log_code": "VM_0409",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10410",
+      "time": "2025-11-10T18:50:00Z",
+      "log_code": "VM_0410",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10411",
+      "time": "2025-11-10T19:00:00Z",
+      "log_code": "VM_0411",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10412",
+      "time": "2025-11-10T19:10:00Z",
+      "log_code": "VM_0412",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10413",
+      "time": "2025-11-10T19:20:00Z",
+      "log_code": "VM_0413",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10414",
+      "time": "2025-11-10T19:30:00Z",
+      "log_code": "CMP_0414",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10415",
+      "time": "2025-11-10T19:40:00Z",
+      "log_code": "VM_0415",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10416",
+      "time": "2025-11-10T19:50:00Z",
+      "log_code": "CMP_0416",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10417",
+      "time": "2025-11-10T20:00:00Z",
+      "log_code": "VM_0417",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10418",
+      "time": "2025-11-10T20:10:00Z",
+      "log_code": "STG_0418",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10419",
+      "time": "2025-11-10T20:20:00Z",
+      "log_code": "CMP_0419",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10420",
+      "time": "2025-11-10T20:30:00Z",
+      "log_code": "STG_0420",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10421",
+      "time": "2025-11-10T20:40:00Z",
+      "log_code": "STG_0421",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10422",
+      "time": "2025-11-10T20:50:00Z",
+      "log_code": "VM_0422",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10423",
+      "time": "2025-11-10T21:00:00Z",
+      "log_code": "STG_0423",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10424",
+      "time": "2025-11-10T21:10:00Z",
+      "log_code": "STG_0424",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10425",
+      "time": "2025-11-10T21:20:00Z",
+      "log_code": "VM_0425",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10426",
+      "time": "2025-11-10T21:30:00Z",
+      "log_code": "STG_0426",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10427",
+      "time": "2025-11-10T21:40:00Z",
+      "log_code": "VM_0427",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10428",
+      "time": "2025-11-10T21:50:00Z",
+      "log_code": "CMP_0428",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10429",
+      "time": "2025-11-10T22:00:00Z",
+      "log_code": "VM_0429",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10430",
+      "time": "2025-11-10T22:10:00Z",
+      "log_code": "VM_0430",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10431",
+      "time": "2025-11-10T22:20:00Z",
+      "log_code": "VM_0431",
+      "subtype": "circular_dependency",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10432",
+      "time": "2025-11-10T22:30:00Z",
+      "log_code": "VM_0432",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10433",
+      "time": "2025-11-10T22:40:00Z",
+      "log_code": "VM_0433",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10434",
+      "time": "2025-11-10T22:50:00Z",
+      "log_code": "STG_0434",
+      "subtype": "circular_dependency",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10435",
+      "time": "2025-11-10T23:00:00Z",
+      "log_code": "CMP_0435",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10436",
+      "time": "2025-11-10T23:10:00Z",
+      "log_code": "VM_0436",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10437",
+      "time": "2025-11-10T23:20:00Z",
+      "log_code": "STG_0437",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10438",
+      "time": "2025-11-10T23:30:00Z",
+      "log_code": "VM_0438",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10439",
+      "time": "2025-11-10T23:40:00Z",
+      "log_code": "CMP_0439",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10440",
+      "time": "2025-11-10T23:50:00Z",
+      "log_code": "VM_0440",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10441",
+      "time": "2025-11-11T00:00:00Z",
+      "log_code": "VM_0441",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10442",
+      "time": "2025-11-11T00:10:00Z",
+      "log_code": "VM_0442",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10443",
+      "time": "2025-11-11T00:20:00Z",
+      "log_code": "VM_0443",
+      "subtype": "thread_starvation",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10444",
+      "time": "2025-11-11T00:30:00Z",
+      "log_code": "CMP_0444",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10445",
+      "time": "2025-11-11T00:40:00Z",
+      "log_code": "STG_0445",
+      "subtype": "process_hang",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10446",
+      "time": "2025-11-11T00:50:00Z",
+      "log_code": "VM_0446",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10447",
+      "time": "2025-11-11T01:00:00Z",
+      "log_code": "STG_0447",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10448",
+      "time": "2025-11-11T01:10:00Z",
+      "log_code": "CMP_0448",
+      "subtype": "infinite_recursion",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10449",
+      "time": "2025-11-11T01:20:00Z",
+      "log_code": "STG_0449",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10450",
+      "time": "2025-11-11T01:30:00Z",
+      "log_code": "STG_0450",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10451",
+      "time": "2025-11-11T01:40:00Z",
+      "log_code": "VM_0451",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10452",
+      "time": "2025-11-11T01:50:00Z",
+      "log_code": "CMP_0452",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10453",
+      "time": "2025-11-11T02:00:00Z",
+      "log_code": "VM_0453",
+      "subtype": "thread_starvation",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10454",
+      "time": "2025-11-11T02:10:00Z",
+      "log_code": "CMP_0454",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10455",
+      "time": "2025-11-11T02:20:00Z",
+      "log_code": "STG_0455",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10456",
+      "time": "2025-11-11T02:30:00Z",
+      "log_code": "VM_0456",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10457",
+      "time": "2025-11-11T02:40:00Z",
+      "log_code": "CMP_0457",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10458",
+      "time": "2025-11-11T02:50:00Z",
+      "log_code": "VM_0458",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10459",
+      "time": "2025-11-11T03:00:00Z",
+      "log_code": "VM_0459",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_vm_004"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10460",
+      "time": "2025-11-11T03:10:00Z",
+      "log_code": "VM_0460",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10461",
+      "time": "2025-11-11T03:20:00Z",
+      "log_code": "STG_0461",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10462",
+      "time": "2025-11-11T03:30:00Z",
+      "log_code": "VM_0462",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10463",
+      "time": "2025-11-11T03:40:00Z",
+      "log_code": "STG_0463",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10464",
+      "time": "2025-11-11T03:50:00Z",
+      "log_code": "CMP_0464",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10465",
+      "time": "2025-11-11T04:00:00Z",
+      "log_code": "CMP_0465",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10466",
+      "time": "2025-11-11T04:10:00Z",
+      "log_code": "STG_0466",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10467",
+      "time": "2025-11-11T04:20:00Z",
+      "log_code": "VM_0467",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10468",
+      "time": "2025-11-11T04:30:00Z",
+      "log_code": "VM_0468",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10469",
+      "time": "2025-11-11T04:40:00Z",
+      "log_code": "STG_0469",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10470",
+      "time": "2025-11-11T04:50:00Z",
+      "log_code": "STG_0470",
+      "subtype": "deadlock_condition",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10471",
+      "time": "2025-11-11T05:00:00Z",
+      "log_code": "CMP_0471",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10472",
+      "time": "2025-11-11T05:10:00Z",
+      "log_code": "CMP_0472",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10473",
+      "time": "2025-11-11T05:20:00Z",
+      "log_code": "CMP_0473",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10474",
+      "time": "2025-11-11T05:30:00Z",
+      "log_code": "VM_0474",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10475",
+      "time": "2025-11-11T05:40:00Z",
+      "log_code": "CMP_0475",
+      "subtype": "circular_dependency",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10476",
+      "time": "2025-11-11T05:50:00Z",
+      "log_code": "CMP_0476",
+      "subtype": "circular_dependency",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10477",
+      "time": "2025-11-11T06:00:00Z",
+      "log_code": "CMP_0477",
+      "subtype": "infinite_recursion",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10478",
+      "time": "2025-11-11T06:10:00Z",
+      "log_code": "STG_0478",
+      "subtype": "process_hang",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10479",
+      "time": "2025-11-11T06:20:00Z",
+      "log_code": "CMP_0479",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10480",
+      "time": "2025-11-11T06:30:00Z",
+      "log_code": "STG_0480",
+      "subtype": "process_hang",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10481",
+      "time": "2025-11-11T06:40:00Z",
+      "log_code": "VM_0481",
+      "subtype": "deadlock_condition",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10482",
+      "time": "2025-11-11T06:50:00Z",
+      "log_code": "CMP_0482",
+      "subtype": "thread_starvation",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10483",
+      "time": "2025-11-11T07:00:00Z",
+      "log_code": "CMP_0483",
+      "subtype": "thread_starvation",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10484",
+      "time": "2025-11-11T07:10:00Z",
+      "log_code": "VM_0484",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10485",
+      "time": "2025-11-11T07:20:00Z",
+      "log_code": "CMP_0485",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10486",
+      "time": "2025-11-11T07:30:00Z",
+      "log_code": "VM_0486",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_005"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10487",
+      "time": "2025-11-11T07:40:00Z",
+      "log_code": "CMP_0487",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10488",
+      "time": "2025-11-11T07:50:00Z",
+      "log_code": "STG_0488",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10489",
+      "time": "2025-11-11T08:00:00Z",
+      "log_code": "STG_0489",
+      "subtype": "infinite_recursion",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10490",
+      "time": "2025-11-11T08:10:00Z",
+      "log_code": "CMP_0490",
+      "subtype": "process_hang",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10491",
+      "time": "2025-11-11T08:20:00Z",
+      "log_code": "STG_0491",
+      "subtype": "infinite_loop_detected",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10492",
+      "time": "2025-11-11T08:30:00Z",
+      "log_code": "CMP_0492",
+      "subtype": "process_hang",
+      "customer_name": "DataFlow Technologies",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10493",
+      "time": "2025-11-11T08:40:00Z",
+      "log_code": "CMP_0493",
+      "subtype": "infinite_recursion",
+      "customer_name": "TechCore Solutions",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10494",
+      "time": "2025-11-11T08:50:00Z",
+      "log_code": "STG_0494",
+      "subtype": "circular_dependency",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_storage_001"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10495",
+      "time": "2025-11-11T09:00:00Z",
+      "log_code": "CMP_0495",
+      "subtype": "deadlock_condition",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10496",
+      "time": "2025-11-11T09:10:00Z",
+      "log_code": "VM_0496",
+      "subtype": "resource_lock_timeout",
+      "customer_name": "CloudMart Wholesale",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10497",
+      "time": "2025-11-11T09:20:00Z",
+      "log_code": "VM_0497",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10498",
+      "time": "2025-11-11T09:30:00Z",
+      "log_code": "VM_0498",
+      "subtype": "deadlock_condition",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_vm_003"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10499",
+      "time": "2025-11-11T09:40:00Z",
+      "log_code": "CMP_0499",
+      "subtype": "infinite_recursion",
+      "customer_name": "ShopFast eCommerce",
+      "resources_affected": [
+        "res_compute_002"
+      ],
+      "status": "STALE"
+    },
+    {
+      "id": "log_10500",
+      "time": "2025-11-11T09:50:00Z",
+      "log_code": "VM_0500",
+      "subtype": "deadlock_resolution_failed",
+      "customer_name": "Rocket Startup Labs",
+      "resources_affected": [
+        "res_vm_002"
+      ],
+      "status": "STALE"
     }
   ],
   "metadata": {
-    "total_logs": 10000,
+    "total_logs": 10500,
     "logs_per_resource": 1000,
     "resources": [
       "res_vm_001",
@@ -110024,14 +115524,15 @@
       "Rocket Startup Labs"
     ],
     "status_distribution": {
-      "OK": "90%",
-      "ERROR": "4%",
-      "WARNING": "4%",
-      "CRITICAL": "2%"
+      "CRITICAL": "199 (1.9%)",
+      "ERROR": "404 (3.8%)",
+      "OK": "9023 (85.9%)",
+      "STALE": "500 (4.8%)",
+      "WARNING": "374 (3.6%)"
     },
     "time_range": {
       "start": "2025-11-01T00:00:00Z",
-      "end": "2025-11-07T22:40:00Z"
+      "end": "2025-11-11T09:50:00Z"
     }
   }
 }

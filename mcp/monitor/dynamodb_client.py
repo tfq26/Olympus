@@ -33,42 +33,16 @@ except Exception as e:
 
 def insert_log(log_data):
     """
-    Insert a single log entry into DynamoDB
-    Args: log_data - Dictionary containing log data
+    Insert a single log entry into DynamoDB (store JSON as-is)
+    Args: log_data - Dictionary containing log data (entire JSON object)
     Returns: True if successful, False otherwise
     """
     try:
         if not logs_table:
             return False
         
-        # Denormalize: create one item per resource affected for efficient querying
-        resources = log_data.get("resources_affected", [])
-        if not resources:
-            # If no resources, create single item
-            item = {
-                "log_id": log_data.get("id"),
-                "timestamp": log_data.get("time"),
-                "log_code": log_data.get("log_code"),
-                "subtype": log_data.get("subtype"),
-                "customer_name": log_data.get("customer_name"),
-                "resources_affected": log_data.get("resources_affected", []),
-                "status": log_data.get("status")
-            }
-            logs_table.put_item(Item=item)
-        else:
-            # Create one item per resource (denormalized for GSI queries)
-            for resource_id in resources:
-                item = {
-                    "log_id": f"{log_data.get('id')}_res_{resource_id}",  # Use "_res_" separator
-                    "timestamp": log_data.get("time"),
-                    "log_code": log_data.get("log_code"),
-                    "subtype": log_data.get("subtype"),
-                    "customer_name": log_data.get("customer_name"),
-                    "resource_id": resource_id,  # For GSI3 querying
-                    "resources_affected": log_data.get("resources_affected", []),
-                    "status": log_data.get("status")
-                }
-                logs_table.put_item(Item=item)
+        # Store the entire JSON object as-is - no transformation
+        logs_table.put_item(Item=log_data)
         
         return True
     except Exception as e:
@@ -78,52 +52,21 @@ def insert_log(log_data):
 
 def batch_insert_logs(logs_list):
     """
-    Batch insert logs into DynamoDB (more efficient than individual inserts)
-    Uses denormalization: creates one item per resource for efficient querying
-    Args: logs_list - List of log dictionaries
+    Batch insert logs into DynamoDB (store JSON as-is, no transformation)
+    Args: logs_list - List of log dictionaries (entire JSON objects)
     Returns: Number of successfully inserted logs
     """
     if not logs_table:
         return 0
     
     inserted_count = 0
-    # DynamoDB allows max 25 items per batch write
-    batch_size = 25
     
     try:
-        # First, prepare all items (denormalized)
-        all_items = []
-        for log in logs_list:
-            resources = log.get("resources_affected", [])
-            if not resources:
-                # If no resources, create single item
-                all_items.append({
-                    "log_id": log.get("id"),
-                    "timestamp": log.get("time"),
-                    "log_code": log.get("log_code"),
-                    "subtype": log.get("subtype"),
-                    "customer_name": log.get("customer_name"),
-                    "resources_affected": log.get("resources_affected", []),
-                    "status": log.get("status")
-                })
-            else:
-                # Create one item per resource (denormalized for GSI queries)
-                for resource_id in resources:
-                    all_items.append({
-                        "log_id": f"{log.get('id')}_res_{resource_id}",  # Use "_res_" separator
-                        "timestamp": log.get("time"),
-                        "log_code": log.get("log_code"),
-                        "subtype": log.get("subtype"),
-                        "customer_name": log.get("customer_name"),
-                        "resource_id": resource_id,  # For GSI3 querying
-                        "resources_affected": log.get("resources_affected", []),
-                        "status": log.get("status")
-                    })
-        
-        # Process items in batches
+        # Store each log JSON object as-is - no denormalization, no transformation
         with logs_table.batch_writer() as batch:
-            for item in all_items:
-                batch.put_item(Item=item)
+            for log in logs_list:
+                # Store the entire log object as-is
+                batch.put_item(Item=log)
                 inserted_count += 1
         
         return inserted_count
@@ -134,33 +77,17 @@ def batch_insert_logs(logs_list):
 
 def insert_resource(resource_data):
     """
-    Insert a single resource into DynamoDB
-    Args: resource_data - Dictionary containing resource data
+    Insert a single resource into DynamoDB (store JSON as-is)
+    Args: resource_data - Dictionary containing resource data (entire JSON object)
     Returns: True if successful, False otherwise
     """
     try:
         if not metrics_table:
             return False
         
-        # Convert resource data to DynamoDB item format
-        item = {
-            "resource_id": resource_data.get("id"),
-            "name": resource_data.get("name"),
-            "type": resource_data.get("type"),
-            "provider": resource_data.get("provider"),
-            "region": resource_data.get("region"),
-            "status": resource_data.get("status"),
-            "created_at": resource_data.get("created_at"),
-            "created_by": resource_data.get("created_by"),
-            "health_score": resource_data.get("health_score"),
-            "metrics": resource_data.get("metrics", {}),
-            "dependencies": resource_data.get("dependencies", []),
-            "tags": resource_data.get("tags", {}),
-            "estimated_monthly_cost": resource_data.get("estimated_monthly_cost"),
-            "security": resource_data.get("security", {})
-        }
+        # Store the entire JSON object as-is - no transformation
+        metrics_table.put_item(Item=resource_data)
         
-        metrics_table.put_item(Item=item)
         return True
     except Exception as e:
         print(f"Error inserting resource: {e}")
@@ -169,8 +96,8 @@ def insert_resource(resource_data):
 
 def batch_insert_resources(resources_list):
     """
-    Batch insert resources into DynamoDB
-    Args: resources_list - List of resource dictionaries
+    Batch insert resources into DynamoDB (store JSON as-is)
+    Args: resources_list - List of resource dictionaries (entire JSON objects)
     Returns: Number of successfully inserted resources
     """
     if not metrics_table:
@@ -179,26 +106,11 @@ def batch_insert_resources(resources_list):
     inserted_count = 0
     
     try:
-        # Use batch writer for efficient batch writes
+        # Store each resource JSON object as-is - no transformation
         with metrics_table.batch_writer() as batch:
             for resource in resources_list:
-                item = {
-                    "resource_id": resource.get("id"),
-                    "name": resource.get("name"),
-                    "type": resource.get("type"),
-                    "provider": resource.get("provider"),
-                    "region": resource.get("region"),
-                    "status": resource.get("status"),
-                    "created_at": resource.get("created_at"),
-                    "created_by": resource.get("created_by"),
-                    "health_score": resource.get("health_score"),
-                    "metrics": resource.get("metrics", {}),
-                    "dependencies": resource.get("dependencies", []),
-                    "tags": resource.get("tags", {}),
-                    "estimated_monthly_cost": resource.get("estimated_monthly_cost"),
-                    "security": resource.get("security", {})
-                }
-                batch.put_item(Item=item)
+                # Store the entire resource object as-is
+                batch.put_item(Item=resource)
                 inserted_count += 1
         
         return inserted_count
@@ -209,25 +121,21 @@ def batch_insert_resources(resources_list):
 
 def get_log_by_id(log_id):
     """
-    Get a single log by its ID
-    Note: Due to denormalization, this may return the first matching log
+    Get a single log by its ID (returns JSON as stored)
     Args: log_id - The log ID to retrieve
-    Returns: Log dictionary or None if not found
+    Returns: Log dictionary (JSON as-is) or None if not found
     """
     try:
         if not logs_table:
             return None
         
-        # Since we denormalized, try to get the first occurrence
-        # (log_id might be "log_00001" or "log_00001_res_vm_001")
         response = logs_table.get_item(
-            Key={"log_id": log_id}
+            Key={"id": log_id}
         )
         
         if "Item" in response:
-            item = response["Item"]
-            # Convert back to original format
-            return _convert_log_item(item)
+            # Return the item as-is (no conversion needed)
+            return response["Item"]
         return None
     except Exception as e:
         print(f"Error getting log by ID: {e}")
@@ -236,9 +144,9 @@ def get_log_by_id(log_id):
 
 def get_logs_by_customer(customer_name):
     """
-    Get all logs for a specific customer using GSI1
+    Get all logs for a specific customer (scan and filter)
     Args: customer_name - The customer name to query
-    Returns: List of log dictionaries
+    Returns: List of log dictionaries (JSON as stored)
     """
     try:
         if not logs_table:
@@ -246,38 +154,24 @@ def get_logs_by_customer(customer_name):
         
         logs = []
         
-        try:
-            # Query GSI1: customer-name-index
-            response = logs_table.query(
-                IndexName="customer-name-index",
-                KeyConditionExpression="customer_name = :customer",
-                ExpressionAttributeValues={":customer": customer_name}
+        # Scan table and filter by customer_name
+        response = logs_table.scan(
+            FilterExpression="customer_name = :customer",
+            ExpressionAttributeValues={":customer": customer_name}
+        )
+        
+        for item in response.get("Items", []):
+            logs.append(item)  # Return as-is
+        
+        # Handle pagination
+        while "LastEvaluatedKey" in response:
+            response = logs_table.scan(
+                FilterExpression="customer_name = :customer",
+                ExpressionAttributeValues={":customer": customer_name},
+                ExclusiveStartKey=response["LastEvaluatedKey"]
             )
-            
             for item in response.get("Items", []):
-                logs.append(_convert_log_item(item))
-            
-            # Handle pagination
-            while "LastEvaluatedKey" in response:
-                response = logs_table.query(
-                    IndexName="customer-name-index",
-                    KeyConditionExpression="customer_name = :customer",
-                    ExpressionAttributeValues={":customer": customer_name},
-                    ExclusiveStartKey=response["LastEvaluatedKey"]
-                )
-                for item in response.get("Items", []):
-                    logs.append(_convert_log_item(item))
-        except ClientError as e:
-            # If GSI doesn't exist, fall back to scan with filter
-            if e.response['Error']['Code'] == 'ResourceNotFoundException':
-                response = logs_table.scan(
-                    FilterExpression="customer_name = :customer",
-                    ExpressionAttributeValues={":customer": customer_name}
-                )
-                for item in response.get("Items", []):
-                    logs.append(_convert_log_item(item))
-            else:
-                raise
+                logs.append(item)  # Return as-is
         
         return logs
     except Exception as e:
@@ -287,9 +181,9 @@ def get_logs_by_customer(customer_name):
 
 def get_logs_by_status(status):
     """
-    Get all logs with a specific status using GSI2
+    Get all logs with a specific status (scan and filter)
     Args: status - The status to query (OK, ERROR, WARNING, CRITICAL)
-    Returns: List of log dictionaries
+    Returns: List of log dictionaries (JSON as stored)
     """
     try:
         if not logs_table:
@@ -297,41 +191,26 @@ def get_logs_by_status(status):
         
         logs = []
         
-        try:
-            # Query GSI2: status-index
-            response = logs_table.query(
-                IndexName="status-index",
-                KeyConditionExpression="#status = :status",
+        # Scan table and filter by status
+        response = logs_table.scan(
+            FilterExpression="#status = :status",
+            ExpressionAttributeNames={"#status": "status"},
+            ExpressionAttributeValues={":status": status}
+        )
+        
+        for item in response.get("Items", []):
+            logs.append(item)  # Return as-is
+        
+        # Handle pagination
+        while "LastEvaluatedKey" in response:
+            response = logs_table.scan(
+                FilterExpression="#status = :status",
                 ExpressionAttributeNames={"#status": "status"},
-                ExpressionAttributeValues={":status": status}
+                ExpressionAttributeValues={":status": status},
+                ExclusiveStartKey=response["LastEvaluatedKey"]
             )
-            
             for item in response.get("Items", []):
-                logs.append(_convert_log_item(item))
-            
-            # Handle pagination
-            while "LastEvaluatedKey" in response:
-                response = logs_table.query(
-                    IndexName="status-index",
-                    KeyConditionExpression="#status = :status",
-                    ExpressionAttributeNames={"#status": "status"},
-                    ExpressionAttributeValues={":status": status},
-                    ExclusiveStartKey=response["LastEvaluatedKey"]
-                )
-                for item in response.get("Items", []):
-                    logs.append(_convert_log_item(item))
-        except ClientError as e:
-            # If GSI doesn't exist, fall back to scan with filter
-            if e.response['Error']['Code'] == 'ResourceNotFoundException':
-                response = logs_table.scan(
-                    FilterExpression="#status = :status",
-                    ExpressionAttributeNames={"#status": "status"},
-                    ExpressionAttributeValues={":status": status}
-                )
-                for item in response.get("Items", []):
-                    logs.append(_convert_log_item(item))
-            else:
-                raise
+                logs.append(item)  # Return as-is
         
         return logs
     except Exception as e:
@@ -341,96 +220,24 @@ def get_logs_by_status(status):
 
 def get_logs_by_resource(resource_id):
     """
-    Get all logs for a specific resource using GSI3
+    Get all logs for a specific resource (scan and filter)
     Args: resource_id - The resource ID to query
-    Returns: List of log dictionaries
+    Returns: List of log dictionaries (JSON as stored) or None if table doesn't exist
     """
     try:
         if not logs_table:
-            return []
+            return None
         
         logs = []
         
-        try:
-            # Query GSI3: resource-index
-            response = logs_table.query(
-                IndexName="resource-index",
-                KeyConditionExpression="resource_id = :resource",
-                ExpressionAttributeValues={":resource": resource_id}
-            )
-            
-            for item in response.get("Items", []):
-                logs.append(_convert_log_item(item))
-            
-            # Handle pagination
-            while "LastEvaluatedKey" in response:
-                response = logs_table.query(
-                    IndexName="resource-index",
-                    KeyConditionExpression="resource_id = :resource",
-                    ExpressionAttributeValues={":resource": resource_id},
-                    ExclusiveStartKey=response["LastEvaluatedKey"]
-                )
-                for item in response.get("Items", []):
-                    logs.append(_convert_log_item(item))
-        except ClientError as e:
-            # If GSI doesn't exist, fall back to scan with filter
-            # Note: contains() doesn't work directly on lists, need to check each item
-            if e.response['Error']['Code'] == 'ResourceNotFoundException':
-                # Scan all items and filter in application
-                response = logs_table.scan()
-                for item in response.get("Items", []):
-                    # Check if resource_id is in resources_affected list
-                    resources_affected = item.get("resources_affected", [])
-                    if resource_id in resources_affected:
-                        logs.append(_convert_log_item(item))
-                
-                # Handle pagination
-                while "LastEvaluatedKey" in response:
-                    response = logs_table.scan(
-                        ExclusiveStartKey=response["LastEvaluatedKey"]
-                    )
-                    for item in response.get("Items", []):
-                        resources_affected = item.get("resources_affected", [])
-                        if resource_id in resources_affected:
-                            logs.append(_convert_log_item(item))
-            else:
-                raise
-        
-        return logs
-    except Exception as e:
-        print(f"Error getting logs by resource: {e}")
-        return []
-
-
-def get_all_logs():
-    """
-    Get all logs from DynamoDB (use scan - less efficient for large datasets)
-    Returns: List of all log dictionaries (deduplicated)
-    Note: Due to denormalization, we deduplicate logs by original log ID
-    """
-    try:
-        if not logs_table:
-            return []
-        
-        logs_dict = {}  # Use dict to store unique logs by original log ID
-        seen_log_ids = set()  # Track unique log IDs to avoid duplicates
-        
+        # Scan table and filter by resource_id in resources_affected list
         response = logs_table.scan()
         
         for item in response.get("Items", []):
-            # Extract original log ID (remove resource suffix if present)
-            log_id = item.get("log_id", "")
-            # Handle composite keys: "log_00001_res_vm_001" -> "log_00001"
-            if "_res_" in log_id:
-                original_log_id = log_id.split("_res_")[0]
-            else:
-                original_log_id = log_id
-            
-            # Only add if we haven't seen this log ID before
-            if original_log_id not in seen_log_ids:
-                log = _convert_log_item(item)
-                logs_dict[original_log_id] = log
-                seen_log_ids.add(original_log_id)
+            # Check if resource_id is in resources_affected list
+            resources_affected = item.get("resources_affected", [])
+            if resource_id in resources_affected:
+                logs.append(item)  # Return as-is
         
         # Handle pagination
         while "LastEvaluatedKey" in response:
@@ -438,42 +245,80 @@ def get_all_logs():
                 ExclusiveStartKey=response["LastEvaluatedKey"]
             )
             for item in response.get("Items", []):
-                log_id = item.get("log_id", "")
-                if "_res_" in log_id:
-                    original_log_id = log_id.split("_res_")[0]
-                else:
-                    original_log_id = log_id
-                if original_log_id not in seen_log_ids:
-                    log = _convert_log_item(item)
-                    logs_dict[original_log_id] = log
-                    seen_log_ids.add(original_log_id)
+                resources_affected = item.get("resources_affected", [])
+                if resource_id in resources_affected:
+                    logs.append(item)  # Return as-is
         
-        # Return as list
-        return list(logs_dict.values())
+        return logs
+    except ClientError as e:
+        # If table doesn't exist, return None so fallback can work
+        if e.response['Error']['Code'] == 'ResourceNotFoundException':
+            return None
+        print(f"Error getting logs by resource: {e}")
+        return None
+    except Exception as e:
+        print(f"Error getting logs by resource: {e}")
+        return None
+
+
+def get_all_logs():
+    """
+    Get all logs from DynamoDB (use scan - returns JSON as stored)
+    Returns: List of all log dictionaries (JSON as-is) or None if table doesn't exist
+    """
+    try:
+        if not logs_table:
+            return None
+        
+        logs = []
+        response = logs_table.scan()
+        
+        for item in response.get("Items", []):
+            logs.append(item)  # Return as-is, no conversion needed
+        
+        # Handle pagination
+        while "LastEvaluatedKey" in response:
+            response = logs_table.scan(
+                ExclusiveStartKey=response["LastEvaluatedKey"]
+            )
+            for item in response.get("Items", []):
+                logs.append(item)  # Return as-is
+        
+        return logs
+    except ClientError as e:
+        # If table doesn't exist, return None so fallback can work
+        if e.response['Error']['Code'] == 'ResourceNotFoundException':
+            return None
+        print(f"Error getting all logs: {e}")
+        return None
     except Exception as e:
         print(f"Error getting all logs: {e}")
-        return []
+        return None
 
 
 def get_resource_by_id(resource_id):
     """
-    Get a single resource by its ID
+    Get a single resource by its ID (returns JSON as stored)
     Args: resource_id - The resource ID to retrieve
-    Returns: Resource dictionary or None if not found
+    Returns: Resource dictionary (JSON as-is) or None if not found
     """
     try:
         if not metrics_table:
             return None
         
         response = metrics_table.get_item(
-            Key={"resource_id": resource_id}
+            Key={"id": resource_id}
         )
         
         if "Item" in response:
-            item = response["Item"]
-            # Convert resource_id back to id for compatibility
-            item["id"] = item.pop("resource_id")
-            return item
+            # Return the item as-is (no conversion needed)
+            return response["Item"]
+        return None
+    except ClientError as e:
+        # If table doesn't exist, raise exception so fallback can work
+        if e.response['Error']['Code'] == 'ResourceNotFoundException':
+            raise  # Let the caller handle fallback
+        print(f"Error getting resource by ID: {e}")
         return None
     except Exception as e:
         print(f"Error getting resource by ID: {e}")
@@ -482,20 +327,18 @@ def get_resource_by_id(resource_id):
 
 def get_all_resources():
     """
-    Get all resources from DynamoDB
-    Returns: List of all resource dictionaries
+    Get all resources from DynamoDB (returns JSON as stored)
+    Returns: List of all resource dictionaries (JSON as-is) or None if table doesn't exist
     """
     try:
         if not metrics_table:
-            return []
+            return None
         
         resources = []
         response = metrics_table.scan()
         
         for item in response.get("Items", []):
-            # Convert resource_id back to id for compatibility
-            item["id"] = item.pop("resource_id")
-            resources.append(item)
+            resources.append(item)  # Return as-is, no conversion needed
         
         # Handle pagination
         while "LastEvaluatedKey" in response:
@@ -503,80 +346,142 @@ def get_all_resources():
                 ExclusiveStartKey=response["LastEvaluatedKey"]
             )
             for item in response.get("Items", []):
-                item["id"] = item.pop("resource_id")
-                resources.append(item)
+                resources.append(item)  # Return as-is
         
         return resources
+    except ClientError as e:
+        # If table doesn't exist, return None so fallback can work
+        if e.response['Error']['Code'] == 'ResourceNotFoundException':
+            return None
+        print(f"Error getting all resources: {e}")
+        return None
     except Exception as e:
         print(f"Error getting all resources: {e}")
-        return []
+        return None
 
 
-def _convert_log_item(item):
+# Removed _convert_log_item function - no longer needed since we store JSON as-is
+
+
+def create_tables():
     """
-    Convert DynamoDB log item to Python dictionary (original format)
-    Args: item - DynamoDB item from DynamoDB
-    Returns: Python dictionary in original log format
+    Create DynamoDB table to store logs JSON data as-is
+    Creates logs-table if it doesn't exist (metrics removed - only logs)
+    Simple schema: just store the JSON objects with id as partition key
+    Returns: Dictionary with creation results
     """
-    # Extract original log ID (remove resource suffix if present)
-    log_id = item.get("log_id", "")
-    # Handle composite keys: "log_00001_res_vm_001" -> "log_00001"
-    if "_res_" in log_id:
-        # Split on "_res_" to get original log ID
-        parts = log_id.split("_res_")
-        original_log_id = parts[0]
-    else:
-        original_log_id = log_id
-    
-    # Build log dictionary in original format
-    log = {
-        "id": original_log_id,
-        "time": item.get("timestamp"),
-        "log_code": item.get("log_code"),
-        "subtype": item.get("subtype"),
-        "customer_name": item.get("customer_name"),
-        "resources_affected": item.get("resources_affected", []),
-        "status": item.get("status")
+    results = {
+        "logs_table_created": False,
+        "errors": []
     }
     
-    return log
+    try:
+        # Create logs table - simple schema, just store JSON as-is
+        try:
+            logs_table_definition = {
+                "TableName": LOGS_TABLE_NAME,
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"  # Partition key - just the log id
+                    }
+                ],
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"  # String
+                    }
+                ],
+                "BillingMode": "PAY_PER_REQUEST"  # On-demand pricing
+            }
+            
+            dynamodb_client = boto3.client("dynamodb", region_name=DYNAMODB_REGION)
+            dynamodb_client.create_table(**logs_table_definition)
+            
+            # Wait for table to be created
+            print(f"Creating logs table: {LOGS_TABLE_NAME}...")
+            waiter = dynamodb_client.get_waiter('table_exists')
+            waiter.wait(TableName=LOGS_TABLE_NAME)
+            print(f"✓ Logs table created successfully")
+            results["logs_table_created"] = True
+            
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'ResourceInUseException':
+                print(f"Logs table {LOGS_TABLE_NAME} already exists")
+                results["logs_table_created"] = True
+            else:
+                error_msg = f"Error creating logs table: {str(e)}"
+                results["errors"].append(error_msg)
+                print(error_msg)
+    
+    except Exception as e:
+        error_msg = f"Error in create_tables: {str(e)}"
+        results["errors"].append(error_msg)
+        print(error_msg)
+    
+    return results
 
 
-def migrate_json_to_dynamodb(logs_file_path=None, metrics_file_path=None):
+def migrate_json_to_dynamodb(logs_file_path=None):
     """
-    Migrate data from JSON files to DynamoDB
-    This function reads logs.json and metrics.json and inserts them into DynamoDB
+    Create DynamoDB table and migrate logs from JSON file
+    This function:
+    1. Creates the logs-table (if it doesn't exist)
+    2. Reads logs.json
+    3. Inserts logs into DynamoDB using batch operations
+    Note: Metrics removed - only logs are stored in DynamoDB
     Args:
         logs_file_path - Path to logs.json file (optional, uses default if None)
-        metrics_file_path - Path to metrics.json file (optional, uses default if None)
     Returns: Dictionary with migration results
     """
     import json
     from pathlib import Path
     
-    # Use default paths if not provided
+    # Use default path if not provided
     if logs_file_path is None:
         project_root = Path(__file__).parent.parent.parent
         logs_file_path = project_root / "logs.json"
-    if metrics_file_path is None:
-        project_root = Path(__file__).parent.parent.parent
-        metrics_file_path = project_root / "metrics.json"
     
     results = {
+        "table_created": False,
         "logs_inserted": 0,
-        "resources_inserted": 0,
         "errors": []
     }
     
-    # Migrate logs
+    # Step 1: Create table
+    print("=== Step 1: Creating DynamoDB Table ===")
+    try:
+        table_results = create_tables()
+        results["table_created"] = table_results["logs_table_created"]
+        results["errors"].extend(table_results["errors"])
+        
+        if not results["table_created"]:
+            print("Warning: Table may not have been created")
+    except Exception as e:
+        error_msg = f"Error creating table: {str(e)}"
+        results["errors"].append(error_msg)
+        print(error_msg)
+        return results
+    
+    # Wait a bit for table to be fully ready
+    import time
+    time.sleep(2)
+    
+    # Step 2: Migrate logs
+    print("\n=== Step 2: Migrating Logs ===")
     try:
         if logs_file_path.exists():
+            print(f"Reading logs from: {logs_file_path}")
             with open(logs_file_path, 'r') as f:
                 data = json.load(f)
                 logs = data.get("logs", [])
                 if logs:
+                    print(f"Found {len(logs)} logs to migrate")
+                    print("Inserting logs into DynamoDB (this may take a while)...")
                     results["logs_inserted"] = batch_insert_logs(logs)
-                    print(f"Migrated {results['logs_inserted']} log items to DynamoDB")
+                    print(f"✓ Migrated {results['logs_inserted']} log items to DynamoDB")
+                else:
+                    results["errors"].append("No logs found in JSON file")
         else:
             results["errors"].append(f"Logs file not found: {logs_file_path}")
     except Exception as e:
@@ -584,21 +489,16 @@ def migrate_json_to_dynamodb(logs_file_path=None, metrics_file_path=None):
         results["errors"].append(error_msg)
         print(error_msg)
     
-    # Migrate resources
-    try:
-        if metrics_file_path.exists():
-            with open(metrics_file_path, 'r') as f:
-                data = json.load(f)
-                resources = data.get("resources", [])
-                if resources:
-                    results["resources_inserted"] = batch_insert_resources(resources)
-                    print(f"Migrated {results['resources_inserted']} resource items to DynamoDB")
-        else:
-            results["errors"].append(f"Metrics file not found: {metrics_file_path}")
-    except Exception as e:
-        error_msg = f"Error migrating resources: {str(e)}"
-        results["errors"].append(error_msg)
-        print(error_msg)
+    # Summary
+    print("\n=== Migration Summary ===")
+    print(f"Table created: {results['table_created']}")
+    print(f"Logs inserted: {results['logs_inserted']}")
+    if results["errors"]:
+        print(f"Errors: {len(results['errors'])}")
+        for error in results["errors"]:
+            print(f"  - {error}")
+    else:
+        print("✓ Migration completed successfully!")
     
     return results
 
