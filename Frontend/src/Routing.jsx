@@ -12,7 +12,7 @@ import SignIn from "./pages/auth/FirebaseSignIn.jsx";
 import Dashboard from "./pages/Resources/dashboard.jsx";
 import TicketsDashboard from "./pages/Tickets/TicketDashboard.jsx";
 import NotFound from "./pages/error.jsx";
-import LogsDashboard from "./pages/Logs/LogDashboard.jsx";
+import LogsDashboard from "./pages/LogsView/LogDashboard.jsx";
 import MenuBar from "./components/MenuBar.jsx";
 import ProfilePage from "./pages/Profile/ProfilePage.jsx";
 
