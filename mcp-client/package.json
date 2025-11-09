@@ -7,7 +7,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test-endpoints.js",
+    "start": "node server.js",
+    "test:router": "node -e \"import('./model/router.js').then(m => m.interpretMessage(process.argv[1]).then(r => console.log(JSON.stringify(r, null, 2))).catch(e => console.error(e.message)))\""
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.21.1",

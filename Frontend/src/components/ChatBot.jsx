@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useChat } from "@ai-sdk/react";
+import { useWebSocketChat } from "../hooks/useWebSocketChat";
 import { motion, AnimatePresence } from "framer-motion";
 
 const models = [
@@ -11,13 +11,9 @@ export default function ChatBot({
   placeholder = "Ask me anything about your infrastructure...",
 }) {
   const [input, setInput] = useState("");
-  const [model, setModel] = useState(models[0].value);
   const [isStarted, setIsStarted] = useState(false);
 
-  const { messages, append, isLoading } = useChat({
-    api: "/api/chat",
-    body: { model },
-  });
+  const { messages, append, isLoading } = useWebSocketChat();
 
   const handleSubmit = () => {
     if (!input.trim()) return;
