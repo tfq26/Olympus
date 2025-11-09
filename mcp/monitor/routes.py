@@ -5,7 +5,7 @@ Provides endpoints for CloudWatch metrics and mock data analysis with LLM integr
 from flask import Blueprint, jsonify, request
 from .cloudwatch_client import fetch_ec2_metrics
 from .mock_data import load_logs, load_metrics, get_resource_by_id, get_logs_by_resource, get_customer_health_summary
-from ..Nvidia_llm.AI_client import analyze_with_nvidia, analyze_metrics_with_nvidia, analyze_logs_with_nvidia, analyze_customer_health
+from ..Nvidia_llm.AI_client import analyze_with_nvidia, analyze_metrics_with_nvidia, analyze_logs_with_nvidia
 
 # Create Flask Blueprint for monitor routes
 monitor_bp = Blueprint("monitor", __name__)
@@ -181,9 +181,9 @@ def get_combined_resource_analysis(resource_id):
 @monitor_bp.route("/mock/customers/health", methods=["GET"])
 def get_customer_health():
     """
-    Get customer health summary with LLM analysis
+    Get customer health summary
     Analyzes all logs grouped by customer and calculates health metrics
-    Returns: Customer health metrics, critical issues, and LLM summary
+    Returns: Customer health metrics, critical issues, and overall statistics
     """
     # Get customer health data from logs
     health_data = get_customer_health_summary()
@@ -207,12 +207,8 @@ def get_customer_health():
     # Format overall health percentage with % symbol
     overall_health_percent = f"{overall_health_value}%"
     
-    # Generate LLM summary
-    llm_analysis = analyze_customer_health(health_data, critical_issues)
-    
-    # Build response
+    # Build response (without LLM summary)
     return jsonify({
-        "summary": llm_analysis.get("analysis", "Analysis not available"),
         "affected_customers": affected_customers,
         "critical_issues": critical_issues,
         "overall_statistics": {

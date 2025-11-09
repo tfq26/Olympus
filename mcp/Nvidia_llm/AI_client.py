@@ -210,6 +210,29 @@ Provide a clear summary in 2-3 sentences focusing on:
     
     return _call_nvidia_api(prompt, "customer health data")
 
+def _clean_unicode_text(text):
+    """
+    Clean Unicode characters from text, replacing them with ASCII equivalents
+    Args: text - Text string that may contain Unicode characters
+    Returns: Cleaned text with Unicode characters replaced
+    """
+    if not text:
+        return text
+    
+    # Replace common Unicode dash characters with regular dash
+    text = text.replace('\u2013', '-')  # en-dash
+    text = text.replace('\u2014', '-')  # em-dash
+    text = text.replace('\u2015', '-')  # horizontal bar
+    text = text.replace('\u2212', '-')  # minus sign
+    
+    # Replace other common Unicode characters
+    text = text.replace('\u2018', "'")  # left single quotation mark
+    text = text.replace('\u2019', "'")  # right single quotation mark
+    text = text.replace('\u201c', '"')  # left double quotation mark
+    text = text.replace('\u201d', '"')  # right double quotation mark
+    
+    return text
+
 def _call_nvidia_api(prompt, data_type, use_streaming=False):
     """
     Helper function to make API call to NVIDIA Nemotron LLM using OpenAI SDK
@@ -248,10 +271,14 @@ def _call_nvidia_api(prompt, data_type, use_streaming=False):
             for chunk in completion:
                 if chunk.choices[0].delta.content is not None:
                     analysis_content += chunk.choices[0].delta.content
+            # Clean up Unicode characters before returning
+            analysis_content = _clean_unicode_text(analysis_content)
             return {"analysis": analysis_content}
         else:
             # Handle non-streaming response
             analysis = completion.choices[0].message.content
+            # Clean up Unicode characters before returning
+            analysis = _clean_unicode_text(analysis)
             return {"analysis": analysis}
             
     except Exception as e:
