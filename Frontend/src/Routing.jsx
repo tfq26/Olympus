@@ -14,7 +14,7 @@ import TicketsDashboard from "./pages/Tickets/TicketDashboard.jsx";
 import NotFound from "./pages/error.jsx";
 import LogsDashboard from "./pages/LogsView/LogDashboard.jsx";
 import MenuBar from "./components/MenuBar.jsx";
-import ProfilePage from "./pages/Profile/ProfilePage.jsx";
+import ProfilePage from "./pages/profile/profile.jsx";
 
 export const appRoutes = [
   { path: "/", element: <Home />, roles: ["user", "admin"] },

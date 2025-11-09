@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { auth, db } from "../firebase"; // adjust path if needed
+import { auth, db } from "../../lib/firebase"; // adjust path if needed
 import { doc, getDoc } from "firebase/firestore";
 
 export default function ProfilePage() {
