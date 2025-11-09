@@ -2,14 +2,33 @@ import React, { useState, useMemo, useRef } from "react";
 import { Card } from "primereact/card";
 import { Chart } from "primereact/chart";
 import { Button } from "primereact/button";
-import { InputTextarea } from "primereact/inputtextarea";
-import { OverlayPanel } from "primereact/overlaypanel";
+import SmallerChatBox from "../../components/SmallerChatBot";
 import { motion } from "framer-motion";
 import "primeicons/primeicons.css";
 
+const actions = [
+  {
+    label: "Add Metric Alert",
+    icon: "pi pi-bell",
+    templatePrompt: "Add a new metric alert for [INSERT_RESOURCE].",
+  },
+  {
+    label: "Run Diagnostic",
+    icon: "pi pi-wrench",
+    templatePrompt: "Run a diagnostic on [INSERT_RESOURCE].",
+  },
+  {
+    label: "View Logs",
+    icon: "pi pi-external-link",
+    templatePrompt: "Show recent logs from [INSERT_RESOURCE].",
+  },
+];
+
 // --- Chart Helpers ---
 const generateChartData = (label, color) => {
-  const dataPoints = Array.from({ length: 12 }, () => Math.floor(Math.random() * 100));
+  const dataPoints = Array.from({ length: 12 }, () =>
+    Math.floor(Math.random() * 100)
+  );
   return {
     labels: Array.from({ length: 12 }, (_, i) => `${i * 5}s ago`),
     datasets: [
@@ -112,7 +131,12 @@ export default function CloudDashboard() {
           }
         >
           <div className="h-40 px-2">
-            <Chart type="line" data={data} options={options} className="h-full" />
+            <Chart
+              type="line"
+              data={data}
+              options={options}
+              className="h-full"
+            />
           </div>
         </Card>
       </motion.div>
@@ -162,66 +186,8 @@ export default function CloudDashboard() {
           { label: "Scale Workers", icon: "pi pi-users" },
         ])}
       </motion.div>
-
-      {/* AI Assistant Chat Input with Plus Button */}
-      <div className="flex items-center w-full gap-3 pt-4 border-t border-gray-800/50">
-        {/* Plus Button with OverlayPanel */}
-        <div className="relative">
-          <Button
-            icon="pi pi-plus"
-            className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 h-10 w-10 flex items-center justify-center rounded-lg shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200"
-            onClick={(e) => op.current.toggle(e)}
-            aria-haspopup
-            aria-controls="action_popup"
-          />
-          <OverlayPanel
-            ref={op}
-            id="action_popup"
-            style={{ width: "220px" }}
-            className="dark:bg-gray-800 bg-white rounded-lg shadow-xl border border-gray-200/20 dark:border-gray-700/50"
-            >
-            <div className="flex flex-col space-y-2 p-3"> {/* ← added padding */}
-                <Button
-                label="Add Metric Alert"
-                icon="pi pi-bell"
-                className="p-button-text text-sm justify-start dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-md transition-all"
-                onClick={() => handleAction("Add Metric Alert")}
-                />
-                <Button
-                label="Run Diagnostic"
-                icon="pi pi-wrench"
-                className="p-button-text text-sm justify-start dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-md transition-all"
-                onClick={() => handleAction("Run Diagnostic")}
-                />
-                <Button
-                label="View Logs"
-                icon="pi pi-external-link"
-                className="p-button-text text-sm justify-start dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-md transition-all"
-                onClick={() => handleAction("View Logs")}
-                />
-            </div>
-            </OverlayPanel>
-        </div>
-
-        {/* Input Field */}
-        <InputTextarea
-          className="flex-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-lg shadow-md border border-transparent focus:ring-4 focus:ring-indigo-500/40 focus:border-indigo-500 resize-none transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-          style={{ minHeight: "2.5rem" }}
-          autoResize
-          value={chatValue}
-          onChange={(e) => setChatValue(e.target.value)}
-          rows={1}
-          placeholder="Ask me anything about your infrastructure..."
-        />
-
-        {/* Send Button */}
-        <Button
-          onClick={handleSend}
-          className="bg-indigo-600 text-white font-semibold h-10 w-10 flex items-center justify-center rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/40 transition-all duration-200"
-          icon="pi pi-send"
-          aria-label="Send Message"
-          disabled={!chatValue.trim()}
-        />
+      <div className="pt-6 border-t border-gray-700/40">
+        <SmallerChatBox actions={actions} />
       </div>
     </main>
   );
