@@ -11,18 +11,14 @@
 			"type": "stdio"
 		},
 		"terraform": {
-			"command": "docker",
+			"command": "${workspaceFolder}/.venv/bin/python",
 			"args": [
-				"run",
-				"-i",
-				"--rm",
-				"--env-file",
-				"${workspaceFolder}/.env",
-				"-v",
-				"mcps_terraform-state:/app/server/terraform",
-				"mcps-terraform"
+				"${workspaceFolder}/mcps/terraform/server/mcp_server.py"
 			],
-			"type": "stdio"
+			"type": "stdio",
+			"env": {
+				"PYTHONUNBUFFERED": "1"
+			}
 		}
-	},
+	}
 }

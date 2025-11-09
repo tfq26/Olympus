@@ -1,13 +1,17 @@
 import subprocess
 import json
 import os
+from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("terraform")
-TERRAFORM_BASE_DIR = "/app/server/terraform"
-TERRAFORM_EC2_DIR = "/app/server/terraform/ec2"
-TERRAFORM_S3_DIR = "/app/server/terraform/s3"
-TERRAFORM_LAMBDA_DIR = "/app/server/terraform/lambda"
+
+# Get the directory where this script is located
+SCRIPT_DIR = Path(__file__).parent.resolve()
+TERRAFORM_BASE_DIR = SCRIPT_DIR / "terraform"
+TERRAFORM_EC2_DIR = TERRAFORM_BASE_DIR / "ec2"
+TERRAFORM_S3_DIR = TERRAFORM_BASE_DIR / "s3"
+TERRAFORM_LAMBDA_DIR = TERRAFORM_BASE_DIR / "lambda"
 
 def tf(args: list[str], working_dir: str) -> str:
     """Execute terraform command in the specified directory"""
@@ -124,7 +128,30 @@ def destroy_s3_bucket(auto_approve: bool = True) -> str:
     Returns:
         The output from terraform destroy
     """
+    # Read the bucket name from the state file
+    state_file = TERRAFORM_S3_DIR / "terraform.tfstate"
+    bucket_name = None
+    aws_region = "us-east-1"
+    
+    if state_file.exists():
+        try:
+            with open(state_file, 'r') as f:
+                state = json.load(f)
+                # Extract bucket name from outputs or resources
+                if 'outputs' in state and 'bucket_name' in state['outputs']:
+                    bucket_name = state['outputs']['bucket_name']['value']
+                if 'outputs' in state and 'bucket_region' in state['outputs']:
+                    aws_region = state['outputs']['bucket_region']['value']
+        except Exception as e:
+            pass
+    
     cmd = ["terraform", "destroy"]
+    
+    # Pass the variables if we found them
+    if bucket_name:
+        cmd.extend(["-var", f"bucket_name={bucket_name}"])
+        cmd.extend(["-var", f"aws_region={aws_region}"])
+    
     if auto_approve:
         cmd.append("-auto-approve")
     
@@ -228,7 +255,35 @@ def destroy_lambda_function(auto_approve: bool = True) -> str:
     Returns:
         The output from terraform destroy
     """
+    # Read variables from the state file
+    state_file = TERRAFORM_LAMBDA_DIR / "terraform.tfstate"
+    function_name = None
+    aws_region = "us-east-1"
+    source_code_file = "lambda_function.py"
+    handler = "lambda_function.handler"
+    
+    if state_file.exists():
+        try:
+            with open(state_file, 'r') as f:
+                state = json.load(f)
+                # Extract from outputs
+                if 'outputs' in state:
+                    if 'function_name' in state['outputs']:
+                        function_name = state['outputs']['function_name']['value']
+                    if 'function_region' in state['outputs']:
+                        aws_region = state['outputs']['function_region']['value']
+        except Exception as e:
+            pass
+    
     cmd = ["terraform", "destroy"]
+    
+    # Pass the variables if we found them
+    if function_name:
+        cmd.extend(["-var", f"function_name={function_name}"])
+        cmd.extend(["-var", f"aws_region={aws_region}"])
+        cmd.extend(["-var", f"source_code_file={source_code_file}"])
+        cmd.extend(["-var", f"handler={handler}"])
+    
     if auto_approve:
         cmd.append("-auto-approve")
     
