@@ -8,6 +8,9 @@ import { useWebSocketChat } from "../hooks/useWebSocketChat";
 export default function SmallerChatBox({
   placeholder = "Ask me anything...",
   actions = [],
+  onActionClick = null,
+  selectedContext = [],
+  systemPrompt = "",
 }) {
   const [chatValue, setChatValue] = useState("");
   const [showChat, setShowChat] = useState(false);
@@ -16,11 +19,40 @@ export default function SmallerChatBox({
 
   const { messages, append, isLoading } = useWebSocketChat();
 
-  const handleSend = () => {
-    if (!chatValue.trim()) return;
+  const handleSend = (customMessage = null) => {
+    const messageToSend = customMessage || chatValue;
+    if (!messageToSend.trim()) return;
+
     if (!showChat) setShowChat(true);
-    append({ role: "user", content: chatValue });
+
+    // Build context-aware message
+    let finalMessage = messageToSend;
+    if (selectedContext.length > 0) {
+      finalMessage = `Context: ${selectedContext.join(
+        ", "
+      )}\n\n${messageToSend}`;
+    }
+
+    append({ role: "user", content: finalMessage });
     setChatValue("");
+  };
+
+  const handleActionSelect = (action) => {
+    let message = "";
+
+    if (onActionClick) {
+      // Use custom handler to generate message
+      message = onActionClick(action);
+    } else {
+      // Default behavior
+      message = `${action.label}`;
+      if (selectedContext.length > 0) {
+        message += ` ${selectedContext.join(", ")}`;
+      }
+    }
+    console.log("Action selected, sending message:", message);
+    handleSend(message);
+    op.current?.hide();
   };
 
   return (
@@ -49,53 +81,56 @@ export default function SmallerChatBox({
               </div>
             ))}
 
-            {isLoading && <div className="text-sm opacity-70 italic">...</div>}
+            {isLoading && (
+              <div className="text-sm opacity-70 italic flex items-center gap-2">
+                <span className="pi pi-spin pi-spinner" />
+                Thinking...
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Selected Context Indicator */}
+      {selectedContext.length > 0 && (
+        <div className="mb-2 flex items-center gap-2 text-xs text-indigo-300">
+          <span className="pi pi-info-circle" />
+          <span>
+            Context: {selectedContext.slice(0, 3).join(", ")}
+            {selectedContext.length > 3 &&
+              ` +${selectedContext.length - 3} more`}
+          </span>
+        </div>
+      )}
+
       {/* Input Bar */}
       <div className="flex items-center w-full gap-3 pt-3 border-t border-gray-700/40">
         {/* Dynamic Actions OverlayButton */}
-        <div className="relative">
-          <Button
-            icon="pi pi-plus"
-            className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 h-10 w-10 flex items-center justify-center rounded-lg shadow hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-            onClick={(e) => op.current.toggle(e)}
-          />
-          <OverlayPanel
-            ref={op}
-            className="dark:bg-gray-800 bg-white rounded-lg shadow-xl border border-gray-700/20"
-          >
-            <div className="flex flex-col p-2 space-y-1">
-              {actions.map((item) => (
-                <Button
-                  key={item.label}
-                  label={item.label}
-                  icon={item.icon}
-                  className="p-button-text gap-2 text-sm justify-start dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/40 rounded-md transition"
-                  onClick={() => {
-                    // If the action provides a templatePrompt, populate the chat input with it
-                    if (item.templatePrompt) {
-                      setChatValue(item.templatePrompt);
-                      // open the panel if not shown and focus the input
-                      if (!showChat) setShowChat(true);
-                      // focus the textarea after overlay closes
-                      op.current?.hide();
-                      setTimeout(() => textareaRef.current?.focus(), 50);
-                    } else if (typeof item.onClick === "function") {
-                      // call custom handler if provided
-                      item.onClick();
-                      op.current?.hide();
-                    } else {
-                      op.current?.hide();
-                    }
-                  }}
-                />
-              ))}
-            </div>
-          </OverlayPanel>
-        </div>
+        {actions.length > 0 && (
+          <div className="relative">
+            <Button
+              icon="pi pi-plus"
+              className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 h-10 w-10 flex items-center justify-center rounded-lg shadow hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+              onClick={(e) => op.current.toggle(e)}
+            />
+            <OverlayPanel
+              ref={op}
+              className="dark:bg-gray-800 bg-white rounded-lg shadow-xl border border-gray-700/20"
+            >
+              <div className="flex flex-col p-2 space-y-1">
+                {actions.map((item) => (
+                  <Button
+                    key={item.label}
+                    label={item.label}
+                    icon={item.icon}
+                    onClick={() => handleActionSelect(item)}
+                    className="p-button-text gap-2 text-sm justify-start dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/40 rounded-md transition"
+                  />
+                ))}
+              </div>
+            </OverlayPanel>
+          </div>
+        )}
 
         {/* Message Input */}
         <InputTextarea
@@ -116,7 +151,7 @@ export default function SmallerChatBox({
         {/* Send Button */}
         <Button
           icon="pi pi-send"
-          onClick={handleSend}
+          onClick={() => handleSend()}
           disabled={!chatValue.trim()}
           className="bg-indigo-600 text-white h-10 w-10 flex items-center justify-center rounded-lg shadow hover:bg-indigo-700 transition disabled:opacity-40"
         />

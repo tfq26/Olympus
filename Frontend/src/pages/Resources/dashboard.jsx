@@ -8,19 +8,16 @@ import "primeicons/primeicons.css";
 
 const actions = [
   {
-    label: "Add Metric Alert",
-    icon: "pi pi-bell",
-    templatePrompt: "Add a new metric alert for [INSERT_RESOURCE].",
+    label: "Summarize",
+    icon: "pi pi-align-left",
   },
   {
-    label: "Run Diagnostic",
-    icon: "pi pi-wrench",
-    templatePrompt: "Run a diagnostic on [INSERT_RESOURCE].",
+    label: "Report",
+    icon: "pi pi-chart-bar",
   },
   {
-    label: "View Logs",
-    icon: "pi pi-external-link",
-    templatePrompt: "Show recent logs from [INSERT_RESOURCE].",
+    label: "Explain",
+    icon: "pi pi-comment",
   },
 ];
 
@@ -78,17 +75,8 @@ const itemVariants = {
 
 // --- Main Component ---
 export default function CloudDashboard() {
-  const [chatValue, setChatValue] = useState("");
+  const [selectedGraphs, setSelectedGraphs] = useState([]);
   const op = useRef(null);
-
-  const handleSend = () => {
-    console.log("Sending message:", chatValue);
-  };
-
-  const handleAction = (action) => {
-    console.log("Action selected:", action);
-    op.current?.hide();
-  };
 
   const chartData = useMemo(
     () => ({
@@ -102,24 +90,65 @@ export default function CloudDashboard() {
     []
   );
 
-  const renderChartCard = (metricKey, title, actions) => {
+  const graphMetadata = {
+    cpu: "CPU Utilization",
+    ram: "Memory Usage",
+    networkIn: "Network In",
+    diskIops: "Disk IOPS",
+    metric5: "Load Balancer Latency",
+    metric6: "Request Queue Depth",
+  };
+
+  const toggleGraphSelection = (metricKey) => {
+    setSelectedGraphs((prev) =>
+      prev.includes(metricKey)
+        ? prev.filter((k) => k !== metricKey)
+        : [...prev, metricKey]
+    );
+  };
+
+  const handleActionWithGraphs = (action) => {
+    if (selectedGraphs.length === 0) {
+      return `${action.label} what?`;
+    }
+
+    const resourceNames = selectedGraphs
+      .map((key) => graphMetadata[key])
+      .join(", ");
+
+    return `${action.label} ${resourceNames}`;
+  };
+
+  const renderChartCard = (metricKey, title, cardActions) => {
     const data = chartData[metricKey];
     const options = getChartOptions(title);
+    const isSelected = selectedGraphs.includes(metricKey);
 
     return (
       <motion.div key={metricKey} variants={itemVariants} className="h-full">
         <Card
-          className="h-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-xl border border-gray-200/60 dark:border-gray-700/50 shadow-sm"
+          className={`h-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-xl border shadow-sm cursor-pointer transition-all duration-200 ${
+            isSelected
+              ? "border-indigo-500 ring-2 ring-indigo-500/50 shadow-indigo-500/30"
+              : "border-gray-200/60 dark:border-gray-700/50 hover:border-indigo-400/50"
+          }`}
+          onClick={() => toggleGraphSelection(metricKey)}
           header={
-            <div className="p-3 border-b border-gray-100/60 dark:border-gray-700/50">
+            <div className="p-3 border-b border-gray-100/60 dark:border-gray-700/50 flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">
                 {title}
               </h3>
+              {isSelected && (
+                <span className="pi pi-check-circle text-indigo-500 text-lg" />
+              )}
             </div>
           }
           footer={
-            <div className="flex justify-end gap-2 p-2 border-t border-gray-100/60 dark:border-gray-700/50">
-              {actions.map((a, i) => (
+            <div
+              className="flex justify-end gap-2 p-2 border-t border-gray-100/60 dark:border-gray-700/50"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {cardActions.map((a, i) => (
                 <Button
                   key={i}
                   label={a.label}
@@ -130,7 +159,7 @@ export default function CloudDashboard() {
             </div>
           }
         >
-          <div className="h-40 px-2">
+          <div className="h-40 px-2 pointer-events-none">
             <Chart
               type="line"
               data={data}
@@ -155,6 +184,23 @@ export default function CloudDashboard() {
         Resource Dashboard:{" "}
         <span className="text-indigo-400">production-api</span>
       </motion.h1>
+
+      {/* Selection Info */}
+      {selectedGraphs.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center text-sm text-indigo-300"
+        >
+          {selectedGraphs.length} graph{selectedGraphs.length !== 1 ? "s" : ""}{" "}
+          selected
+          <Button
+            label="Clear"
+            className="p-button-text p-button-sm ml-2 text-indigo-400"
+            onClick={() => setSelectedGraphs([])}
+          />
+        </motion.div>
+      )}
 
       {/* Dashboard Grid */}
       <motion.div
@@ -186,8 +232,13 @@ export default function CloudDashboard() {
           { label: "Scale Workers", icon: "pi pi-users" },
         ])}
       </motion.div>
+
       <div className="pt-6 border-t border-gray-700/40">
-        <SmallerChatBox actions={actions} />
+        <SmallerChatBox
+          actions={actions}
+          onActionClick={handleActionWithGraphs}
+          selectedContext={selectedGraphs.map((key) => graphMetadata[key])}
+        />
       </div>
     </main>
   );

@@ -185,24 +185,6 @@ export default function LogsDashboard() {
             },
           ]}
         />
-        {/*         
-        <input
-          type="text"
-          placeholder="Ask about logs or type a command..."
-          value={chatValue}
-          onChange={(e) => setChatValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          className="flex-1 bg-white/90 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-3 rounded-lg shadow-md border border-transparent focus:ring-4 focus:ring-indigo-500/40 focus:border-indigo-500 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-all"
-        />
-
-        <button
-          onClick={handleSend}
-          disabled={!chatValue.trim()}
-          className="h-10 w-10 flex items-center justify-center rounded-lg bg-indigo-600 text-white font-semibold shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/40 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Send size={18} strokeWidth={2} />
-        </button>
- */}
       </div>
     </main>
   );
