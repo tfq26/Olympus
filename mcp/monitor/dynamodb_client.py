@@ -33,7 +33,8 @@ except Exception as e:
 
 def insert_log(log_data):
     """
-    Insert a single log entry into DynamoDB (store JSON as-is)
+    Insert a single log entry into DynamoDB
+    Maps JSON fields to table schema: id -> log_id, time -> timestamp
     Args: log_data - Dictionary containing log data (entire JSON object)
     Returns: True if successful, False otherwise
     """
@@ -41,8 +42,19 @@ def insert_log(log_data):
         if not logs_table:
             return False
         
-        # Store the entire JSON object as-is - no transformation
-        logs_table.put_item(Item=log_data)
+        # Map JSON fields to table schema
+        item = log_data.copy()
+        
+        # Map "id" to "log_id" for partition key
+        if "id" in item:
+            item["log_id"] = item.pop("id")
+        
+        # Map "time" to "timestamp" for sort key
+        if "time" in item:
+            item["timestamp"] = item.pop("time")
+        
+        # Store the item with mapped keys
+        logs_table.put_item(Item=item)
         
         return True
     except Exception as e:
@@ -52,22 +64,46 @@ def insert_log(log_data):
 
 def batch_insert_logs(logs_list):
     """
-    Batch insert logs into DynamoDB (store JSON as-is, no transformation)
+    Batch insert logs into DynamoDB
+    Maps JSON fields to table schema: id -> log_id, time -> timestamp
     Args: logs_list - List of log dictionaries (entire JSON objects)
     Returns: Number of successfully inserted logs
+    Note: Table requires log_id (partition key) and timestamp (sort key)
     """
     if not logs_table:
         return 0
     
     inserted_count = 0
+    failed_count = 0
     
     try:
-        # Store each log JSON object as-is - no denormalization, no transformation
+        # Table schema requires: log_id (PK) and timestamp (SK)
+        # JSON has: id and time - need to map them
         with logs_table.batch_writer() as batch:
             for log in logs_list:
-                # Store the entire log object as-is
-                batch.put_item(Item=log)
-                inserted_count += 1
+                try:
+                    # Map JSON fields to table schema
+                    item = log.copy()
+                    
+                    # Map "id" to "log_id" for partition key
+                    if "id" in item:
+                        item["log_id"] = item.pop("id")
+                    
+                    # Map "time" to "timestamp" for sort key
+                    if "time" in item:
+                        item["timestamp"] = item.pop("time")
+                    
+                    # Keep all other fields as-is (customer_name, status, resources_affected, etc.)
+                    # Store the item with mapped keys
+                    batch.put_item(Item=item)
+                    inserted_count += 1
+                except Exception as e:
+                    failed_count += 1
+                    if failed_count <= 5:  # Only print first 5 errors
+                        print(f"  Error inserting log {log.get('id', 'unknown')}: {e}")
+        
+        if failed_count > 0:
+            print(f"  Warning: {failed_count} logs failed to insert")
         
         return inserted_count
     except Exception as e:
@@ -121,21 +157,32 @@ def batch_insert_resources(resources_list):
 
 def get_log_by_id(log_id):
     """
-    Get a single log by its ID (returns JSON as stored)
+    Get a single log by its ID
+    Maps table fields back to JSON format: log_id -> id, timestamp -> time
     Args: log_id - The log ID to retrieve
-    Returns: Log dictionary (JSON as-is) or None if not found
+    Returns: Log dictionary (JSON format) or None if not found
+    Note: Table uses log_id, but we need to query by it and return JSON format
     """
     try:
         if not logs_table:
             return None
         
-        response = logs_table.get_item(
-            Key={"id": log_id}
+        # Query by log_id (need to scan or query since timestamp is also part of key)
+        # For simplicity, scan and filter by log_id, then return first match
+        response = logs_table.scan(
+            FilterExpression="log_id = :log_id",
+            ExpressionAttributeValues={":log_id": log_id}
         )
         
-        if "Item" in response:
-            # Return the item as-is (no conversion needed)
-            return response["Item"]
+        if response.get("Items"):
+            # Convert back to JSON format (log_id -> id, timestamp -> time)
+            item = response["Items"][0]
+            # Map table fields back to JSON format
+            if "log_id" in item:
+                item["id"] = item.pop("log_id")
+            if "timestamp" in item:
+                item["time"] = item.pop("timestamp")
+            return item
         return None
     except Exception as e:
         print(f"Error getting log by ID: {e}")
@@ -145,8 +192,9 @@ def get_log_by_id(log_id):
 def get_logs_by_customer(customer_name):
     """
     Get all logs for a specific customer (scan and filter)
+    Maps table fields back to JSON format: log_id -> id, timestamp -> time
     Args: customer_name - The customer name to query
-    Returns: List of log dictionaries (JSON as stored)
+    Returns: List of log dictionaries (JSON format)
     """
     try:
         if not logs_table:
@@ -161,7 +209,12 @@ def get_logs_by_customer(customer_name):
         )
         
         for item in response.get("Items", []):
-            logs.append(item)  # Return as-is
+            # Convert table fields back to JSON format
+            if "log_id" in item:
+                item["id"] = item.pop("log_id")
+            if "timestamp" in item:
+                item["time"] = item.pop("timestamp")
+            logs.append(item)
         
         # Handle pagination
         while "LastEvaluatedKey" in response:
@@ -171,7 +224,12 @@ def get_logs_by_customer(customer_name):
                 ExclusiveStartKey=response["LastEvaluatedKey"]
             )
             for item in response.get("Items", []):
-                logs.append(item)  # Return as-is
+                # Convert table fields back to JSON format
+                if "log_id" in item:
+                    item["id"] = item.pop("log_id")
+                if "timestamp" in item:
+                    item["time"] = item.pop("timestamp")
+                logs.append(item)
         
         return logs
     except Exception as e:
@@ -182,8 +240,9 @@ def get_logs_by_customer(customer_name):
 def get_logs_by_status(status):
     """
     Get all logs with a specific status (scan and filter)
-    Args: status - The status to query (OK, ERROR, WARNING, CRITICAL)
-    Returns: List of log dictionaries (JSON as stored)
+    Maps table fields back to JSON format: log_id -> id, timestamp -> time
+    Args: status - The status to query (OK, ERROR, WARNING, CRITICAL, STALE)
+    Returns: List of log dictionaries (JSON format)
     """
     try:
         if not logs_table:
@@ -199,7 +258,12 @@ def get_logs_by_status(status):
         )
         
         for item in response.get("Items", []):
-            logs.append(item)  # Return as-is
+            # Convert table fields back to JSON format
+            if "log_id" in item:
+                item["id"] = item.pop("log_id")
+            if "timestamp" in item:
+                item["time"] = item.pop("timestamp")
+            logs.append(item)
         
         # Handle pagination
         while "LastEvaluatedKey" in response:
@@ -210,7 +274,12 @@ def get_logs_by_status(status):
                 ExclusiveStartKey=response["LastEvaluatedKey"]
             )
             for item in response.get("Items", []):
-                logs.append(item)  # Return as-is
+                # Convert table fields back to JSON format
+                if "log_id" in item:
+                    item["id"] = item.pop("log_id")
+                if "timestamp" in item:
+                    item["time"] = item.pop("timestamp")
+                logs.append(item)
         
         return logs
     except Exception as e:
@@ -221,8 +290,9 @@ def get_logs_by_status(status):
 def get_logs_by_resource(resource_id):
     """
     Get all logs for a specific resource (scan and filter)
+    Maps table fields back to JSON format: log_id -> id, timestamp -> time
     Args: resource_id - The resource ID to query
-    Returns: List of log dictionaries (JSON as stored) or None if table doesn't exist
+    Returns: List of log dictionaries (JSON format) or None if table doesn't exist
     """
     try:
         if not logs_table:
@@ -237,7 +307,12 @@ def get_logs_by_resource(resource_id):
             # Check if resource_id is in resources_affected list
             resources_affected = item.get("resources_affected", [])
             if resource_id in resources_affected:
-                logs.append(item)  # Return as-is
+                # Convert table fields back to JSON format
+                if "log_id" in item:
+                    item["id"] = item.pop("log_id")
+                if "timestamp" in item:
+                    item["time"] = item.pop("timestamp")
+                logs.append(item)
         
         # Handle pagination
         while "LastEvaluatedKey" in response:
@@ -247,7 +322,12 @@ def get_logs_by_resource(resource_id):
             for item in response.get("Items", []):
                 resources_affected = item.get("resources_affected", [])
                 if resource_id in resources_affected:
-                    logs.append(item)  # Return as-is
+                    # Convert table fields back to JSON format
+                    if "log_id" in item:
+                        item["id"] = item.pop("log_id")
+                    if "timestamp" in item:
+                        item["time"] = item.pop("timestamp")
+                    logs.append(item)
         
         return logs
     except ClientError as e:
@@ -263,8 +343,9 @@ def get_logs_by_resource(resource_id):
 
 def get_all_logs():
     """
-    Get all logs from DynamoDB (use scan - returns JSON as stored)
-    Returns: List of all log dictionaries (JSON as-is) or None if table doesn't exist
+    Get all logs from DynamoDB (use scan - returns JSON format)
+    Maps table fields back to JSON format: log_id -> id, timestamp -> time
+    Returns: List of all log dictionaries (JSON format) or None if table doesn't exist
     """
     try:
         if not logs_table:
@@ -274,7 +355,12 @@ def get_all_logs():
         response = logs_table.scan()
         
         for item in response.get("Items", []):
-            logs.append(item)  # Return as-is, no conversion needed
+            # Convert table fields back to JSON format
+            if "log_id" in item:
+                item["id"] = item.pop("log_id")
+            if "timestamp" in item:
+                item["time"] = item.pop("timestamp")
+            logs.append(item)
         
         # Handle pagination
         while "LastEvaluatedKey" in response:
@@ -282,7 +368,12 @@ def get_all_logs():
                 ExclusiveStartKey=response["LastEvaluatedKey"]
             )
             for item in response.get("Items", []):
-                logs.append(item)  # Return as-is
+                # Convert table fields back to JSON format
+                if "log_id" in item:
+                    item["id"] = item.pop("log_id")
+                if "timestamp" in item:
+                    item["time"] = item.pop("timestamp")
+                logs.append(item)
         
         return logs
     except ClientError as e:
