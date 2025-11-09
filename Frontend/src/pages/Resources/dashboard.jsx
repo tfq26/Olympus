@@ -240,16 +240,71 @@ export default function CloudDashboard() {
     );
   };
 
-  const handleActionWithGraphs = (action) => {
+  const handleActionWithGraphs = async (action) => {
     if (selectedGraphs.length === 0) {
       return `${action.label} what?`;
     }
 
-    const resourceNames = selectedGraphs
-      .map((key) => graphMetadata[key])
-      .join(", ");
+    // Gather context: selected graphs + current metric values
+    const context = {
+      resource: {
+        name: selectedResource?.name || 'Unknown',
+        id: selectedResource?.id,
+        type: selectedResource?.type || 'Unknown',
+        region: selectedResource?.region || 'us-east-1',
+        status: selectedResource?.status || 'unknown'
+      },
+      selectedMetrics: selectedGraphs.map(key => {
+        const metricData = chartData[key];
+        const latestValue = metricData.datasets[0].data[metricData.datasets[0].data.length - 1];
+        let unit = '%';
+        if (liveMetrics?.metrics) {
+          const metrics = liveMetrics.metrics;
+          switch (key) {
+            case 'cpu':
+              return { name: graphMetadata[key], value: metrics.cpu_usage_percent?.toFixed(1) || latestValue?.toFixed(1), unit: '%' };
+            case 'ram':
+              return { name: graphMetadata[key], value: metrics.memory_usage_percent?.toFixed(1) || latestValue?.toFixed(1), unit: '%' };
+            case 'networkIn':
+              return { name: graphMetadata[key], value: metrics.network_in_mbps?.toFixed(2) || latestValue?.toFixed(2), unit: 'Mbps' };
+            case 'diskIops':
+              return { name: graphMetadata[key], value: metrics.disk_iops || latestValue?.toFixed(0), unit: 'IOPS' };
+            default:
+              return { name: graphMetadata[key], value: latestValue?.toFixed(1), unit };
+          }
+        }
+        return { name: graphMetadata[key], value: latestValue?.toFixed(1), unit };
+      }),
+      timestamp: new Date().toISOString()
+    };
 
-    return `${action.label} ${resourceNames}`;
+    // Map action to AI prompt context
+    const actionPrompts = {
+      'Summarize': `Provide a concise summary of the current state of these metrics for ${context.resource.name}. Focus on overall health and notable patterns.`,
+      'Report': `Generate a detailed technical report for these metrics on ${context.resource.name}. Include current values, trends, and any anomalies or concerns.`,
+      'Explain': `Explain what these metrics mean for ${context.resource.name} in simple terms. Help the user understand the significance of the current values and what actions (if any) they should take.`
+    };
+
+    const promptContext = actionPrompts[action.label] || `Analyze these metrics for ${context.resource.name}`;
+
+    try {
+      // Call AI parse endpoint
+      const response = await fetch(`${import.meta.env.VITE_NODE_URL || 'http://localhost:8080'}/ai/parse`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: context, context: promptContext })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate AI response');
+      }
+
+      const result = await response.json();
+      return result.parsed_response || 'Unable to generate response';
+    } catch (error) {
+      console.error('AI action error:', error);
+      return `❌ Failed to ${action.label.toLowerCase()}: ${error.message}`;
+    }
   };
 
   const renderChartCard = (metricKey, title, cardActions) => {

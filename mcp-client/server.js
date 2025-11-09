@@ -356,8 +356,25 @@ const tools = {
     description: "Get mock resource metrics by resource_id. Args: resource_id",
     run: async ({ resource_id }) => {
       if (!resource_id) throw new Error("resource_id required");
-      const res = await axios.get(`${FLASK_URL}/monitor/mock/metrics/${resource_id}`);
-      return res.data;
+      try {
+        const res = await axios.get(`${FLASK_URL}/monitor/mock/metrics/${resource_id}`);
+        return res.data;
+      } catch (e) {
+        // If resource not found, return friendly message instead of error
+        if (e.response?.status === 404) {
+          return {
+            resource: {
+              id: resource_id,
+              name: resource_id,
+              type: 'Unknown',
+              status: 'not_found',
+              metrics: {}
+            },
+            message: `⚠️ Resource ${resource_id} not found in monitoring system. It may not be registered yet or may have been deleted.`
+          };
+        }
+        throw e;
+      }
     },
   },
   getLogs: {
@@ -885,7 +902,30 @@ app.get("/monitor/resource/:resource_id", async (req, res) => {
     const result = await axios.get(`${FLASK_URL}/monitor/mock/metrics/${resource_id}`);
     res.json(result.data);
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    // If resource not found, return mock/empty metrics instead of error
+    if (e.response?.status === 404) {
+      console.warn(`⚠️ Resource ${resource_id} not found in metrics, returning mock data`);
+      res.json({
+        resource: {
+          id: resource_id,
+          name: resource_id,
+          type: 'Unknown',
+          status: 'unknown',
+          metrics: {
+            cpu_usage_percent: 0,
+            memory_usage_percent: 0,
+            network_in_mbps: 0,
+            disk_iops: 0
+          },
+          health_score: 0
+        },
+        analysis: {
+          analysis: "⚠️ This resource is not yet available in the monitoring system. Metrics will appear once the resource is fully initialized."
+        }
+      });
+    } else {
+      res.status(500).json({ ok: false, error: e.message });
+    }
   }
 });
 
