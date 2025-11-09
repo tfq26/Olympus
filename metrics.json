@@ -1,0 +1,636 @@
+{
+  "resources": [
+    {
+      "id": "res_vm_001",
+      "name": "prod-web-server-01",
+      "type": "vm",
+      "provider": "aws",
+      "region": "us-east-1",
+      "status": "healthy",
+      "created_at": "2024-08-15T10:30:00Z",
+      "created_by": "usr_001",
+      "health_score": 95,
+      "metrics": {
+        "cpu_usage_percent": 67,
+        "memory_usage_percent": 72,
+        "disk_usage_percent": 45,
+        "network_in_mbps": 125,
+        "network_out_mbps": 98,
+        "uptime_days": 85
+      },
+      "dependencies": ["res_storage_001", "res_vm_002"],
+      "tags": {
+        "environment": "production",
+        "team": "web",
+        "cost_center": "engineering"
+      },
+      "estimated_monthly_cost": 387.5,
+      "security": {
+        "firewall_rules": [
+          {
+            "rule_id": "fw_001",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "443",
+            "source": "0.0.0.0/0",
+            "action": "allow",
+            "priority": 100
+          },
+          {
+            "rule_id": "fw_002",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "80",
+            "source": "0.0.0.0/0",
+            "action": "allow",
+            "priority": 101
+          },
+          {
+            "rule_id": "fw_003",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "22",
+            "source": "10.0.0.0/8",
+            "action": "allow",
+            "priority": 102
+          }
+        ],
+        "security_groups": ["sg-web-prod-001", "sg-common-prod-001"],
+        "encryption_at_rest": true,
+        "encryption_in_transit": true,
+        "last_security_scan": "2025-11-07T10:30:00Z",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 1,
+          "medium": 3,
+          "low": 7
+        },
+        "compliance_status": {
+          "pci_dss": "compliant",
+          "hipaa": "not_applicable",
+          "soc2": "compliant"
+        },
+        "open_ports": [80, 443, 22],
+        "ssl_certificate_expiry": "2025-12-15T23:59:59Z"
+      }
+    },
+    {
+      "id": "res_vm_002",
+      "name": "prod-api-server-01",
+      "type": "vm",
+      "provider": "aws",
+      "region": "us-east-1",
+      "status": "warning",
+      "created_at": "2024-09-22T14:20:00Z",
+      "created_by": "usr_002",
+      "health_score": 72,
+      "metrics": {
+        "cpu_usage_percent": 89,
+        "memory_usage_percent": 94,
+        "disk_usage_percent": 78,
+        "network_in_mbps": 145,
+        "network_out_mbps": 112,
+        "uptime_days": 47
+      },
+      "dependencies": ["res_storage_002", "res_storage_001"],
+      "tags": {
+        "environment": "production",
+        "team": "api",
+        "cost_center": "engineering"
+      },
+      "estimated_monthly_cost": 432.8,
+      "security": {
+        "firewall_rules": [
+          {
+            "rule_id": "fw_004",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "8080",
+            "source": "10.0.0.0/16",
+            "action": "allow",
+            "priority": 100
+          },
+          {
+            "rule_id": "fw_005",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "22",
+            "source": "10.0.0.0/8",
+            "action": "allow",
+            "priority": 101
+          },
+          {
+            "rule_id": "fw_006",
+            "direction": "outbound",
+            "protocol": "all",
+            "port_range": "all",
+            "destination": "0.0.0.0/0",
+            "action": "allow",
+            "priority": 200
+          }
+        ],
+        "security_groups": ["sg-api-prod-001", "sg-common-prod-001"],
+        "encryption_at_rest": true,
+        "encryption_in_transit": true,
+        "last_security_scan": "2025-11-06T14:20:00Z",
+        "vulnerabilities": {
+          "critical": 2,
+          "high": 4,
+          "medium": 8,
+          "low": 12
+        },
+        "compliance_status": {
+          "pci_dss": "non_compliant",
+          "hipaa": "not_applicable",
+          "soc2": "in_progress"
+        },
+        "open_ports": [8080, 22],
+        "ssl_certificate_expiry": "2025-11-20T23:59:59Z"
+      }
+    },
+    {
+      "id": "res_vm_003",
+      "name": "staging-app-server-01",
+      "type": "vm",
+      "provider": "azure",
+      "region": "east-us",
+      "status": "healthy",
+      "created_at": "2024-07-10T09:15:00Z",
+      "created_by": "usr_003",
+      "health_score": 88,
+      "metrics": {
+        "cpu_usage_percent": 45,
+        "memory_usage_percent": 58,
+        "disk_usage_percent": 34,
+        "network_in_mbps": 67,
+        "network_out_mbps": 54,
+        "uptime_days": 121
+      },
+      "dependencies": ["res_storage_003"],
+      "tags": {
+        "environment": "staging",
+        "team": "development",
+        "cost_center": "engineering"
+      },
+      "estimated_monthly_cost": 256.3,
+      "security": {
+        "firewall_rules": [
+          {
+            "rule_id": "fw_007",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "443",
+            "source": "172.16.0.0/12",
+            "action": "allow",
+            "priority": 100
+          },
+          {
+            "rule_id": "fw_008",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "3000",
+            "source": "172.16.0.0/12",
+            "action": "allow",
+            "priority": 101
+          }
+        ],
+        "security_groups": ["sg-app-staging-001"],
+        "encryption_at_rest": false,
+        "encryption_in_transit": true,
+        "last_security_scan": "2025-11-05T09:15:00Z",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 2,
+          "low": 5
+        },
+        "compliance_status": {
+          "pci_dss": "not_applicable",
+          "hipaa": "not_applicable",
+          "soc2": "not_applicable"
+        },
+        "open_ports": [443, 3000, 22],
+        "ssl_certificate_expiry": "2026-01-10T23:59:59Z"
+      }
+    },
+    {
+      "id": "res_vm_004",
+      "name": "prod-database-server-01",
+      "type": "vm",
+      "provider": "gcp",
+      "region": "us-central1",
+      "status": "critical",
+      "created_at": "2024-06-05T11:45:00Z",
+      "created_by": "usr_002",
+      "health_score": 48,
+      "metrics": {
+        "cpu_usage_percent": 96,
+        "memory_usage_percent": 98,
+        "disk_usage_percent": 92,
+        "network_in_mbps": 234,
+        "network_out_mbps": 189,
+        "uptime_days": 156
+      },
+      "dependencies": ["res_storage_002"],
+      "tags": {
+        "environment": "production",
+        "team": "database",
+        "cost_center": "engineering",
+        "backup": "enabled"
+      },
+      "estimated_monthly_cost": 687.9,
+      "security": {
+        "firewall_rules": [
+          {
+            "rule_id": "fw_009",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "5432",
+            "source": "10.0.0.0/16",
+            "action": "allow",
+            "priority": 100
+          },
+          {
+            "rule_id": "fw_010",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "22",
+            "source": "10.0.1.0/24",
+            "action": "allow",
+            "priority": 101
+          },
+          {
+            "rule_id": "fw_011",
+            "direction": "inbound",
+            "protocol": "all",
+            "port_range": "all",
+            "source": "0.0.0.0/0",
+            "action": "deny",
+            "priority": 1000
+          }
+        ],
+        "security_groups": ["sg-database-prod-001", "sg-common-prod-001"],
+        "encryption_at_rest": true,
+        "encryption_in_transit": true,
+        "last_security_scan": "2025-11-08T08:30:00Z",
+        "vulnerabilities": {
+          "critical": 3,
+          "high": 6,
+          "medium": 11,
+          "low": 15
+        },
+        "compliance_status": {
+          "pci_dss": "compliant",
+          "hipaa": "compliant",
+          "soc2": "compliant"
+        },
+        "open_ports": [5432, 22],
+        "ssl_certificate_expiry": "2026-02-28T23:59:59Z"
+      }
+    },
+    {
+      "id": "res_vm_005",
+      "name": "dev-test-server-01",
+      "type": "vm",
+      "provider": "aws",
+      "region": "us-west-2",
+      "status": "healthy",
+      "created_at": "2024-10-12T08:30:00Z",
+      "created_by": "usr_004",
+      "health_score": 92,
+      "metrics": {
+        "cpu_usage_percent": 23,
+        "memory_usage_percent": 34,
+        "disk_usage_percent": 28,
+        "network_in_mbps": 12,
+        "network_out_mbps": 8,
+        "uptime_days": 27
+      },
+      "dependencies": [],
+      "tags": {
+        "environment": "development",
+        "team": "qa",
+        "cost_center": "engineering"
+      },
+      "estimated_monthly_cost": 145.2,
+      "security": {
+        "firewall_rules": [
+          {
+            "rule_id": "fw_012",
+            "direction": "inbound",
+            "protocol": "tcp",
+            "port_range": "22-8080",
+            "source": "192.168.0.0/16",
+            "action": "allow",
+            "priority": 100
+          }
+        ],
+        "security_groups": ["sg-dev-001"],
+        "encryption_at_rest": false,
+        "encryption_in_transit": false,
+        "last_security_scan": "2025-11-01T12:00:00Z",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 1,
+          "medium": 3,
+          "low": 8
+        },
+        "compliance_status": {
+          "pci_dss": "not_applicable",
+          "hipaa": "not_applicable",
+          "soc2": "not_applicable"
+        },
+        "open_ports": [22, 80, 443, 3000, 8080],
+        "ssl_certificate_expiry": null
+      }
+    },
+    {
+      "id": "res_storage_001",
+      "name": "prod-user-data-storage",
+      "type": "storage",
+      "provider": "aws",
+      "region": "us-east-1",
+      "status": "healthy",
+      "created_at": "2024-06-01T08:00:00Z",
+      "created_by": "usr_002",
+      "health_score": 98,
+      "metrics": {
+        "size_gb": 2340,
+        "used_gb": 1876,
+        "available_gb": 464,
+        "iops": 3000,
+        "throughput_mbps": 125,
+        "object_count": 1567890
+      },
+      "dependencies": [],
+      "tags": {
+        "environment": "production",
+        "team": "platform",
+        "backup": "enabled",
+        "cost_center": "engineering"
+      },
+      "estimated_monthly_cost": 234.0,
+      "security": {
+        "access_control": {
+          "public_access": false,
+          "access_policies": [
+            {
+              "principal": "arn:aws:iam::123456789:role/prod-web-role",
+              "actions": ["s3:GetObject", "s3:PutObject"],
+              "effect": "allow"
+            },
+            {
+              "principal": "arn:aws:iam::123456789:role/prod-api-role",
+              "actions": ["s3:GetObject"],
+              "effect": "allow"
+            }
+          ]
+        },
+        "encryption_at_rest": true,
+        "encryption_type": "AES-256",
+        "encryption_key_id": "arn:aws:kms:us-east-1:123456789:key/abc-123",
+        "versioning_enabled": true,
+        "mfa_delete": true,
+        "last_security_scan": "2025-11-07T16:00:00Z",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 1,
+          "low": 2
+        },
+        "compliance_status": {
+          "pci_dss": "compliant",
+          "hipaa": "compliant",
+          "soc2": "compliant"
+        },
+        "data_classification": "confidential",
+        "access_logs_enabled": true
+      }
+    },
+    {
+      "id": "res_storage_002",
+      "name": "prod-database-storage",
+      "type": "storage",
+      "provider": "gcp",
+      "region": "us-central1",
+      "status": "warning",
+      "created_at": "2024-05-15T13:20:00Z",
+      "created_by": "usr_002",
+      "health_score": 76,
+      "metrics": {
+        "size_gb": 5000,
+        "used_gb": 4623,
+        "available_gb": 377,
+        "iops": 5000,
+        "throughput_mbps": 250,
+        "object_count": 0
+      },
+      "dependencies": [],
+      "tags": {
+        "environment": "production",
+        "team": "database",
+        "backup": "enabled",
+        "cost_center": "engineering"
+      },
+      "estimated_monthly_cost": 500.0,
+      "security": {
+        "access_control": {
+          "public_access": false,
+          "access_policies": [
+            {
+              "principal": "arn:gcp:iam::project-id:serviceAccount/db-service@project.iam",
+              "actions": ["storage.objects.get", "storage.objects.create"],
+              "effect": "allow"
+            }
+          ]
+        },
+        "encryption_at_rest": true,
+        "encryption_type": "Google-managed",
+        "encryption_key_id": "projects/project-id/locations/us-central1/keyRings/db-keys/cryptoKeys/db-key",
+        "versioning_enabled": false,
+        "mfa_delete": false,
+        "last_security_scan": "2025-11-06T11:45:00Z",
+        "vulnerabilities": {
+          "critical": 1,
+          "high": 2,
+          "medium": 4,
+          "low": 6
+        },
+        "compliance_status": {
+          "pci_dss": "compliant",
+          "hipaa": "compliant",
+          "soc2": "compliant"
+        },
+        "data_classification": "highly_confidential",
+        "access_logs_enabled": true
+      }
+    },
+    {
+      "id": "res_storage_003",
+      "name": "staging-app-storage",
+      "type": "storage",
+      "provider": "azure",
+      "region": "east-us",
+      "status": "healthy",
+      "created_at": "2024-07-20T10:00:00Z",
+      "created_by": "usr_003",
+      "health_score": 94,
+      "metrics": {
+        "size_gb": 1000,
+        "used_gb": 456,
+        "available_gb": 544,
+        "iops": 1500,
+        "throughput_mbps": 75,
+        "object_count": 345678
+      },
+      "dependencies": [],
+      "tags": {
+        "environment": "staging",
+        "team": "development",
+        "backup": "disabled",
+        "cost_center": "engineering"
+      },
+      "estimated_monthly_cost": 100.0,
+      "security": {
+        "access_control": {
+          "public_access": false,
+          "access_policies": [
+            {
+              "principal": "arn:azure:identity:subscription-id:resourceGroups/staging/providers/Microsoft.ManagedIdentity/staging-app-identity",
+              "actions": ["read", "write", "delete"],
+              "effect": "allow"
+            }
+          ]
+        },
+        "encryption_at_rest": false,
+        "encryption_type": null,
+        "encryption_key_id": null,
+        "versioning_enabled": false,
+        "mfa_delete": false,
+        "last_security_scan": "2025-10-28T10:00:00Z",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 1,
+          "medium": 2,
+          "low": 4
+        },
+        "compliance_status": {
+          "pci_dss": "not_applicable",
+          "hipaa": "not_applicable",
+          "soc2": "not_applicable"
+        },
+        "data_classification": "internal",
+        "access_logs_enabled": false
+      }
+    },
+    {
+      "id": "res_compute_001",
+      "name": "prod-batch-processor",
+      "type": "compute",
+      "provider": "aws",
+      "region": "us-east-1",
+      "status": "healthy",
+      "created_at": "2024-09-01T15:30:00Z",
+      "created_by": "usr_001",
+      "health_score": 91,
+      "metrics": {
+        "invocations_per_hour": 4567,
+        "average_duration_ms": 1234,
+        "error_rate_percent": 2.3,
+        "concurrent_executions": 45,
+        "memory_usage_mb": 768,
+        "timeout_count": 12
+      },
+      "dependencies": ["res_storage_001", "res_vm_002"],
+      "tags": {
+        "environment": "production",
+        "team": "data-engineering",
+        "cost_center": "engineering"
+      },
+      "estimated_monthly_cost": 156.7,
+      "security": {
+        "execution_role": "arn:aws:iam::123456789:role/lambda-batch-processor-role",
+        "vpc_config": {
+          "vpc_id": "vpc-0123456789abcdef",
+          "subnet_ids": ["subnet-abc123", "subnet-def456"],
+          "security_group_ids": ["sg-compute-prod-001"]
+        },
+        "environment_variables_encrypted": true,
+        "encryption_key_id": "arn:aws:kms:us-east-1:123456789:key/compute-key-123",
+        "network_access": "private",
+        "last_security_scan": "2025-11-07T15:30:00Z",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 1,
+          "medium": 2,
+          "low": 5
+        },
+        "compliance_status": {
+          "pci_dss": "compliant",
+          "hipaa": "not_applicable",
+          "soc2": "compliant"
+        },
+        "resource_policy": {
+          "allowed_principals": ["arn:aws:iam::123456789:role/prod-web-role"],
+          "allowed_actions": ["lambda:InvokeFunction"]
+        }
+      }
+    },
+    {
+      "id": "res_compute_002",
+      "name": "prod-image-processor",
+      "type": "compute",
+      "provider": "gcp",
+      "region": "us-central1",
+      "status": "critical",
+      "created_at": "2024-10-05T16:40:00Z",
+      "created_by": "usr_003",
+      "health_score": 45,
+      "metrics": {
+        "invocations_per_hour": 8934,
+        "average_duration_ms": 2867,
+        "error_rate_percent": 23.7,
+        "concurrent_executions": 89,
+        "memory_usage_mb": 1024,
+        "timeout_count": 456
+      },
+      "dependencies": ["res_storage_001", "res_storage_003"],
+      "tags": {
+        "environment": "production",
+        "team": "media",
+        "cost_center": "engineering"
+      },
+      "estimated_monthly_cost": 287.4,
+      "security": {
+        "execution_role": "projects/project-id/serviceAccounts/image-processor@project.iam.gserviceaccount.com",
+        "vpc_config": {
+          "vpc_id": "projects/project-id/global/networks/prod-vpc",
+          "subnet_ids": [
+            "projects/project-id/regions/us-central1/subnetworks/prod-subnet-1"
+          ],
+          "security_group_ids": null
+        },
+        "environment_variables_encrypted": false,
+        "encryption_key_id": null,
+        "network_access": "public",
+        "last_security_scan": "2025-11-04T16:40:00Z",
+        "vulnerabilities": {
+          "critical": 4,
+          "high": 7,
+          "medium": 9,
+          "low": 14
+        },
+        "compliance_status": {
+          "pci_dss": "non_compliant",
+          "hipaa": "not_applicable",
+          "soc2": "non_compliant"
+        },
+        "resource_policy": {
+          "allowed_principals": ["allUsers"],
+          "allowed_actions": ["cloudfunctions.functions.invoke"]
+        }
+      }
+    }
+  ]
+}
+
