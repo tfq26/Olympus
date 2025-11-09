@@ -337,6 +337,7 @@ export default function CloudDashboard() {
     );
   };
 
+  const nothingFound = !selectedResource || selectedResource?.name === 'N/A' || selectedResource?.id === 'N/A';
   return (
     <main className="p-4 md:p-8 space-y-8 transition-colors duration-300">
       {/* Title */}
@@ -352,100 +353,92 @@ export default function CloudDashboard() {
         </span>
       </motion.h1>
 
-      {/* Resource Selector & Status */}
-      <div className="flex flex-wrap justify-center items-center gap-4">
-        {/* Customer Filter */}
-        {uniqueCustomers.length > 1 && (
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-400">Customer:</label>
-            <select
-              value={customerFilter}
-              onChange={(e) => setCustomerFilter(e.target.value)}
-              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 capitalize"
+      {nothingFound ? (
+        <div className="flex flex-col items-center justify-center py-16">
+          <span className="pi pi-search text-5xl text-gray-400 mb-4" />
+          <h2 className="text-xl font-semibold text-gray-400">Nothing found</h2>
+          <p className="text-gray-500 mt-2">No resources available to display.</p>
+        </div>
+      ) : (
+        <>
+          {/* Resource Selector & Status */}
+          <div className="flex flex-wrap justify-center items-center gap-4">
+            {/* Customer Filter */}
+            {uniqueCustomers.length > 1 && (
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-400">Customer:</label>
+                <select
+                  value={customerFilter}
+                  onChange={(e) => setCustomerFilter(e.target.value)}
+                  className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 capitalize"
+                >
+                  {uniqueCustomers.map(customer => (
+                    <option key={customer} value={customer} className="capitalize">
+                      {customer === 'all' ? 'All Customers' : customer}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Resource Selector */}
+            {/* ...existing resource selector and dashboard UI... */}
+            
+            {liveMetrics && (
+              <div className="flex items-center gap-2 px-4 py-2 bg-green-900/20 border border-green-500/30 rounded-lg">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span className="text-sm text-green-400">Live Data</span>
+              </div>
+            )}
+
+            {error && (
+              <div className="px-4 py-2 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                ⚠️ {error}
+              </div>
+            )}
+          </div>
+
+          {/* Selection Info */}
+          {selectedGraphs.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center text-sm text-indigo-300"
             >
-              {uniqueCustomers.map(customer => (
-                <option key={customer} value={customer} className="capitalize">
-                  {customer === 'all' ? 'All Customers' : customer}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+              {selectedGraphs.length} graph{selectedGraphs.length !== 1 ? "s" : ""}{" "}
+              selected
+              <Button
+                label="Clear"
+                className="p-button-text p-button-sm ml-2 text-indigo-400"
+                onClick={() => setSelectedGraphs([])}
+              />
+            </motion.div>
+          )}
 
-        {/* Resource Selector */}
-        {filteredResources.length > 1 && (
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-400">Resource:</label>
-            <select
-              value={selectedResource?.id || ''}
-              onChange={(e) => {
-                const resource = filteredResources.find(r => r.id === e.target.value);
-                setSelectedResource(resource);
-              }}
-              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-200"
-            >
-              {filteredResources.map(r => (
-                <option key={r.id} value={r.id}>
-                  {r.name || r.id} ({r.type})
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        
-        {liveMetrics && (
-          <div className="flex items-center gap-2 px-4 py-2 bg-green-900/20 border border-green-500/30 rounded-lg">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            <span className="text-sm text-green-400">Live Data</span>
-          </div>
-        )}
+          {/* Dashboard Grid */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {renderChartCard("cpu", "CPU Utilization (Past Hour)", [])}
+            {renderChartCard("ram", "Memory Usage (Past Hour)", [])}
+            {renderChartCard("networkIn", "Network In (Past 10 Min)", [])}
+            {renderChartCard("diskIops", "Disk IOPS (Read/Write)", [])}
+            {renderChartCard("metric5", "Load Balancer Latency (ms)", [])}
+            {renderChartCard("metric6", "Request Queue Depth", [])}
+          </motion.div>
 
-        {error && (
-          <div className="px-4 py-2 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
-            ⚠️ {error}
+          <div className="pt-6 border-t border-gray-700/40">
+            <SmallerChatBox
+              actions={actions}
+              onActionClick={handleActionWithGraphs}
+              selectedContext={selectedGraphs.map((key) => graphMetadata[key])}
+            />
           </div>
-        )}
-      </div>
-
-      {/* Selection Info */}
-      {selectedGraphs.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center text-sm text-indigo-300"
-        >
-          {selectedGraphs.length} graph{selectedGraphs.length !== 1 ? "s" : ""}{" "}
-          selected
-          <Button
-            label="Clear"
-            className="p-button-text p-button-sm ml-2 text-indigo-400"
-            onClick={() => setSelectedGraphs([])}
-          />
-        </motion.div>
+        </>
       )}
-
-      {/* Dashboard Grid */}
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {renderChartCard("cpu", "CPU Utilization (Past Hour)", [])}
-        {renderChartCard("ram", "Memory Usage (Past Hour)", [])}
-        {renderChartCard("networkIn", "Network In (Past 10 Min)", [])}
-        {renderChartCard("diskIops", "Disk IOPS (Read/Write)", [])}
-        {renderChartCard("metric5", "Load Balancer Latency (ms)", [])}
-        {renderChartCard("metric6", "Request Queue Depth", [])}
-      </motion.div>
-
-      <div className="pt-6 border-t border-gray-700/40">
-        <SmallerChatBox
-          actions={actions}
-          onActionClick={handleActionWithGraphs}
-          selectedContext={selectedGraphs.map((key) => graphMetadata[key])}
-        />
-      </div>
     </main>
   );
 }

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import ChatBot from "../../components/FullGeneralChatBot.jsx";
 import { motion } from "framer-motion";
 import { useAuth } from "../../contexts/authContext.jsx";
 import { canPerform } from "../../lib/permissions.js";
@@ -6,7 +8,25 @@ import { getResources, createResource, deleteResource, createS3, createEC2, crea
 
 export default function ManageResources() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [resources, setResources] = useState([]);
+  const [selectedResourceIds, setSelectedResourceIds] = useState([]);
+  // Mass delete selected resources
+  const handleDeleteSelected = async () => {
+    if (selectedResourceIds.length === 0) return;
+    setLoading(true);
+    try {
+      for (const id of selectedResourceIds) {
+        await deleteResource(id);
+      }
+      await fetchResources();
+      setSelectedResourceIds([]);
+    } catch (err) {
+      alert('Failed to delete selected resources');
+    } finally {
+      setLoading(false);
+    }
+  };
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -43,17 +63,13 @@ export default function ManageResources() {
     try {
       // Parse tags from comma-separated string
       const tags = formData.tags ? formData.tags.split(",").map(t => t.trim()).filter(t => t) : [];
-      
-      // 0) Check AWS credentials first to determine status color
       let status = "running";
       try {
         const creds = await checkAwsCredentials();
-        if (!creds.ok) status = "warning"; // degraded yellow state
+        if (!creds.ok) status = "warning";
       } catch (e) {
-        status = "warning"; // treat inability to check as warning
+        status = "warning";
       }
-
-      // 1) Create via Terraform depending on type
       let tfResult;
       if (formData.type === 'S3') {
         tfResult = await createS3(formData.name, formData.region);
@@ -64,20 +80,14 @@ export default function ManageResources() {
       } else {
         throw new Error(`Unsupported type for Terraform creation: ${formData.type}`);
       }
-
-      // Provide concise success/failure feedback (backend returns parsed message)
       if (tfResult?.ok === false) {
         throw new Error(tfResult.error || 'Terraform creation failed');
       }
-
-      // 2) Register the resource in monitoring DB for tracking
-      // Attempt to extract IDs/ARNs from raw result for tagging
       const raw = tfResult.result || '';
       const instanceIds = [...raw.matchAll(/i-[a-f0-9]+/gi)].map(m => m[0]);
       const publicIps = [...raw.matchAll(/(\d+\.\d+\.\d+\.\d+)/g)].map(m => m[0]).filter(ip => /\d+\.\d+\.\d+\.\d+/.test(ip));
       const arnMatches = [...raw.matchAll(/arn:aws:[^\s"']+/g)].map(m => m[0]);
       const extraTags = [...instanceIds, ...publicIps.slice(0,3), ...arnMatches.slice(0,1)];
-
       const resourceData = {
         name: formData.name,
         type: formData.type,
@@ -87,11 +97,12 @@ export default function ManageResources() {
         created_by: user.email || "admin"
       };
       await createResource(resourceData);
-
       alert(`✅ ${formData.type} created via Terraform. Registered in monitoring.`);
       setShowCreateModal(false);
       setFormData({ name: "", type: "EC2", region: "us-east-1", tags: "" });
       fetchResources();
+      // Route to resource dashboard after creation
+      navigate("/resources/dashboard");
     } catch (error) {
       console.error("Failed to create resource:", error);
       alert(`Failed to create resource: ${error.message}`);
@@ -150,6 +161,19 @@ export default function ManageResources() {
 
   return (
     <main className="p-6 md:p-10 space-y-8">
+      {/* Mass Delete Button */}
+      <div className="flex justify-end mb-4">
+        {resources.length > 0 && (
+          <button
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
+            disabled={selectedResourceIds.length === 0}
+            onClick={handleDeleteSelected}
+          >
+            <i className="pi pi-trash"></i>
+            Delete Selected ({selectedResourceIds.length})
+          </button>
+        )}
+      </div>
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -169,7 +193,7 @@ export default function ManageResources() {
       </motion.div>
 
       {/* Resources List */}
-      <div className="space-y-4">
+      <div className="overflow-x-auto">
         {loading ? (
           <div className="text-center text-gray-400 py-12">Loading resources...</div>
         ) : resources.length === 0 ? (
@@ -178,70 +202,80 @@ export default function ManageResources() {
             <p>No resources found</p>
           </div>
         ) : (
-          resources.map((resource) => (
-            <motion.div
-              key={resource.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 hover:border-indigo-500/50 transition-colors"
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-100 mb-2">
-                    {resource.name || resource.id}
-                  </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-400">Type:</span>
-                      <span className="ml-2 text-gray-200">{resource.type}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-400">Region:</span>
-                      <span className="ml-2 text-gray-200">{resource.region || "N/A"}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-400">Status:</span>
-                      <span className={`ml-2 px-2 py-1 rounded text-xs font-semibold ${
-                        resource.status === "running" ? "bg-green-900/30 text-green-400" : resource.status === 'warning' ? 'bg-yellow-900/30 text-yellow-400' : "bg-gray-700 text-gray-300"
-                      }`}>
-                        {resource.status || "unknown"}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-400">ID:</span>
-                      <span className="ml-2 text-gray-200 font-mono text-xs">{resource.id}</span>
-                    </div>
-                  </div>
-                  {resource.tags && resource.tags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {resource.tags.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-1 bg-indigo-900/30 border border-indigo-700/40 rounded text-xs text-indigo-300"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {canPerform(user.role, "deleteResource") && (
-                  <button
-                    onClick={() => handleDelete(resource.id)}
-                    className="ml-4 px-3 py-2 bg-red-600/20 hover:bg-red-600/40 border border-red-500/30 text-red-400 rounded-lg transition-colors"
-                    title="Delete Resource"
-                  >
-                    <i className="pi pi-trash"></i>
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          ))
+          <table className="min-w-full text-sm text-gray-200 border border-gray-700 rounded-lg">
+            <thead>
+              <tr className="bg-gray-900/80">
+                <th className="px-2 py-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedResourceIds.length === resources.length}
+                    onChange={e => {
+                      if (e.target.checked) {
+                        setSelectedResourceIds(resources.map(r => r.id));
+                      } else {
+                        setSelectedResourceIds([]);
+                      }
+                    }}
+                  />
+                </th>
+                <th className="px-2 py-2">Name</th>
+                <th className="px-2 py-2">Type</th>
+                <th className="px-2 py-2">Region</th>
+                <th className="px-2 py-2">Status</th>
+                <th className="px-2 py-2">ID</th>
+                <th className="px-2 py-2">Tags</th>
+                <th className="px-2 py-2">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {resources.map(resource => (
+                <tr key={resource.id} className="border-b border-gray-800">
+                  <td className="px-2 py-2 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedResourceIds.includes(resource.id)}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setSelectedResourceIds(prev => [...prev, resource.id]);
+                        } else {
+                          setSelectedResourceIds(prev => prev.filter(id => id !== resource.id));
+                        }
+                      }}
+                    />
+                  </td>
+                  <td className="px-2 py-2">{resource.name || resource.id}</td>
+                  <td className="px-2 py-2">{resource.type}</td>
+                  <td className="px-2 py-2">{resource.region || "N/A"}</td>
+                  <td className={`px-2 py-2 ${resource.status === "running" ? "text-green-400" : resource.status === 'warning' ? 'text-yellow-400' : "text-gray-300"}`}>{resource.status || "unknown"}</td>
+                  <td className="px-2 py-2 font-mono text-xs">{resource.id}</td>
+                  <td className="px-2 py-2">
+                    {resource.tags && resource.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {resource.tags.map((tag, idx) => (
+                          <span key={idx} className="px-2 py-1 bg-indigo-900/30 border border-indigo-700/40 rounded text-xs text-indigo-300">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-2 py-2 text-center">
+                    {canPerform(user.role, "deleteResource") && (
+                      <button
+                        onClick={() => handleDelete(resource.id)}
+                        className="px-2 py-1 bg-red-600/20 hover:bg-red-600/40 border border-red-500/30 text-red-400 rounded-lg transition-colors"
+                        title="Delete Resource"
+                      >
+                        <i className="pi pi-trash"></i>
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 
-      {/* Create Modal */}
+      {/* Create Modal with ChatBot input */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <motion.div
@@ -250,7 +284,12 @@ export default function ManageResources() {
             className="bg-gray-800 border border-gray-700 rounded-xl p-6 max-w-md w-full shadow-2xl"
           >
             <h2 className="text-2xl font-bold text-gray-100 mb-4">Create New Resource</h2>
-
+            <div className="space-y-4 mb-6">
+              <ChatBot
+                welcomeMessage="Describe the resource you want to create."
+                placeholder="E.g. Create an EC2 instance in us-east-1 with tag production"
+              />
+            </div>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -264,7 +303,6 @@ export default function ManageResources() {
                   placeholder="my-web-server"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Type
@@ -280,7 +318,6 @@ export default function ManageResources() {
                   <option value="RDS">RDS Database</option>
                 </select>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Region
@@ -296,7 +333,6 @@ export default function ManageResources() {
                   <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
                 </select>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Tags (comma-separated)
@@ -310,7 +346,6 @@ export default function ManageResources() {
                 />
               </div>
             </div>
-
             <div className="flex gap-3 mt-6">
               <button
                 onClick={handleCreate}
