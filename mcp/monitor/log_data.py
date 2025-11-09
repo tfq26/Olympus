@@ -21,7 +21,7 @@ except Exception:
     # DynamoDB not available, use JSON files
     DYNAMODB_AVAILABLE = False
 
-# Calculate project root directory (3 levels up from this file: mcp/monitor/mock_data.py)
+# Calculate project root directory (3 levels up from this file: mcp/monitor/log_data.py)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 LOGS_FILE = os.path.join(BASE_DIR, "logs.json")
 METRICS_FILE = os.path.join(BASE_DIR, "metrics.json")

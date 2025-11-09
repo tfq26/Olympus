@@ -3,8 +3,9 @@ Monitor Routes - Flask Blueprint for monitoring endpoints
 Provides endpoints for CloudWatch metrics and mock data analysis with LLM integration
 """
 from flask import Blueprint, jsonify, request
-from .cloudwatch_client import fetch_ec2_metrics
-from .mock_data import load_logs, load_metrics, get_resource_by_id, get_logs_by_resource, get_customer_health_summary
+from .cloudwatch_client import fetch_ec2_metrics, fetch_ec2_metrics_enriched
+from .log_data import load_logs, load_metrics, get_resource_by_id, get_logs_by_resource, get_customer_health_summary
+from .metrics_updater import update_resource_metrics
 from ..Nvidia_llm.AI_client import analyze_with_nvidia, analyze_metrics_with_nvidia, analyze_logs_with_nvidia
 
 # Create Flask Blueprint for monitor routes
@@ -38,6 +39,69 @@ def get_ec2_metrics():
         "metrics": metrics,
         "analysis": llm_analysis
     })
+
+
+@monitor_bp.route("/metrics/enriched", methods=["GET"])
+def get_ec2_metrics_enriched():
+    """
+    Get enriched EC2 metrics from CloudWatch and EC2 metadata
+    Automatically updates metrics.json with fetched data (replaces existing, no duplicates)
+    Query params: 
+        instance_id (required) - AWS EC2 instance ID
+        resource_id (optional) - Resource ID to update (if instance_id not in resource)
+        auto_update (optional) - Set to 'false' to disable auto-update (default: 'true')
+    Returns: Enriched metrics (CPU, memory, disk, network, uptime) + metadata + update status
+    """
+    instance_id = request.args.get("instance_id")
+    if not instance_id:
+        return jsonify({"error": "Please provide ?instance_id=..."}), 400
+    
+    resource_id = request.args.get("resource_id")
+    auto_update = request.args.get("auto_update", "true").lower() == "true"
+    
+    # Fetch enriched metrics from CloudWatch and EC2
+    enriched_metrics = fetch_ec2_metrics_enriched(instance_id)
+    if "error" in enriched_metrics:
+        return jsonify(enriched_metrics), 500
+    
+    # Automatically update metrics.json (unless disabled)
+    update_result = None
+    if auto_update:
+        update_result = update_resource_metrics(instance_id, resource_id, auto_create=False)
+        # If update failed but we have metrics, still return the metrics
+        # (update failure is not critical for viewing metrics)
+        if "error" in update_result:
+            # Log error but don't fail the request
+            enriched_metrics["update_warning"] = update_result.get("error")
+        else:
+            enriched_metrics["update_status"] = "updated"
+            enriched_metrics["resource_id"] = update_result.get("resource_id")
+    
+    return jsonify(enriched_metrics)
+
+
+@monitor_bp.route("/metrics/update", methods=["POST"])
+def update_metrics():
+    """
+    Update resource metrics in metrics.json with enriched CloudWatch data
+    Query params:
+        instance_id (required) - EC2 instance ID
+        resource_id (optional) - Resource ID to update (if instance_id not in resource)
+    Returns: Update result with updated metrics
+    """
+    instance_id = request.args.get("instance_id")
+    resource_id = request.args.get("resource_id")
+    
+    if not instance_id:
+        return jsonify({"error": "Please provide ?instance_id=..."}), 400
+    
+    # Update metrics in metrics.json
+    result = update_resource_metrics(instance_id, resource_id)
+    
+    if "error" in result:
+        return jsonify(result), 500
+    
+    return jsonify(result)
 
 # ============================================================================
 # Mock Data Endpoints - For Testing
