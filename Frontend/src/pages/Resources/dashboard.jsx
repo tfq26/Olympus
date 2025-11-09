@@ -209,28 +209,12 @@ export default function CloudDashboard() {
         initial="hidden"
         animate="visible"
       >
-        {renderChartCard("cpu", "CPU Utilization (Past Hour)", [
-          { label: "Scale Up", icon: "pi pi-arrow-up" },
-          { label: "View Processes", icon: "pi pi-list" },
-        ])}
-        {renderChartCard("ram", "Memory Usage (Past Hour)", [
-          { label: "Clear Cache", icon: "pi pi-trash" },
-          { label: "Snapshots", icon: "pi pi-camera" },
-        ])}
-        {renderChartCard("networkIn", "Network In (Past 10 Min)", [
-          { label: "Block IP", icon: "pi pi-ban" },
-          { label: "Trace Route", icon: "pi pi-globe" },
-        ])}
-        {renderChartCard("diskIops", "Disk IOPS (Read/Write)", [
-          { label: "Optimize", icon: "pi pi-sliders-h" },
-          { label: "Increase Storage", icon: "pi pi-database" },
-        ])}
-        {renderChartCard("metric5", "Load Balancer Latency (ms)", [
-          { label: "Check Health", icon: "pi pi-heart" },
-        ])}
-        {renderChartCard("metric6", "Request Queue Depth", [
-          { label: "Scale Workers", icon: "pi pi-users" },
-        ])}
+        {renderChartCard("cpu", "CPU Utilization (Past Hour)", [])}
+        {renderChartCard("ram", "Memory Usage (Past Hour)", [])}
+        {renderChartCard("networkIn", "Network In (Past 10 Min)", [])}
+        {renderChartCard("diskIops", "Disk IOPS (Read/Write)", [])}
+        {renderChartCard("metric5", "Load Balancer Latency (ms)", [])}
+        {renderChartCard("metric6", "Request Queue Depth", [])}
       </motion.div>
 
       <div className="pt-6 border-t border-gray-700/40">
