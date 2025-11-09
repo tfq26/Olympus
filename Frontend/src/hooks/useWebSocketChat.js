@@ -206,12 +206,10 @@ export function useWebSocketChat() {
       setMessages((prev) => [...prev, userMessage]);
       setIsLoading(true);
 
+      // Send message to router - let the MCP server route it to the appropriate tool
+      // The router will detect log queries and route to getLogsByResource automatically
       const messageData = JSON.stringify({
-        tool: "queryAI",
-        args: {
-          prompt: message.content,
-          systemMessage: "You are a helpful assistant. Answer questions clearly and concisely.",
-        },
+        message: message.content,
       });
 
       // Check connection state

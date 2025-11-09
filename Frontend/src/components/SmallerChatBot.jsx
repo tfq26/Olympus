@@ -39,9 +39,9 @@ export default function SmallerChatBox({
             {messages.map((m) => (
               <div
                 key={m.id}
-                className={`p-3 rounded-lg text-sm border-l-4 ${
+                className={`p-3 rounded-lg text-sm border-l-4 whitespace-pre-wrap font-mono ${
                   m.role === "assistant"
-                    ? "bg-indigo-500/20 border-indigo-400"
+                    ? "bg-indigo-500/20 border-indigo-400 max-h-[45vh] overflow-y-auto"
                     : "bg-gray-700/20 border-gray-400"
                 }`}
               >

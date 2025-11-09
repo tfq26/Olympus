@@ -176,6 +176,171 @@ def get_mock_logs():
         "total": len(filtered_logs)
     })
 
+@monitor_bp.route("/mock/logs/summary", methods=["GET"])
+def get_logs_summary():
+    """
+    Get summary of logs grouped by customer with optional filters
+    Query params:
+        - customer_name (optional) - Filter by customer name (partial match, case-insensitive)
+        - status (optional) - Filter by status (OK, WARNING, ERROR, CRITICAL, STALE, UNKNOWN)
+        - resource_id (optional) - Filter by resource ID
+    Returns: Summary with status counts and health scores per customer
+    """
+    logs = load_logs()
+    if logs is None:
+        return jsonify({"error": "Failed to load logs from DynamoDB or JSON file"}), 500
+    
+    # Apply filters from query parameters
+    customer_filter = request.args.get("customer_name")
+    status_filter = request.args.get("status")
+    resource_filter = request.args.get("resource_id")
+    
+    # Filter logs based on query parameters
+    filtered_logs = logs
+    if customer_filter:
+        # Case-insensitive partial match
+        customer_filter_lower = customer_filter.lower()
+        filtered_logs = [log for log in filtered_logs 
+                        if customer_filter_lower in log.get("customer_name", "Unknown").lower()]
+    
+    if status_filter:
+        # Exact match for status (case-insensitive)
+        status_filter_upper = status_filter.upper()
+        filtered_logs = [log for log in filtered_logs 
+                        if log.get("status", "UNKNOWN").upper() == status_filter_upper]
+    
+    if resource_filter:
+        # Filter by resource ID in resources_affected list
+        filtered_logs = [log for log in filtered_logs 
+                        if resource_filter in log.get("resources_affected", [])]
+    
+    # Handle empty logs list (different from None)
+    if len(filtered_logs) == 0:
+        return jsonify({
+            "overall": {
+                "total_logs": 0,
+                "total_customers": 0,
+                "health_score": 0,
+                "OK": 0,
+                "WARNING": 0,
+                "ERROR": 0,
+                "CRITICAL": 0,
+                "STALE": 0,
+                "UNKNOWN": 0
+            },
+            "customers": [],
+            "filters_applied": {
+                "customer_name": customer_filter,
+                "status": status_filter,
+                "resource_id": resource_filter
+            }
+        })
+    
+    # Group logs by customer
+    customer_summaries = {}
+    
+    for log in filtered_logs:
+        customer_name = log.get("customer_name", "Unknown")
+        status = log.get("status", "UNKNOWN")
+        
+        if customer_name not in customer_summaries:
+            customer_summaries[customer_name] = {
+                "customer_name": customer_name,
+                "total": 0,
+                "OK": 0,
+                "WARNING": 0,
+                "ERROR": 0,
+                "CRITICAL": 0,
+                "STALE": 0,
+                "UNKNOWN": 0
+            }
+        
+        customer_summaries[customer_name]["total"] += 1
+        customer_summaries[customer_name][status] = customer_summaries[customer_name].get(status, 0) + 1
+    
+    # Calculate health score for each customer
+    # Health score = (OK logs / total logs) * 100
+    # Penalties: CRITICAL = -20%, ERROR = -10%, WARNING = -5%
+    for customer_name, summary in customer_summaries.items():
+        total = summary["total"]
+        if total > 0:
+            ok_count = summary.get("OK", 0)
+            critical_count = summary.get("CRITICAL", 0)
+            error_count = summary.get("ERROR", 0)
+            warning_count = summary.get("WARNING", 0)
+            
+            # Base health score from OK percentage
+            base_score = (ok_count / total) * 100
+            
+            # Apply penalties
+            critical_penalty = (critical_count / total) * 20
+            error_penalty = (error_count / total) * 10
+            warning_penalty = (warning_count / total) * 5
+            
+            health_score = max(0, min(100, base_score - critical_penalty - error_penalty - warning_penalty))
+            summary["health_score"] = round(health_score, 2)
+        else:
+            summary["health_score"] = 0
+    
+    # Convert to list and sort by health score (lowest first - most critical)
+    summary_list = list(customer_summaries.values())
+    summary_list.sort(key=lambda x: x["health_score"])
+    
+    # Calculate overall totals (use filtered_logs, not logs)
+    overall_totals = {
+        "total_logs": len(filtered_logs),
+        "total_customers": len(customer_summaries),
+        "OK": sum(s["OK"] for s in summary_list),
+        "WARNING": sum(s["WARNING"] for s in summary_list),
+        "ERROR": sum(s["ERROR"] for s in summary_list),
+        "CRITICAL": sum(s["CRITICAL"] for s in summary_list),
+        "STALE": sum(s["STALE"] for s in summary_list),
+        "UNKNOWN": sum(s["UNKNOWN"] for s in summary_list)
+    }
+    
+    # Calculate overall health score
+    if overall_totals["total_logs"] > 0:
+        overall_ok = overall_totals["OK"]
+        overall_critical = overall_totals["CRITICAL"]
+        overall_error = overall_totals["ERROR"]
+        overall_warning = overall_totals["WARNING"]
+        
+        base_score = (overall_ok / overall_totals["total_logs"]) * 100
+        critical_penalty = (overall_critical / overall_totals["total_logs"]) * 20
+        error_penalty = (overall_error / overall_totals["total_logs"]) * 10
+        warning_penalty = (overall_warning / overall_totals["total_logs"]) * 5
+        
+        overall_health_score = max(0, min(100, base_score - critical_penalty - error_penalty - warning_penalty))
+        overall_totals["health_score"] = round(overall_health_score, 2)
+    else:
+        overall_totals["health_score"] = 0
+    
+    # Prepare response
+    response_data = {
+        "overall": overall_totals,
+        "customers": summary_list,
+        "filters_applied": {
+            "customer_name": customer_filter,
+            "status": status_filter,
+            "resource_id": resource_filter
+        }
+    }
+    
+    # If filters are applied, also include the filtered logs (sorted by timestamp, newest first)
+    if customer_filter or status_filter or resource_filter:
+        # Sort filtered logs by timestamp (newest first)
+        sorted_filtered_logs = sorted(
+            filtered_logs,
+            key=lambda x: x.get("time") or x.get("timestamp") or "",
+            reverse=True
+        )
+        # Limit to first 100 logs to avoid overwhelming the response
+        response_data["logs"] = sorted_filtered_logs[:100]
+        response_data["total_logs_returned"] = len(sorted_filtered_logs[:100])
+        response_data["total_logs_available"] = len(sorted_filtered_logs)
+    
+    return jsonify(response_data)
+
 @monitor_bp.route("/mock/logs/analysis", methods=["GET"])
 def analyze_mock_logs():
     """

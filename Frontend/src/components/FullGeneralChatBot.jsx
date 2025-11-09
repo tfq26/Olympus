@@ -89,9 +89,9 @@ export default function ChatBot({
               {messages.map((m) => (
                 <div
                   key={m.id}
-                  className={`p-4 rounded-lg shadow-md  text-sm text-text-primary border-l-4 ${
+                  className={`p-4 rounded-lg shadow-md text-sm text-text-primary border-l-4 whitespace-pre-wrap font-mono ${
                     m.role === "assistant"
-                      ? "mr-8 bg-[rgba(159,112,253,0.15)] border-nebula-magenta"
+                      ? "mr-8 bg-[rgba(159,112,253,0.15)] border-nebula-magenta max-h-[70vh] overflow-y-auto"
                       : "ml-8 bg-[rgba(28,19,99,0.4)] border-nebula-cyan"
                   }`}
                 >

@@ -1,0 +1,73 @@
+# Quick Test Commands for Chatbot
+
+Copy and paste these into the chatbot to test log retrieval:
+
+## ✅ GUARANTEED TO WORK (Based on your data)
+
+### Test 1: Resource ID (Has logs)
+show recent logs from res_vm_001
+
+### Test 2: Resource Name (Matches olympus-test-ecs)
+show recent logs from olympus-test-ecs
+
+### Test 3: Partial Name Match
+show recent logs from olympus
+
+### Test 4: With Limit
+show first 50 logs from res_vm_001
+
+### Test 5: Different Phrasing
+get logs for res_vm_001
+
+### Test 6: Resource Name Variation
+show logs from olympus-test
+
+## 🧪 TEST VARIATIONS
+
+### Try these variations:
+show recent logs from ecs2
+show recent logs from ec2-olympus
+show recent logs from ecs
+get logs for olympus-test-ecs
+what are the logs for res_vm_001
+display logs from res_vm_001
+fetch logs for olympus
+view recent logs from res_vm_001
+list logs for olympus-test-ecs
+
+### With limits:
+show first 20 logs from res_vm_001
+show first 100 logs from olympus-test-ecs
+get 50 logs from res_vm_001
+show 10 logs from olympus
+
+## 📊 EXPECTED RESULTS
+
+### ✅ Success Response Should Show:
+- 📊 Found X log(s) for resource: [name/id]
+- Status Summary: OK: X, ERROR: X, WARNING: X
+- Recent Logs list with:
+  - Status badges
+  - Timestamps
+  - Log codes
+  - Messages
+  - Customer names
+
+### ❌ If You See Generic AI Response:
+The router isn't catching the query. Check:
+1. MCP server is running
+2. Flask backend is running
+3. Router is working (test with: node test in mcp-client)
+
+## 🔍 DEBUGGING
+
+### Test Router Directly:
+cd mcp-client
+node -e "import('./model/router.js').then(async m => { const result = await m.interpretMessage('show recent logs from res_vm_001'); console.log(JSON.stringify(result, null, 2)); })"
+
+### Check DynamoDB:
+python check_dynamodb.py
+
+### Check Flask Backend:
+curl "http://localhost:5000/monitor/mock/logs?resource_id=res_vm_001"
+
