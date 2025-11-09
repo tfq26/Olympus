@@ -1,0 +1,15 @@
+/Users/younussyed/Desktop/codeProjects/Olympus/venv/lib/python3.14/site-packages/openai/_compat.py:48: UserWarning: Core Pydantic V1 functionality isn't compatible with Python 3.14 or greater.
+  from pydantic.v1.typing import (
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.169.182.126:5000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [09/Nov/2025 10:22:10] "[35m[1mGET /monitor/mock/resources HTTP/1.1[0m" 500 -
+127.0.0.1 - - [09/Nov/2025 10:22:12] "GET /monitor/mock/logs?limit=100 HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 10:22:31] "GET /monitor/mock/logs?limit=100 HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 10:22:31] "GET /monitor/mock/logs?status=INFO&limit=100 HTTP/1.1" 200 -
+127.0.0.1 - - [09/Nov/2025 10:22:36] "[35m[1mGET /monitor/mock/resources HTTP/1.1[0m" 500 -
+127.0.0.1 - - [09/Nov/2025 10:22:36] "[35m[1mGET /monitor/mock/resources HTTP/1.1[0m" 500 -

@@ -2,9 +2,11 @@ import { Sidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const OverviewSidebar = () => {
   const [visible, setVisible] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="h-full">
@@ -38,6 +40,17 @@ const OverviewSidebar = () => {
               Summary of current environment and metrics
             </p>
           </div>
+
+          {/* Profile Button */}
+          <Button
+            label="View Profile"
+            icon="pi pi-user"
+            className="w-full p-button-sm p-button-outlined"
+            onClick={() => {
+              setVisible(false);
+              navigate("/profile");
+            }}
+          />
 
           <Divider className="!my-4" />
 

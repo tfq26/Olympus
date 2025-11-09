@@ -7,8 +7,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node test-endpoints.js",
+    "test": "echo 'No tests configured. Use: npm run test:client to test WebSocket connection'",
     "start": "node server.js",
+    "test:client": "node testclient.js",
     "test:router": "node -e \"import('./model/router.js').then(m => m.interpretMessage(process.argv[1]).then(r => console.log(JSON.stringify(r, null, 2))).catch(e => console.error(e.message)))\"",
     "test:cors": "node test-cors.js"
   },

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import CloudDashboard from "./pages/CloudDashboard";
+import ProfilePage from "./pages/profile/profile";
 import SystemHealth from "./components/SystemHealth";
 import MenuBar from "./components/MenuBar";
 import OverviewSidebar from "./components/OverviewSidebar";
@@ -20,6 +21,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<CloudDashboard />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Routes>
           </div>
 

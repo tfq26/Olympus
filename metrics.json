@@ -1,0 +1,94 @@
+[
+  {
+    "resource_id": "res_api_001",
+    "customer": "Acme Corp",
+    "type": "API Server",
+    "cpu_usage": 45.2,
+    "memory_usage": 62.8,
+    "disk_usage": 38.5,
+    "network_in": 125.4,
+    "network_out": 98.6,
+    "uptime_hours": 168,
+    "status": "healthy",
+    "last_updated": "2025-01-09T10:00:00Z"
+  },
+  {
+    "resource_id": "res_db_001",
+    "customer": "Acme Corp",
+    "type": "Database",
+    "cpu_usage": 68.3,
+    "memory_usage": 78.2,
+    "disk_usage": 82.1,
+    "network_in": 240.7,
+    "network_out": 180.3,
+    "uptime_hours": 720,
+    "status": "healthy",
+    "last_updated": "2025-01-09T10:00:00Z"
+  },
+  {
+    "resource_id": "res_vm_001",
+    "customer": "Globex",
+    "type": "Virtual Machine",
+    "cpu_usage": 82.5,
+    "memory_usage": 91.2,
+    "disk_usage": 56.4,
+    "network_in": 67.8,
+    "network_out": 45.2,
+    "uptime_hours": 504,
+    "status": "warning",
+    "last_updated": "2025-01-09T10:00:00Z"
+  },
+  {
+    "resource_id": "res_db_002",
+    "customer": "Initech",
+    "type": "Database",
+    "cpu_usage": 55.7,
+    "memory_usage": 70.3,
+    "disk_usage": 88.9,
+    "network_in": 310.5,
+    "network_out": 205.8,
+    "uptime_hours": 336,
+    "status": "degraded",
+    "last_updated": "2025-01-09T10:00:00Z"
+  },
+  {
+    "resource_id": "res_api_002",
+    "customer": "Umbrella",
+    "type": "API Server",
+    "cpu_usage": 95.1,
+    "memory_usage": 88.6,
+    "disk_usage": 45.2,
+    "network_in": 450.2,
+    "network_out": 380.6,
+    "uptime_hours": 48,
+    "status": "critical",
+    "last_updated": "2025-01-09T10:00:00Z"
+  },
+  {
+    "resource_id": "res_lb_001",
+    "customer": "Umbrella",
+    "type": "Load Balancer",
+    "cpu_usage": 72.4,
+    "memory_usage": 65.8,
+    "disk_usage": 22.1,
+    "network_in": 890.3,
+    "network_out": 760.5,
+    "uptime_hours": 96,
+    "status": "warning",
+    "last_updated": "2025-01-09T10:00:00Z"
+  },
+  {
+    "resource_id": "res_storage_001",
+    "customer": "Hooli",
+    "type": "Storage",
+    "cpu_usage": 15.2,
+    "memory_usage": 28.4,
+    "disk_usage": 65.7,
+    "network_in": 125.9,
+    "network_out": 95.3,
+    "uptime_hours": 1440,
+    "status": "healthy",
+    "last_updated": "2025-01-09T10:00:00Z"
+  }
+]
+

@@ -90,21 +90,21 @@ export async function destroyLambda() {
   return res.json();
 }
 
-// Monitoring operations
+// Monitoring operations - Use Flask backend directly
 export async function getResources() {
-  const res = await fetch(`${NODE_BASE_URL}/monitor/resources`);
+  const res = await fetch(`${FLASK_BASE_URL}/monitor/mock/resources`);
   if (!res.ok) throw new Error(`Get resources failed: ${res.status}`);
   return res.json();
 }
 
 export async function getResourceMetrics(resource_id) {
-  const res = await fetch(`${NODE_BASE_URL}/monitor/resource/${resource_id}`);
+  const res = await fetch(`${FLASK_BASE_URL}/monitor/mock/resource/${resource_id}`);
   if (!res.ok) throw new Error(`Get resource metrics failed: ${res.status}`);
   return res.json();
 }
 
 export async function getEC2Metrics(instance_id) {
-  const res = await fetch(`${NODE_BASE_URL}/monitor/metrics/${instance_id}`);
+  const res = await fetch(`${FLASK_BASE_URL}/monitor/metrics?instance_id=${instance_id}`);
   if (!res.ok) throw new Error(`Get EC2 metrics failed: ${res.status}`);
   return res.json();
 }
@@ -114,18 +114,19 @@ export async function getEC2MetricsEnriched(instance_id, resource_id = null, aut
   if (resource_id) params.append('resource_id', resource_id);
   if (auto_update !== undefined) params.append('auto_update', auto_update);
   
-  const res = await fetch(`${NODE_BASE_URL}/monitor/metrics/enriched/${instance_id}?${params}`);
+  const res = await fetch(`${FLASK_BASE_URL}/monitor/metrics/enriched?${params}`);
   if (!res.ok) throw new Error(`Get enriched metrics failed: ${res.status}`);
   return res.json();
 }
 
-// Logs operations
-export async function getLogs(resource_id = null, status = null) {
+// Logs operations - Use Flask backend directly
+export async function getLogs(resource_id = null, status = null, limit = 100) {
   const params = new URLSearchParams();
   if (resource_id) params.append('resource_id', resource_id);
   if (status) params.append('status', status);
+  if (limit) params.append('limit', limit);
   
-  const res = await fetch(`${NODE_BASE_URL}/monitor/logs?${params}`);
+  const res = await fetch(`${FLASK_BASE_URL}/monitor/mock/logs?${params}`);
   if (!res.ok) throw new Error(`Get logs failed: ${res.status}`);
   return res.json();
 }
@@ -135,7 +136,7 @@ export async function getLogsAnalysis(resource_id = null, status = null) {
   if (resource_id) params.append('resource_id', resource_id);
   if (status) params.append('status', status);
   
-  const res = await fetch(`${NODE_BASE_URL}/monitor/logs/analysis?${params}`);
+  const res = await fetch(`${FLASK_BASE_URL}/monitor/mock/logs/analysis?${params}`);
   if (!res.ok) throw new Error(`Get logs analysis failed: ${res.status}`);
   return res.json();
 }

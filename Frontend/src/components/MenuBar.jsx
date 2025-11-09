@@ -31,6 +31,11 @@ export default function MenuBar() {
       icon: "pi pi-file",
       command: () => handleNavigate(3, "/logs"),
     },
+    {
+      label: "Profile",
+      icon: "pi pi-user",
+      command: () => handleNavigate(4, "/profile"),
+    },
   ];
 
   const handleNavigate = (index, path) => {

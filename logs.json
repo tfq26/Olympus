@@ -1,0 +1,45 @@
+{
+  "logs": [
+    {
+      "id": "LOG-001",
+      "timestamp": "2025-01-09T10:15:00Z",
+      "status": "OK",
+      "message": "System health check passed",
+      "customer": "Acme Corp",
+      "resources_affected": ["res_api_001", "res_db_001"]
+    },
+    {
+      "id": "LOG-002",
+      "timestamp": "2025-01-09T10:20:00Z",
+      "status": "WARNING",
+      "message": "High memory usage detected",
+      "customer": "Globex",
+      "resources_affected": ["res_vm_001"]
+    },
+    {
+      "id": "LOG-003",
+      "timestamp": "2025-01-09T10:25:00Z",
+      "status": "ERROR",
+      "message": "Database connection timeout",
+      "customer": "Initech",
+      "resources_affected": ["res_db_002"]
+    },
+    {
+      "id": "LOG-004",
+      "timestamp": "2025-01-09T10:30:00Z",
+      "status": "CRITICAL",
+      "message": "Service unavailable - immediate attention required",
+      "customer": "Umbrella",
+      "resources_affected": ["res_api_002", "res_lb_001"]
+    },
+    {
+      "id": "LOG-005",
+      "timestamp": "2025-01-09T10:35:00Z",
+      "status": "OK",
+      "message": "Backup completed successfully",
+      "customer": "Hooli",
+      "resources_affected": ["res_storage_001"]
+    }
+  ]
+}
+

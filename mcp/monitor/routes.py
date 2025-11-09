@@ -219,6 +219,34 @@ def analyze_mock_logs():
         "analysis": analysis
     })
 
+@monitor_bp.route("/mock/resources", methods=["GET"])
+def get_all_resources():
+    """
+    Get all resources from metrics.json
+    Returns: List of all resources with their metrics
+    """
+    metrics = load_metrics()
+    if metrics is None:
+        return jsonify({"error": "Failed to load metrics.json"}), 500
+    
+    return jsonify({
+        "resources": metrics,
+        "total": len(metrics)
+    })
+
+@monitor_bp.route("/mock/resource/<resource_id>", methods=["GET"])
+def get_single_resource(resource_id):
+    """
+    Get a single resource by ID
+    Path param: resource_id - Resource ID to retrieve
+    Returns: Resource data with metrics
+    """
+    resource = get_resource_by_id(resource_id)
+    if not resource:
+        return jsonify({"error": f"Resource {resource_id} not found"}), 404
+    
+    return jsonify(resource)
+
 @monitor_bp.route("/mock/resource/<resource_id>/combined", methods=["GET"])
 def get_combined_resource_analysis(resource_id):
     """
