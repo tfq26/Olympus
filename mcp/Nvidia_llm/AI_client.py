@@ -1,19 +1,74 @@
 """
 NVIDIA LLM Client - Integration with NVIDIA Nemotron for analyzing metrics and logs
 Provides functions to analyze CloudWatch metrics, resource metrics, and logs using LLM
+Uses OpenAI SDK with NVIDIA API
 """
 import os
 import json
-import requests
+from pathlib import Path
 from dotenv import load_dotenv
+from openai import OpenAI
+import httpx
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from .env file in project root
+project_root = Path(__file__).parent.parent.parent
+env_file = project_root / ".env"
+load_dotenv(dotenv_path=env_file)
 
 # Get NVIDIA API configuration from environment variables
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
-NVIDIA_API_URL = os.getenv("NVIDIA_API_URL", "https://integrate.api.nvidia.com/v1/chat/completions")
-NVIDIA_MODEL = os.getenv("NVIDIA_MODEL", "nvidia/nemotron-70b-instruct")
+NVIDIA_BASE_URL = os.getenv("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1")
+# Using nvidia/nvidia-nemotron-nano-9b-v2 as default model
+# Can be overridden with NVIDIA_MODEL in .env file
+NVIDIA_MODEL = os.getenv("NVIDIA_MODEL", "nvidia/nvidia-nemotron-nano-9b-v2")
+
+def _get_client():
+    """
+    Get or create OpenAI client configured for NVIDIA API
+    Returns: OpenAI client instance or None if API key is not set
+    """
+    if not NVIDIA_API_KEY:
+        return None
+    
+    try:
+        # Create custom HTTP client to avoid proxy/environment issues
+        http_client = httpx.Client(
+            base_url=NVIDIA_BASE_URL,
+            headers={
+                "Authorization": f"Bearer {NVIDIA_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            timeout=30.0
+        )
+        
+        # Create OpenAI client with custom HTTP client
+        client = OpenAI(
+            base_url=NVIDIA_BASE_URL,
+            api_key=NVIDIA_API_KEY,
+            http_client=http_client
+        )
+        return client
+    except Exception as e:
+        # Fallback: try simple initialization
+        try:
+            # Clear any problematic env vars temporarily
+            old_proxies = {}
+            for key in ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']:
+                if key in os.environ:
+                    old_proxies[key] = os.environ.pop(key)
+            
+            client = OpenAI(
+                base_url=NVIDIA_BASE_URL,
+                api_key=NVIDIA_API_KEY
+            )
+            
+            # Restore env vars
+            for key, value in old_proxies.items():
+                os.environ[key] = value
+                
+            return client
+        except Exception:
+            return None
 
 def analyze_with_nvidia(metrics):
     """
@@ -103,53 +158,49 @@ Provide a clear, actionable summary in 2-3 sentences."""
 
     return _call_nvidia_api(prompt, "log data")
 
-def _call_nvidia_api(prompt, data_type):
+def _call_nvidia_api(prompt, data_type, use_streaming=False):
     """
-    Helper function to make API call to NVIDIA Nemotron LLM
+    Helper function to make API call to NVIDIA Nemotron LLM using OpenAI SDK
     Args:
         prompt - The prompt text to send to the LLM
         data_type - Type of data being analyzed (for system message context)
+        use_streaming - Whether to use streaming responses (default: False)
     Returns: Dictionary with "analysis" key or error information
     """
-    # Set up API request headers
-    headers = {
-        "Authorization": f"Bearer {NVIDIA_API_KEY}",
-        "Content-Type": "application/json"
-    }
+    client = _get_client()
+    if not client:
+        return {"error": "NVIDIA API client not initialized. Check NVIDIA_API_KEY in .env"}
     
-    # Build the API payload following OpenAI-compatible format
-    payload = {
-        "model": NVIDIA_MODEL,
-        "messages": [
-            {
-                "role": "system",
-                "content": f"You are an AI assistant that analyzes {data_type} and provides actionable insights for system administrators."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        "temperature": 0.7,  # Controls randomness (0.0 = deterministic, 1.0 = creative)
-        "max_tokens": 500,    # Maximum length of response
-        "stream": False       # Return complete response, not streamed
-    }
-
     try:
-        # Make POST request to NVIDIA API
-        response = requests.post(NVIDIA_API_URL, headers=headers, json=payload, timeout=30)
+        # Create chat completion using OpenAI SDK
+        completion = client.chat.completions.create(
+            model=NVIDIA_MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"You are an AI assistant that analyzes {data_type} and provides actionable insights for system administrators."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.7,  # Controls randomness (0.0 = deterministic, 1.0 = creative)
+            max_tokens=500,   # Maximum length of response
+            stream=use_streaming  # Whether to stream the response
+        )
         
-        if response.status_code == 200:
-            result = response.json()
-            # Extract the analysis text from the API response
-            if "choices" in result and len(result["choices"]) > 0:
-                analysis = result["choices"][0].get("message", {}).get("content", "")
-                return {"analysis": analysis}
-            return {"error": "Unexpected response format", "raw_response": result}
+        if use_streaming:
+            # Handle streaming response
+            analysis_content = ""
+            for chunk in completion:
+                if chunk.choices[0].delta.content is not None:
+                    analysis_content += chunk.choices[0].delta.content
+            return {"analysis": analysis_content}
         else:
-            # Return error if API call failed
-            return {"error": f"NVIDIA API failed with status {response.status_code}", "details": response.text}
-    except requests.exceptions.Timeout:
-        return {"error": "NVIDIA API request timed out"}
+            # Handle non-streaming response
+            analysis = completion.choices[0].message.content
+            return {"analysis": analysis}
+            
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": f"NVIDIA API error: {str(e)}"}
