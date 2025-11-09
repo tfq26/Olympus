@@ -1,8 +1,0 @@
-version: "3.9"
-
-services:
-  terraform:
-    build: ./terraform
-    env_file: ../.env
-    stdin_open: true
-    tty: true

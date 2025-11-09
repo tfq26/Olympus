@@ -1,2 +1,0 @@
-# MCP Infrastructure Server Requirements
-mcp[cli]
