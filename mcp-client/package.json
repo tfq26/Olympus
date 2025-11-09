@@ -1,0 +1,21 @@
+{
+  "name": "mcp-client",
+  "version": "1.0.0",
+  "description": "MCP integration for MCP client",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test-endpoints.js",
+    "start": "node server.js",
+    "test:router": "node -e \"import('./model/router.js').then(m => m.interpretMessage(process.argv[1]).then(r => console.log(JSON.stringify(r, null, 2))).catch(e => console.error(e.message)))\""
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.21.1",
+    "dotenv": "^16.3.1",
+    "axios": "^1.7.2",
+    "express": "^4.19.2",
+    "ws": "^8.17.1"
+  }
+}
