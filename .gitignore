@@ -1,0 +1,12 @@
+.env
+ec2terraform/
+.venv
+.terraform*
+.terraform/
+terraform.tfstate
+*.tfstate
+*.tfstate.backup
+*.env
+venv/
+__pycache__/
+*.pyc
