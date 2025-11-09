@@ -14,13 +14,15 @@ import TicketsDashboard from "./pages/Tickets/TicketDashboard.jsx";
 import NotFound from "./pages/error.jsx";
 import LogsDashboard from "./pages/Logs/LogDashboard.jsx";
 import MenuBar from "./components/MenuBar.jsx";
+import ProfilePage from "./pages/Profile/ProfilePage.jsx";
 
 export const appRoutes = [
   { path: "/", element: <Home />, roles: ["user", "admin"] },
   { path: "/resources", element: <Dashboard />, roles: ["user", "admin"] },
   { path: "/tickets", element: <TicketsDashboard />, roles: ["user", "admin"] },
   { path: "/signin", element: <SignIn />, public: true, guestOnly: true },
-  { path: "/logs", element: <LogsDashboard />, public: true }
+  { path: "/logs", element: <LogsDashboard />, public: true },
+  { path: "/profile", element: <ProfilePage />, public: true },
 ];
 
 const ProtectedRoute = ({ element, allowedRoles }) => {
