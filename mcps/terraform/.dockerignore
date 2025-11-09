@@ -1,0 +1,17 @@
+# Terraform build artifacts
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Env and config
+.env
+*.log
+
+# Other local-only files
+.vscode/
+.idea/
