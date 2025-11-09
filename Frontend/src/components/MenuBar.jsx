@@ -1,59 +1,80 @@
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { Dock } from "primereact/dock";
+import { Tooltip } from "primereact/tooltip";
 import "primeicons/primeicons.css";
+import "primereact/resources/themes/lara-light-indigo/theme.css"; // or your chosen theme
+import "primereact/resources/primereact.min.css";
 
-const MenuBar = () => {
-  const [hovered, setHovered] = useState(null);
-  const [active, setActive] = useState(0);
+export default function MenuBar() {
+  const navigate = useNavigate();
+  const [activeIndex, setActiveIndex] = useState(0);
 
+  // Define navigation items
   const items = [
-    { label: "Home", icon: "pi pi-home", path: "/" },
-    { label: "Resources", icon: "pi pi-database", path: "/resources" },
-    { label: "Tickets", icon: "pi pi-ticket", path: "/tickets" },
-    { label: "Logs", icon: "pi pi-file", path: "/logs" },
+    {
+      label: "Home",
+      icon: "pi pi-home",
+      command: () => handleNavigate(0, "/"),
+    },
+    {
+      label: "Resources",
+      icon: "pi pi-database",
+      command: () => handleNavigate(1, "/resources"),
+    },
+    {
+      label: "Tickets",
+      icon: "pi pi-ticket",
+      command: () => handleNavigate(2, "/tickets"),
+    },
+    {
+      label: "Logs",
+      icon: "pi pi-file",
+      command: () => handleNavigate(3, "/logs"),
+    },
   ];
 
-  return (
-    <div className="flex justify-center p-4">
-      <nav className="flex gap-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-200">
-        {items.map((item, i) => {
-          const highlighted = hovered === i || active === i;
+  const handleNavigate = (index, path) => {
+    setActiveIndex(index);
+    navigate(path);
+  };
 
-          return (
-            <motion.button
-              key={i}
-              className="relative px-6 py-3 rounded-full flex items-center gap-3"
-              onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(null)}
-              onClick={() => setActive(i)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {highlighted && (
-                <motion.div
-                  className="absolute inset-0 bg-blue-500 rounded-full"
-                  layoutId="highlight"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: active === i ? 1 : 0.1 }}
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
-              <i
-                className={`${item.icon} relative z-10 text-xl`}
-                style={{ color: highlighted ? "white" : "#64748b" }}
-              />
-              <span
-                className="relative z-10 font-medium text-sm"
-                style={{ color: highlighted ? "white" : "#64748b" }}
-              >
-                {item.label}
-              </span>
-            </motion.button>
-          );
-        })}
-      </nav>
+  // Custom dock item templates (for styling and tooltips)
+  const itemTemplate = (item, options) => {
+    const isActive = items[activeIndex].label === item.label;
+
+    return (
+      <>
+        <Tooltip target={`.dock-icon-${item.label}`} content={item.label} position="top" />
+
+        <div
+          className={`dock-icon-${item.label} flex flex-col items-center justify-center transition-all duration-200 ${
+            isActive ? "scale-110" : "scale-100"
+          }`}
+          onClick={item.command}
+        >
+          <i
+            className={`${item.icon} text-2xl sm:text-3xl transition-colors duration-300 ${
+              isActive
+                ? "text-indigo-500 dark:text-indigo-400"
+                : "text-gray-700 dark:text-gray-300"
+            }`}
+          />
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <div className="fixed bottom-2 left-0 right-0 flex justify-center z-50 pointer-events-none">
+      <div className="pointer-events-auto">
+        <Dock
+          model={items}
+          position="bottom"
+          itemTemplate={itemTemplate}
+          className="backdrop-blur-lg rounded-2xl shadow-lg px-4 py-2"
+        />
+      </div>
     </div>
   );
-};
-
-export default MenuBar;
+}

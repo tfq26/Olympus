@@ -37,4 +37,15 @@
   :root {
     font-family: var(--font-mono);
   }
+
+  html, body, #root {
+    height: 100%;
+  }
+
+  body {
+    background-image: linear-gradient(345deg, #0d0b1a 0%, #1f1a3b 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    color: var(--color-text-primary, #eae8ff);
+  }
 }

@@ -1,5 +1,5 @@
 import { Badge } from "primereact/badge";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 export default function SystemHealthIndicator({ status = "Nominal" }) {
   const colorMap = {
