@@ -9,9 +9,9 @@ from .metrics_updater import update_resource_metrics
 from .ticket_system import (
     create_ticket_from_issue, get_ticket_by_id, load_tickets, approve_critical_ticket,
     reject_critical_ticket, load_employees, load_admins, get_employee_by_id, get_admin_by_id,
-    update_ticket
+    update_ticket, create_ticket_from_ai_analysis
 )
-from ..Nvidia_llm.AI_client import analyze_with_nvidia, analyze_metrics_with_nvidia, analyze_logs_with_nvidia
+from ..Nvidia_llm.AI_client import analyze_with_nvidia, analyze_metrics_with_nvidia, analyze_logs_with_nvidia, analyze_metrics_for_issues
 
 # Create Flask Blueprint for monitor routes
 monitor_bp = Blueprint("monitor", __name__)
@@ -656,4 +656,88 @@ def create_tickets_from_metrics():
     return jsonify({
         "tickets_created": len(created_tickets),
         "tickets": created_tickets
+    })
+
+
+@monitor_bp.route("/metrics/analyze-and-create-tickets", methods=["POST"])
+def analyze_metrics_and_create_tickets():
+    """
+    Analyze metrics with AI and create tickets if issues are detected
+    Query params:
+        - resource_id (optional) - Analyze specific resource
+        - instance_id (optional) - Analyze resource by instance_id
+    Returns: AI analysis results and tickets created (if any)
+    """
+    resource_id = request.args.get("resource_id")
+    instance_id = request.args.get("instance_id")
+    
+    # Load resources
+    resources = load_metrics()
+    if resources is None:
+        return jsonify({"error": "Failed to load metrics.json"}), 500
+    
+    # Filter resources if resource_id or instance_id provided
+    if resource_id:
+        resources = [r for r in resources if r.get("id") == resource_id]
+    elif instance_id:
+        resources = [r for r in resources if r.get("instance_id") == instance_id]
+    
+    if not resources:
+        return jsonify({"error": "Resource not found"}), 404
+    
+    # Analyze each resource and create tickets
+    results = []
+    
+    for resource in resources:
+        # Step 1: Analyze metrics with AI
+        ai_analysis = analyze_metrics_for_issues(resource)
+        
+        if "error" in ai_analysis:
+            results.append({
+                "resource_id": resource.get("id"),
+                "resource_name": resource.get("name"),
+                "error": ai_analysis.get("error"),
+                "ticket_created": False
+            })
+            continue
+        
+        # Step 2: Check if issue was detected
+        has_issue = ai_analysis.get("has_issue", False)
+        severity = ai_analysis.get("severity", "OK").upper()
+        
+        # Step 3: Create ticket only if issue detected
+        ticket = None
+        if has_issue and severity != "OK":
+            ticket = create_ticket_from_ai_analysis(ai_analysis, resource)
+        
+        # Step 4: Build result
+        result = {
+            "resource_id": resource.get("id"),
+            "resource_name": resource.get("name"),
+            "ai_analysis": {
+                "has_issue": has_issue,
+                "severity": severity,
+                "issue_type": ai_analysis.get("issue_type"),
+                "description": ai_analysis.get("description"),
+                "recommendations": ai_analysis.get("recommendations")
+            },
+            "ticket_created": ticket is not None,
+            "ticket": ticket
+        }
+        
+        results.append(result)
+    
+    # Summary
+    total_resources = len(results)
+    issues_detected = sum(1 for r in results if r.get("ai_analysis", {}).get("has_issue", False))
+    tickets_created = sum(1 for r in results if r.get("ticket_created", False))
+    
+    return jsonify({
+        "summary": {
+            "total_resources_analyzed": total_resources,
+            "issues_detected": issues_detected,
+            "tickets_created": tickets_created,
+            "no_issues": total_resources - issues_detected
+        },
+        "results": results
     })

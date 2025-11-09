@@ -18,6 +18,9 @@ load_dotenv(dotenv_path=env_file)
 DYNAMODB_REGION = os.getenv("DYNAMODB_REGION", "us-east-1")
 LOGS_TABLE_NAME = os.getenv("DYNAMODB_TABLE_LOGS", "logs-table")
 METRICS_TABLE_NAME = os.getenv("DYNAMODB_TABLE_METRICS", "metrics-table")
+EMPLOYEES_TABLE_NAME = os.getenv("DYNAMODB_TABLE_EMPLOYEES", "employees-table")
+ADMINS_TABLE_NAME = os.getenv("DYNAMODB_TABLE_ADMINS", "admins-table")
+TICKETS_TABLE_NAME = os.getenv("DYNAMODB_TABLE_TICKETS", "tickets-table")
 
 # Initialize DynamoDB resource (simpler API than client)
 try:
@@ -25,10 +28,16 @@ try:
     # Get table references (will be None if tables don't exist)
     logs_table = dynamodb_resource.Table(LOGS_TABLE_NAME) if LOGS_TABLE_NAME else None
     metrics_table = dynamodb_resource.Table(METRICS_TABLE_NAME) if METRICS_TABLE_NAME else None
+    employees_table = dynamodb_resource.Table(EMPLOYEES_TABLE_NAME) if EMPLOYEES_TABLE_NAME else None
+    admins_table = dynamodb_resource.Table(ADMINS_TABLE_NAME) if ADMINS_TABLE_NAME else None
+    tickets_table = dynamodb_resource.Table(TICKETS_TABLE_NAME) if TICKETS_TABLE_NAME else None
 except Exception as e:
     # If DynamoDB initialization fails, set tables to None (will fall back to JSON)
     logs_table = None
     metrics_table = None
+    employees_table = None
+    admins_table = None
+    tickets_table = None
 
 
 def insert_log(log_data):
@@ -456,113 +465,273 @@ def get_all_resources():
 
 def create_tables():
     """
-    Create DynamoDB table to store logs JSON data as-is
-    Creates logs-table if it doesn't exist (metrics removed - only logs)
-    Simple schema: just store the JSON objects with id as partition key
+    Create all DynamoDB tables for logs, metrics, employees, admins, and tickets
+    Creates tables if they don't exist
     Returns: Dictionary with creation results
     """
     results = {
         "logs_table_created": False,
+        "metrics_table_created": False,
+        "employees_table_created": False,
+        "admins_table_created": False,
+        "tickets_table_created": False,
         "errors": []
     }
     
-    try:
-        # Create logs table - simple schema, just store JSON as-is
-        try:
-            logs_table_definition = {
-                "TableName": LOGS_TABLE_NAME,
-                "KeySchema": [
-                    {
-                        "AttributeName": "id",
-                        "KeyType": "HASH"  # Partition key - just the log id
-                    }
-                ],
-                "AttributeDefinitions": [
-                    {
-                        "AttributeName": "id",
-                        "AttributeType": "S"  # String
-                    }
-                ],
-                "BillingMode": "PAY_PER_REQUEST"  # On-demand pricing
-            }
-            
-            dynamodb_client = boto3.client("dynamodb", region_name=DYNAMODB_REGION)
-            dynamodb_client.create_table(**logs_table_definition)
-            
-            # Wait for table to be created
-            print(f"Creating logs table: {LOGS_TABLE_NAME}...")
-            waiter = dynamodb_client.get_waiter('table_exists')
-            waiter.wait(TableName=LOGS_TABLE_NAME)
-            print(f"✓ Logs table created successfully")
-            results["logs_table_created"] = True
-            
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'ResourceInUseException':
-                print(f"Logs table {LOGS_TABLE_NAME} already exists")
-                results["logs_table_created"] = True
-            else:
-                error_msg = f"Error creating logs table: {str(e)}"
-                results["errors"].append(error_msg)
-                print(error_msg)
+    dynamodb_client = boto3.client("dynamodb", region_name=DYNAMODB_REGION)
     
-    except Exception as e:
-        error_msg = f"Error in create_tables: {str(e)}"
-        results["errors"].append(error_msg)
-        print(error_msg)
+    # Create logs table (uses log_id as partition key to match existing schema)
+    try:
+        logs_table_definition = {
+            "TableName": LOGS_TABLE_NAME,
+            "KeySchema": [
+                {"AttributeName": "log_id", "KeyType": "HASH"},
+                {"AttributeName": "timestamp", "KeyType": "RANGE"}
+            ],
+            "AttributeDefinitions": [
+                {"AttributeName": "log_id", "AttributeType": "S"},
+                {"AttributeName": "timestamp", "AttributeType": "S"}
+            ],
+            "BillingMode": "PAY_PER_REQUEST"
+        }
+        dynamodb_client.create_table(**logs_table_definition)
+        print(f"Creating logs table: {LOGS_TABLE_NAME}...")
+        waiter = dynamodb_client.get_waiter('table_exists')
+        waiter.wait(TableName=LOGS_TABLE_NAME)
+        print(f"✓ Logs table created successfully")
+        results["logs_table_created"] = True
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ResourceInUseException':
+            print(f"Logs table {LOGS_TABLE_NAME} already exists")
+            results["logs_table_created"] = True
+        else:
+            results["errors"].append(f"Error creating logs table: {str(e)}")
+    
+    # Create metrics table
+    try:
+        metrics_table_definition = {
+            "TableName": METRICS_TABLE_NAME,
+            "KeySchema": [{"AttributeName": "id", "KeyType": "HASH"}],
+            "AttributeDefinitions": [{"AttributeName": "id", "AttributeType": "S"}],
+            "BillingMode": "PAY_PER_REQUEST"
+        }
+        dynamodb_client.create_table(**metrics_table_definition)
+        print(f"Creating metrics table: {METRICS_TABLE_NAME}...")
+        waiter = dynamodb_client.get_waiter('table_exists')
+        waiter.wait(TableName=METRICS_TABLE_NAME)
+        print(f"✓ Metrics table created successfully")
+        results["metrics_table_created"] = True
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ResourceInUseException':
+            print(f"Metrics table {METRICS_TABLE_NAME} already exists")
+            results["metrics_table_created"] = True
+        else:
+            results["errors"].append(f"Error creating metrics table: {str(e)}")
+    
+    # Create employees table
+    try:
+        employees_table_definition = {
+            "TableName": EMPLOYEES_TABLE_NAME,
+            "KeySchema": [{"AttributeName": "employee_id", "KeyType": "HASH"}],
+            "AttributeDefinitions": [{"AttributeName": "employee_id", "AttributeType": "S"}],
+            "BillingMode": "PAY_PER_REQUEST"
+        }
+        dynamodb_client.create_table(**employees_table_definition)
+        print(f"Creating employees table: {EMPLOYEES_TABLE_NAME}...")
+        waiter = dynamodb_client.get_waiter('table_exists')
+        waiter.wait(TableName=EMPLOYEES_TABLE_NAME)
+        print(f"✓ Employees table created successfully")
+        results["employees_table_created"] = True
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ResourceInUseException':
+            print(f"Employees table {EMPLOYEES_TABLE_NAME} already exists")
+            results["employees_table_created"] = True
+        else:
+            results["errors"].append(f"Error creating employees table: {str(e)}")
+    
+    # Create admins table
+    try:
+        admins_table_definition = {
+            "TableName": ADMINS_TABLE_NAME,
+            "KeySchema": [{"AttributeName": "admin_id", "KeyType": "HASH"}],
+            "AttributeDefinitions": [{"AttributeName": "admin_id", "AttributeType": "S"}],
+            "BillingMode": "PAY_PER_REQUEST"
+        }
+        dynamodb_client.create_table(**admins_table_definition)
+        print(f"Creating admins table: {ADMINS_TABLE_NAME}...")
+        waiter = dynamodb_client.get_waiter('table_exists')
+        waiter.wait(TableName=ADMINS_TABLE_NAME)
+        print(f"✓ Admins table created successfully")
+        results["admins_table_created"] = True
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ResourceInUseException':
+            print(f"Admins table {ADMINS_TABLE_NAME} already exists")
+            results["admins_table_created"] = True
+        else:
+            results["errors"].append(f"Error creating admins table: {str(e)}")
+    
+    # Create tickets table
+    try:
+        tickets_table_definition = {
+            "TableName": TICKETS_TABLE_NAME,
+            "KeySchema": [{"AttributeName": "ticket_id", "KeyType": "HASH"}],
+            "AttributeDefinitions": [{"AttributeName": "ticket_id", "AttributeType": "S"}],
+            "BillingMode": "PAY_PER_REQUEST"
+        }
+        dynamodb_client.create_table(**tickets_table_definition)
+        print(f"Creating tickets table: {TICKETS_TABLE_NAME}...")
+        waiter = dynamodb_client.get_waiter('table_exists')
+        waiter.wait(TableName=TICKETS_TABLE_NAME)
+        print(f"✓ Tickets table created successfully")
+        results["tickets_table_created"] = True
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ResourceInUseException':
+            print(f"Tickets table {TICKETS_TABLE_NAME} already exists")
+            results["tickets_table_created"] = True
+        else:
+            results["errors"].append(f"Error creating tickets table: {str(e)}")
     
     return results
 
 
-def migrate_json_to_dynamodb(logs_file_path=None):
+def batch_insert_employees(employees_list):
+    """Batch insert employees into DynamoDB"""
+    if not employees_table:
+        return 0
+    
+    inserted_count = 0
+    try:
+        with employees_table.batch_writer() as batch:
+            for employee in employees_list:
+                batch.put_item(Item=employee)
+                inserted_count += 1
+        return inserted_count
+    except Exception as e:
+        print(f"Error in batch insert employees: {e}")
+        return inserted_count
+
+
+def batch_insert_admins(admins_list):
+    """Batch insert admins into DynamoDB"""
+    if not admins_table:
+        return 0
+    
+    inserted_count = 0
+    try:
+        with admins_table.batch_writer() as batch:
+            for admin in admins_list:
+                batch.put_item(Item=admin)
+                inserted_count += 1
+        return inserted_count
+    except Exception as e:
+        print(f"Error in batch insert admins: {e}")
+        return inserted_count
+
+
+def batch_insert_tickets(tickets_list):
+    """Batch insert tickets into DynamoDB"""
+    if not tickets_table:
+        return 0
+    
+    inserted_count = 0
+    try:
+        with tickets_table.batch_writer() as batch:
+            for ticket in tickets_list:
+                batch.put_item(Item=ticket)
+                inserted_count += 1
+        return inserted_count
+    except Exception as e:
+        print(f"Error in batch insert tickets: {e}")
+        return inserted_count
+
+
+def batch_insert_metrics_resources(resources_list):
+    """Batch insert metrics/resources into DynamoDB"""
+    if not metrics_table:
+        return 0
+    
+    inserted_count = 0
+    try:
+        with metrics_table.batch_writer() as batch:
+            for resource in resources_list:
+                batch.put_item(Item=resource)
+                inserted_count += 1
+        return inserted_count
+    except Exception as e:
+        print(f"Error in batch insert metrics: {e}")
+        return inserted_count
+
+
+def migrate_json_to_dynamodb(logs_file_path=None, metrics_file_path=None, 
+                              employees_file_path=None, admins_file_path=None, 
+                              tickets_file_path=None):
     """
-    Create DynamoDB table and migrate logs from JSON file
+    Create DynamoDB tables and migrate all JSON data to DynamoDB
     This function:
-    1. Creates the logs-table (if it doesn't exist)
-    2. Reads logs.json
-    3. Inserts logs into DynamoDB using batch operations
-    Note: Metrics removed - only logs are stored in DynamoDB
+    1. Creates all tables (logs, metrics, employees, admins, tickets)
+    2. Reads JSON files
+    3. Inserts data into DynamoDB using batch operations
     Args:
-        logs_file_path - Path to logs.json file (optional, uses default if None)
+        logs_file_path - Path to logs.json file (optional)
+        metrics_file_path - Path to metrics.json file (optional)
+        employees_file_path - Path to employees.json file (optional)
+        admins_file_path - Path to admins.json file (optional)
+        tickets_file_path - Path to tickets.json file (optional)
     Returns: Dictionary with migration results
     """
     import json
+    import time
     from pathlib import Path
     
-    # Use default path if not provided
+    # Use default paths if not provided
+    project_root = Path(__file__).parent.parent.parent
     if logs_file_path is None:
-        project_root = Path(__file__).parent.parent.parent
         logs_file_path = project_root / "logs.json"
+    if metrics_file_path is None:
+        metrics_file_path = project_root / "metrics.json"
+    if employees_file_path is None:
+        employees_file_path = project_root / "employees.json"
+    if admins_file_path is None:
+        admins_file_path = project_root / "admins.json"
+    if tickets_file_path is None:
+        tickets_file_path = project_root / "tickets.json"
     
     results = {
-        "table_created": False,
+        "tables_created": {},
         "logs_inserted": 0,
+        "metrics_inserted": 0,
+        "employees_inserted": 0,
+        "admins_inserted": 0,
+        "tickets_inserted": 0,
         "errors": []
     }
     
-    # Step 1: Create table
-    print("=== Step 1: Creating DynamoDB Table ===")
+    # Step 1: Create all tables
+    print("=== Step 1: Creating DynamoDB Tables ===")
     try:
         table_results = create_tables()
-        results["table_created"] = table_results["logs_table_created"]
+        results["tables_created"] = {
+            "logs": table_results["logs_table_created"],
+            "metrics": table_results["metrics_table_created"],
+            "employees": table_results["employees_table_created"],
+            "admins": table_results["admins_table_created"],
+            "tickets": table_results["tickets_table_created"]
+        }
         results["errors"].extend(table_results["errors"])
-        
-        if not results["table_created"]:
-            print("Warning: Table may not have been created")
     except Exception as e:
-        error_msg = f"Error creating table: {str(e)}"
+        error_msg = f"Error creating tables: {str(e)}"
         results["errors"].append(error_msg)
         print(error_msg)
         return results
     
-    # Wait a bit for table to be fully ready
-    import time
-    time.sleep(2)
+    # Wait for tables to be ready
+    print("Waiting for tables to be ready...")
+    time.sleep(5)
     
     # Step 2: Migrate logs
-    print("\n=== Step 2: Migrating Logs ===")
-    try:
-        if logs_file_path.exists():
-            print(f"Reading logs from: {logs_file_path}")
+    if logs_file_path.exists():
+        print("\n=== Step 2: Migrating Logs ===")
+        try:
             with open(logs_file_path, 'r') as f:
                 data = json.load(f)
                 logs = data.get("logs", [])
@@ -571,25 +740,91 @@ def migrate_json_to_dynamodb(logs_file_path=None):
                     print("Inserting logs into DynamoDB (this may take a while)...")
                     results["logs_inserted"] = batch_insert_logs(logs)
                     print(f"✓ Migrated {results['logs_inserted']} log items to DynamoDB")
+        except Exception as e:
+            results["errors"].append(f"Error migrating logs: {str(e)}")
+    
+    # Step 3: Migrate metrics
+    if metrics_file_path.exists():
+        print("\n=== Step 3: Migrating Metrics ===")
+        try:
+            with open(metrics_file_path, 'r') as f:
+                data = json.load(f)
+                resources = data.get("resources", [])
+                if resources:
+                    print(f"Found {len(resources)} resources to migrate")
+                    results["metrics_inserted"] = batch_insert_metrics_resources(resources)
+                    print(f"✓ Migrated {results['metrics_inserted']} resources to DynamoDB")
+        except Exception as e:
+            results["errors"].append(f"Error migrating metrics: {str(e)}")
+    
+    # Step 4: Migrate employees
+    if employees_file_path.exists():
+        print("\n=== Step 4: Migrating Employees ===")
+        try:
+            with open(employees_file_path, 'r') as f:
+                data = json.load(f)
+                employees = data.get("employees", [])
+                if employees:
+                    print(f"Found {len(employees)} employees to migrate")
+                    results["employees_inserted"] = batch_insert_employees(employees)
+                    print(f"✓ Migrated {results['employees_inserted']} employees to DynamoDB")
+        except Exception as e:
+            results["errors"].append(f"Error migrating employees: {str(e)}")
+    
+    # Step 5: Migrate admins
+    if admins_file_path.exists():
+        print("\n=== Step 5: Migrating Admins ===")
+        try:
+            with open(admins_file_path, 'r') as f:
+                data = json.load(f)
+                admins = data.get("admins", [])
+                if admins:
+                    print(f"Found {len(admins)} admins to migrate")
+                    results["admins_inserted"] = batch_insert_admins(admins)
+                    print(f"✓ Migrated {results['admins_inserted']} admins to DynamoDB")
+        except Exception as e:
+            results["errors"].append(f"Error migrating admins: {str(e)}")
+    
+    # Step 6: Migrate tickets
+    if tickets_file_path.exists():
+        print("\n=== Step 6: Migrating Tickets ===")
+        try:
+            with open(tickets_file_path, 'r') as f:
+                data = json.load(f)
+                tickets = data.get("tickets", [])
+                if tickets:
+                    print(f"Found {len(tickets)} tickets to migrate")
+                    results["tickets_inserted"] = batch_insert_tickets(tickets)
+                    print(f"✓ Migrated {results['tickets_inserted']} tickets to DynamoDB")
                 else:
-                    results["errors"].append("No logs found in JSON file")
-        else:
-            results["errors"].append(f"Logs file not found: {logs_file_path}")
-    except Exception as e:
-        error_msg = f"Error migrating logs: {str(e)}"
-        results["errors"].append(error_msg)
-        print(error_msg)
+                    print("No tickets to migrate (tickets.json is empty)")
+        except Exception as e:
+            results["errors"].append(f"Error migrating tickets: {str(e)}")
     
     # Summary
-    print("\n=== Migration Summary ===")
-    print(f"Table created: {results['table_created']}")
-    print(f"Logs inserted: {results['logs_inserted']}")
+    print("\n" + "=" * 60)
+    print("=== Migration Summary ===")
+    print("=" * 60)
+    print(f"Tables created:")
+    print(f"  - Logs: {results['tables_created'].get('logs', False)}")
+    print(f"  - Metrics: {results['tables_created'].get('metrics', False)}")
+    print(f"  - Employees: {results['tables_created'].get('employees', False)}")
+    print(f"  - Admins: {results['tables_created'].get('admins', False)}")
+    print(f"  - Tickets: {results['tables_created'].get('tickets', False)}")
+    print(f"")
+    print(f"Data migrated:")
+    print(f"  - Logs: {results['logs_inserted']} items")
+    print(f"  - Metrics: {results['metrics_inserted']} items")
+    print(f"  - Employees: {results['employees_inserted']} items")
+    print(f"  - Admins: {results['admins_inserted']} items")
+    print(f"  - Tickets: {results['tickets_inserted']} items")
+    
     if results["errors"]:
-        print(f"Errors: {len(results['errors'])}")
+        print(f"\nErrors: {len(results['errors'])}")
         for error in results["errors"]:
             print(f"  - {error}")
     else:
-        print("✓ Migration completed successfully!")
+        print("\n✓ Migration completed successfully!")
     
     return results
 

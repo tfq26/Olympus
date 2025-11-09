@@ -461,3 +461,61 @@ def reject_critical_ticket(ticket_id, admin_id, reason=None):
         return {"success": True, "ticket": get_ticket_by_id(ticket_id)}
     return {"error": "Failed to update ticket"}
 
+
+# ============================================================================
+# AI-Driven Ticket Creation Functions
+# ============================================================================
+
+def create_ticket_from_ai_analysis(ai_analysis, resource):
+    """
+    Create a ticket based on AI analysis results
+    Only creates ticket if AI detected an issue (has_issue = true and severity != OK)
+    Args:
+        ai_analysis - Dictionary from analyze_metrics_for_issues() with has_issue, severity, etc.
+        resource - Resource object with metrics data
+    Returns: Ticket dictionary if created, None if no issue detected
+    """
+    # Check if there's an error in AI analysis
+    if "error" in ai_analysis:
+        return None
+    
+    # Check if issue was detected
+    has_issue = ai_analysis.get("has_issue", False)
+    severity = ai_analysis.get("severity", "OK").upper()
+    
+    # Only create ticket if issue detected and severity is not OK
+    if not has_issue or severity == "OK":
+        return None
+    
+    # Extract information from AI analysis
+    issue_type = ai_analysis.get("issue_type") or "general"
+    description = ai_analysis.get("description") or f"{severity} issue detected in resource"
+    recommendations = ai_analysis.get("recommendations")
+    
+    # Get resource information
+    resource_id = resource.get("id", "unknown")
+    resource_name = resource.get("name", "unknown")
+    customer_name = resource.get("tags", {}).get("customer") or resource.get("tags", {}).get("Name") or "Unknown"
+    metrics_snapshot = resource.get("metrics", {})
+    
+    # Create issue description
+    issue = f"{severity}: {description}"
+    if recommendations:
+        full_description = f"{description}\n\nRecommendations: {recommendations}"
+    else:
+        full_description = description
+    
+    # Create ticket using existing function
+    ticket = create_ticket_from_issue(
+        issue=issue,
+        resource_id=resource_id,
+        severity=severity,
+        issue_type=issue_type,
+        description=full_description,
+        customer_name=customer_name,
+        logs_related=[],
+        metrics_snapshot=metrics_snapshot
+    )
+    
+    return ticket
+

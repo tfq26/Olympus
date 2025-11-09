@@ -210,6 +210,180 @@ Provide a clear summary in 2-3 sentences focusing on:
     
     return _call_nvidia_api(prompt, "customer health data")
 
+
+def analyze_metrics_for_issues(resource):
+    """
+    Analyzes resource metrics and determines if there are any issues that require tickets
+    Returns structured JSON with issue detection, severity, and type
+    Args: resource - Resource object with metrics data
+    Returns: Dictionary with has_issue, severity, issue_type, description, recommendations
+    """
+    if not NVIDIA_API_KEY:
+        return {"error": "Missing NVIDIA_API_KEY"}
+    
+    # Extract metrics from resource
+    metrics = resource.get("metrics", {})
+    resource_id = resource.get("id", "unknown")
+    resource_name = resource.get("name", "unknown")
+    
+    # Convert metrics to JSON string for the prompt
+    metrics_json = json.dumps(metrics, indent=2, default=str)
+    
+    # Create prompt that asks for structured JSON response
+    prompt = f"""Analyze the following resource metrics and determine if there are any issues that require a support ticket.
+
+Resource: {resource_name} (ID: {resource_id})
+Metrics Data:
+{metrics_json}
+
+Analyze the metrics and return a JSON response with the following structure:
+{{
+  "has_issue": true or false,
+  "severity": "CRITICAL" or "HIGH" or "MEDIUM" or "LOW" or "OK",
+  "issue_type": "cpu_spike" or "memory_leak" or "disk_full" or "network_issue" or "performance" or null,
+  "description": "Brief description of the issue" or null,
+  "recommendations": "What should be done" or null
+}}
+
+Thresholds for determining severity:
+- CPU usage > 95%: CRITICAL
+- CPU usage > 90%: HIGH
+- CPU usage > 80%: MEDIUM
+- CPU usage > 70%: LOW
+- CPU usage <= 70%: OK (no issue)
+
+- Memory usage > 95%: CRITICAL
+- Memory usage > 90%: HIGH
+- Memory usage > 80%: MEDIUM
+- Memory usage > 70%: LOW
+- Memory usage <= 70% or null: OK (no issue)
+
+- Disk usage > 95%: CRITICAL
+- Disk usage > 90%: HIGH
+- Disk usage > 80%: MEDIUM
+- Disk usage > 70%: LOW
+- Disk usage <= 70% or null: OK (no issue)
+
+- Network issues (unusual spikes/drops): MEDIUM or HIGH
+- Normal network traffic: OK (no issue)
+
+- Very low uptime (recent restart): LOW
+- Normal uptime: OK (no issue)
+
+Important:
+- If all metrics are normal, return has_issue: false, severity: "OK"
+- If any metric exceeds thresholds, return has_issue: true with appropriate severity
+- Only return JSON, no additional text
+
+Return only the JSON response:"""
+
+    try:
+        # Call NVIDIA API with modified prompt for structured response
+        client = _get_client()
+        if not client:
+            return {"error": "NVIDIA API client not initialized. Check NVIDIA_API_KEY in .env"}
+        
+        completion = client.chat.completions.create(
+            model=NVIDIA_MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an AI assistant that analyzes resource metrics and returns structured JSON responses. Always return valid JSON only, no additional text."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.3,  # Lower temperature for more consistent JSON responses
+            max_tokens=300,   # Shorter response for structured JSON
+            stream=False
+        )
+        
+        # Get the response
+        response_text = completion.choices[0].message.content
+        response_text = _clean_unicode_text(response_text)
+        
+        # Try to extract JSON from response (handle cases where AI adds extra text)
+        import re
+        # Find JSON object that contains "has_issue" - handle nested braces
+        json_match = re.search(r'\{[^{}]*"has_issue"[^}]*\}', response_text, re.DOTALL)
+        if not json_match:
+            # Try to find any JSON object in the response
+            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if json_match:
+            response_text = json_match.group(0)
+            # Clean up any trailing commas or invalid JSON
+            response_text = response_text.strip()
+        
+        # Parse JSON response
+        try:
+            ai_analysis = json.loads(response_text)
+            
+            # Validate and normalize response
+            has_issue = ai_analysis.get("has_issue", False)
+            severity = ai_analysis.get("severity", "OK").upper()
+            issue_type = ai_analysis.get("issue_type")
+            description = ai_analysis.get("description")
+            recommendations = ai_analysis.get("recommendations")
+            
+            # Normalize severity
+            if severity == "OK" or not has_issue:
+                severity = "OK"
+                has_issue = False
+            
+            return {
+                "has_issue": has_issue,
+                "severity": severity,
+                "issue_type": issue_type,
+                "description": description,
+                "recommendations": recommendations,
+                "raw_response": response_text  # Include raw response for debugging
+            }
+        except json.JSONDecodeError as e:
+            # If JSON parsing fails, try to extract information from text
+            # Fallback: analyze the text response
+            response_lower = response_text.lower()
+            has_issue = "has_issue" in response_text and ("true" in response_lower or "yes" in response_lower or "critical" in response_lower or "high" in response_lower)
+            
+            severity = "OK"
+            if "critical" in response_lower:
+                severity = "CRITICAL"
+                has_issue = True
+            elif "high" in response_lower:
+                severity = "HIGH"
+                has_issue = True
+            elif "medium" in response_lower:
+                severity = "MEDIUM"
+                has_issue = True
+            elif "low" in response_lower:
+                severity = "LOW"
+                has_issue = True
+            
+            # Try to determine issue type
+            issue_type = None
+            if "cpu" in response_lower:
+                issue_type = "cpu_spike"
+            elif "memory" in response_lower:
+                issue_type = "memory_leak"
+            elif "disk" in response_lower:
+                issue_type = "disk_full"
+            elif "network" in response_lower:
+                issue_type = "network_issue"
+            
+            return {
+                "has_issue": has_issue,
+                "severity": severity,
+                "issue_type": issue_type,
+                "description": response_text[:200] if response_text else None,
+                "recommendations": None,
+                "raw_response": response_text,
+                "warning": "Failed to parse JSON, extracted from text"
+            }
+            
+    except Exception as e:
+        return {"error": f"NVIDIA API error: {str(e)}"}
+
 def _clean_unicode_text(text):
     """
     Clean Unicode characters from text, replacing them with ASCII equivalents

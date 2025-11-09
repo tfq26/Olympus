@@ -1,7 +1,11 @@
 """
-Migration Script: Load logs.json into DynamoDB
-This script creates DynamoDB table and migrates logs from JSON file
-Note: Only logs are stored in DynamoDB (metrics removed)
+Migration Script: Load all JSON data into DynamoDB
+This script creates DynamoDB tables and migrates all JSON files:
+- logs.json -> logs-table
+- metrics.json -> metrics-table
+- employees.json -> employees-table
+- admins.json -> admins-table
+- tickets.json -> tickets-table
 """
 import sys
 from pathlib import Path
@@ -14,15 +18,20 @@ from mcp.monitor.dynamodb_client import migrate_json_to_dynamodb
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("DynamoDB Migration Script - Logs Only")
+    print("DynamoDB Migration Script - All JSON Data")
     print("=" * 60)
     print("")
     print("This script will:")
-    print("1. Create DynamoDB table (logs-table)")
-    print("2. Load data from logs.json")
-    print("3. Insert logs into DynamoDB")
+    print("1. Create DynamoDB tables (logs, metrics, employees, admins, tickets)")
+    print("2. Load data from JSON files")
+    print("3. Insert all data into DynamoDB")
     print("")
-    print("Note: Metrics are not stored in DynamoDB (using JSON fallback)")
+    print("Files to migrate:")
+    print("  - logs.json -> logs-table")
+    print("  - metrics.json -> metrics-table")
+    print("  - employees.json -> employees-table")
+    print("  - admins.json -> admins-table")
+    print("  - tickets.json -> tickets-table")
     print("")
     
     # Run migration
