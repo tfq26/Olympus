@@ -4,8 +4,8 @@ Provides endpoints for CloudWatch metrics and mock data analysis with LLM integr
 """
 from flask import Blueprint, jsonify, request
 from .cloudwatch_client import fetch_ec2_metrics
-from .mock_data import load_logs, load_metrics, get_resource_by_id, get_logs_by_resource
-from ..Nvidia_llm.AI_client import analyze_with_nvidia, analyze_metrics_with_nvidia, analyze_logs_with_nvidia
+from .mock_data import load_logs, load_metrics, get_resource_by_id, get_logs_by_resource, get_customer_health_summary
+from ..Nvidia_llm.AI_client import analyze_with_nvidia, analyze_metrics_with_nvidia, analyze_logs_with_nvidia, analyze_customer_health
 
 # Create Flask Blueprint for monitor routes
 monitor_bp = Blueprint("monitor", __name__)
@@ -176,4 +176,51 @@ def get_combined_resource_analysis(resource_id):
         "metrics_analysis": metrics_analysis,
         "logs_analysis": logs_analysis,
         "logs_count": len(logs)
+    })
+
+@monitor_bp.route("/mock/customers/health", methods=["GET"])
+def get_customer_health():
+    """
+    Get customer health summary with LLM analysis
+    Analyzes all logs grouped by customer and calculates health metrics
+    Returns: Customer health metrics, critical issues, and LLM summary
+    """
+    # Get customer health data from logs
+    health_data = get_customer_health_summary()
+    if health_data is None:
+        return jsonify({"error": "Failed to load logs.json"}), 500
+    
+    # Extract customer metrics and critical issues
+    affected_customers = health_data.get("affected_customers", [])
+    critical_issues = health_data.get("critical_issues", [])
+    
+    # Calculate overall statistics
+    total_logs = sum(c["total_logs"] for c in affected_customers)
+    total_errors = sum(c["error_logs"] for c in affected_customers)
+    total_warnings = sum(c["warning_logs"] for c in affected_customers)
+    total_critical = sum(c["critical_logs"] for c in affected_customers)
+    total_customers = len(affected_customers)
+    
+    # Calculate overall health percentage
+    ok_logs = total_logs - total_errors - total_warnings - total_critical
+    overall_health_value = round((ok_logs / total_logs * 100) if total_logs > 0 else 100.0, 2)
+    # Format overall health percentage with % symbol
+    overall_health_percent = f"{overall_health_value}%"
+    
+    # Generate LLM summary
+    llm_analysis = analyze_customer_health(health_data, critical_issues)
+    
+    # Build response
+    return jsonify({
+        "summary": llm_analysis.get("analysis", "Analysis not available"),
+        "affected_customers": affected_customers,
+        "critical_issues": critical_issues,
+        "overall_statistics": {
+            "total_logs": total_logs,
+            "total_customers": total_customers,
+            "overall_health_percent": overall_health_percent,
+            "total_errors": total_errors,
+            "total_critical": total_critical,
+            "total_warnings": total_warnings
+        }
     })

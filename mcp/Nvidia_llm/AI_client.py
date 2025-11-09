@@ -158,6 +158,58 @@ Provide a clear, actionable summary in 2-3 sentences."""
 
     return _call_nvidia_api(prompt, "log data")
 
+def analyze_customer_health(customer_data, critical_issues):
+    """
+    Analyzes customer health data with LLM
+    Args:
+        customer_data - Dictionary with customer health metrics and statistics
+        critical_issues - List of resource IDs with critical issues
+    Returns: Dictionary with "analysis" key containing LLM-generated summary
+    """
+    if not NVIDIA_API_KEY:
+        return {"error": "Missing NVIDIA_API_KEY"}
+    
+    # Format customer data for analysis
+    customers_json = json.dumps(customer_data.get("affected_customers", []), indent=2)
+    critical_issues_str = ", ".join(critical_issues) if critical_issues else "None"
+    
+    # Calculate overall statistics
+    total_logs = sum(c["total_logs"] for c in customer_data.get("affected_customers", []))
+    total_errors = sum(c["error_logs"] for c in customer_data.get("affected_customers", []))
+    total_warnings = sum(c["warning_logs"] for c in customer_data.get("affected_customers", []))
+    total_critical = sum(c["critical_logs"] for c in customer_data.get("affected_customers", []))
+    total_customers = len(customer_data.get("affected_customers", []))
+    
+    # Calculate overall health percentage
+    ok_logs = total_logs - total_errors - total_warnings - total_critical
+    overall_health_value = round((ok_logs / total_logs * 100) if total_logs > 0 else 100.0, 2)
+    overall_health = f"{overall_health_value}%"
+    
+    # Create prompt for LLM analysis
+    prompt = f"""Analyze the following customer health data and provide a concise summary.
+
+Customer Health Metrics:
+{customers_json}
+
+Critical Issues (Resources with ERROR or CRITICAL status):
+{critical_issues_str}
+
+Overall Statistics:
+- Total Logs: {total_logs}
+- Total Customers: {total_customers}
+- Overall Health: {overall_health}
+- Total Errors: {total_errors}
+- Total Warnings: {total_warnings}
+- Total Critical: {total_critical}
+
+Provide a clear summary in 2-3 sentences focusing on:
+- Overall system health trends
+- Customers with the most issues
+- Critical resources that need attention
+- Key recommendations"""
+    
+    return _call_nvidia_api(prompt, "customer health data")
+
 def _call_nvidia_api(prompt, data_type, use_streaming=False):
     """
     Helper function to make API call to NVIDIA Nemotron LLM using OpenAI SDK
