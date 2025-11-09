@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  /* --- Custom Background Image --- */
+  /* This generates a utility class: bg-app-surface */
+  --background-image-app-surface: linear-gradient(
+    345deg,
+    #0d0b1a 0%,
+    #1f1a3b 100%
+  );
+
+  /* --- Accent Glows / Gradients --- */
+  --color-nebula-magenta: #9f70fd;
+  --color-nebula-cyan: #79e8dd;
+  --color-nebula-blue: #55b4ff;
+
+  /* --- Primary and secondary --- */
+  --color-primary: #1c1363;
+  --color-secondary: #f9f6ee;
+
+  /* --- Primary/Secondary Text --- */
+  --color-text-primary: #eae8ff;
+  --color-text-secondary: #8b89a1;
+
+  /* --- System Health Indicators --- */
+  --color-indicator-nominal: #2e9267;
+  --color-indicator-warning: #ffd23e;
+  --color-indicator-critical: #ff6b6b;
+
+  /* --- Typography Tokens (Tailwind v4 style) --- */
+  --font-serif: "Lora", "Playfair Display", serif;
+  --font-sans: "Inter", "Manrope", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+/* PrimeReact tooltip overrides - ensure visibility and allow a white-text variant */
+@layer components {
+  .p-tooltip,
+  .p-tooltip .p-tooltip-text {
+    background: rgba(0, 0, 0, 0.85) !important;
+    color: #ffffff !important;
+    border-radius: 0.5rem !important;
+    padding: 0.25rem 0.5rem !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35) !important;
+    z-index: 9999 !important;
+    white-space: nowrap !important;
+    font-family: var(--font-mono) !important;
+  }
+}
