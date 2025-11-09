@@ -6,6 +6,114 @@ const models = [
   { name: "Hermès", value: ["gemini-2.0-flash", "gemini-2.5-pro"] },
 ];
 
+// Helper to parse and format AI responses
+const formatAIResponse = (content) => {
+  if (!content) return "";
+
+  // Try to parse if it looks like JSON
+  if (content.trim().startsWith("{") || content.trim().startsWith("[")) {
+    try {
+      const parsed = JSON.parse(content);
+      
+      // If it has a result field, format it nicely
+      if (parsed.result) {
+        if (typeof parsed.result === 'string') {
+          return parsed.result;
+        }
+        if (typeof parsed.result === 'object') {
+          return formatObjectResponse(parsed.result);
+        }
+      }
+      
+      // If it has a reply field
+      if (parsed.reply) {
+        return parsed.reply;
+      }
+
+      // If it's a tool execution result
+      if (parsed.tool) {
+        return formatToolResponse(parsed);
+      }
+
+      // Otherwise format the whole object
+      return formatObjectResponse(parsed);
+    } catch {
+      // Not JSON, return as-is
+      return content;
+    }
+  }
+
+  return content;
+};
+
+// Format object responses into readable text
+const formatObjectResponse = (obj) => {
+  if (!obj || typeof obj !== 'object') return String(obj);
+
+  let output = [];
+
+  // Handle arrays
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) return "No items found.";
+    
+    obj.forEach((item, index) => {
+      if (typeof item === 'object') {
+        output.push(`\n**Item ${index + 1}:**`);
+        output.push(formatObjectResponse(item));
+      } else {
+        output.push(`• ${item}`);
+      }
+    });
+    return output.join('\n');
+  }
+
+  // Handle objects
+  Object.entries(obj).forEach(([key, value]) => {
+    const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    
+    if (value === null || value === undefined) {
+      output.push(`**${label}:** N/A`);
+    } else if (typeof value === 'object') {
+      output.push(`**${label}:**`);
+      output.push(formatObjectResponse(value));
+    } else {
+      output.push(`**${label}:** ${value}`);
+    }
+  });
+
+  return output.join('\n');
+};
+
+// Format tool execution results
+const formatToolResponse = (data) => {
+  let output = [];
+
+  if (data.ok === false) {
+    output.push(`❌ **Error:** ${data.error || 'Operation failed'}`);
+    return output.join('\n');
+  }
+
+  output.push(`✅ **Tool:** ${data.tool || 'Unknown'}`);
+  
+  if (data.args && Object.keys(data.args).length > 0) {
+    output.push('\n**Parameters:**');
+    Object.entries(data.args).forEach(([key, value]) => {
+      output.push(`  • ${key}: ${value}`);
+    });
+  }
+
+  if (data.result) {
+    output.push('\n**Result:**');
+    if (typeof data.result === 'string') {
+      output.push(data.result);
+    } else {
+      output.push(formatObjectResponse(data.result));
+    }
+  }
+
+  return output.join('\n');
+};
+
 export default function ChatBot({
   welcomeMessage = "Welcome! How can I help you today?",
   placeholder = "Ask me anything about your infrastructure...",
@@ -99,7 +207,9 @@ export default function ChatBot({
                       : "ml-8 bg-[rgba(28,19,99,0.4)] border-nebula-cyan"
                   }`}
                 >
-                  {m.content}
+                  <div className="whitespace-pre-wrap">
+                    {m.role === "assistant" ? formatAIResponse(m.content) : m.content}
+                  </div>
                   
                   {/* Confirmation buttons for destructive operations */}
                   {m.needsConfirmation && m.intent && (

@@ -221,12 +221,9 @@ export function useWebSocketChat() {
       setMessages((prev) => [...prev, userMessage]);
       setIsLoading(true);
 
+      // Server expects either { message } or { intent, userConfirmed }
       const messageData = JSON.stringify({
-        tool: "queryAI",
-        args: {
-          prompt: message.content,
-          systemMessage: "You are a helpful assistant. Answer questions clearly and concisely.",
-        },
+        message: message.content
       });
 
       // Check connection state

@@ -13,8 +13,10 @@ import Dashboard from "./pages/Resources/dashboard.jsx";
 import TicketsDashboard from "./pages/Tickets/TicketDashboard.jsx";
 import NotFound from "./pages/error.jsx";
 import LogsDashboard from "./pages/LogsView/LogDashboard.jsx";
-import MenuBar from "./components/MenuBar.jsx";
 import ProfilePage from "./pages/profile/profile.jsx";
+import SystemHealth from "./components/SystemHealth.jsx";
+import OverviewSidebar from "./components/OverviewSidebar.jsx";
+import TopNav from "./components/TopNav.jsx";
 
 export const appRoutes = [
   { path: "/", element: <Home />, roles: ["user", "admin"] },
@@ -48,37 +50,49 @@ const AppRouter = () => {
 
   return (
     <Router>
-      <div className="min-h-screen pb-20 text-text-primary bg-app-surface font-mono">
-        <Routes>
-          {appRoutes.map((route, i) => {
-            if (route.public) {
-              const element =
-                user && route.guestOnly ? (
-                  <Navigate to="/" replace />
-                ) : (
-                  route.element
-                );
-              return <Route key={i} path={route.path} element={element} />;
-            }
+      <div className="relative flex flex-col h-screen bg-app-surface font-mono text-white">
+        {/* Top status header + navigation */}
+        <SystemHealth status="Nominal" />
+        <TopNav />
 
-            return (
-              <Route
-                key={i}
-                path={route.path}
-                element={
-                  <ProtectedRoute
-                    element={route.element}
-                    allowedRoles={route.roles}
-                  />
+        {/* Main content + Sidebar container */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Main scrollable content */}
+          <div className="flex-1 overflow-y-auto pb-20 px-4 md:px-8 text-text-primary">
+            <Routes>
+              {appRoutes.map((route, i) => {
+                if (route.public) {
+                  const element =
+                    user && route.guestOnly ? (
+                      <Navigate to="/" replace />
+                    ) : (
+                      route.element
+                    );
+                  return <Route key={i} path={route.path} element={element} />;
                 }
-              />
-            );
-          })}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
 
-        {/* Bottom Dock Menu */}
-        {user && <MenuBar />}
+                return (
+                  <Route
+                    key={i}
+                    path={route.path}
+                    element={
+                      <ProtectedRoute
+                        element={route.element}
+                        allowedRoles={route.roles}
+                      />
+                    }
+                  />
+                );
+              })}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+
+          {/* Sidebar (desktop only) */}
+          <div className="hidden lg:flex h-full border-l border-gray-800">
+            <OverviewSidebar />
+          </div>
+        </div>
       </div>
     </Router>
   );

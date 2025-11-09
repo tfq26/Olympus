@@ -1,9 +1,11 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "primereact/button";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { InputTextarea } from "primereact/inputtextarea";
 import { useWebSocketChat } from "../hooks/useWebSocketChat";
+import { useAuth } from "../contexts/authContext.jsx";
+import { canPerform } from "../lib/permissions.js";
 
 export default function SmallerChatBox({
   placeholder = "Ask me anything...",
@@ -18,7 +20,9 @@ export default function SmallerChatBox({
   const op = useRef(null);
   const textareaRef = useRef(null);
 
-  const { messages, append, isLoading } = useWebSocketChat();
+  const { messages, append, isLoading, confirm, setMessages } = useWebSocketChat();
+  const { user } = useAuth();
+  const [toast, setToast] = useState(null); // { type, message }
 
   // Don't render if hidden prop is true
   if (hidden) return null;
@@ -73,15 +77,44 @@ export default function SmallerChatBox({
             className="mb-3 h-[50vh] overflow-y-auto rounded-xl p-4 shadow-lg bg-white/5 backdrop-blur border border-gray-800/40 space-y-3"
           >
             {messages.map((m) => (
-              <div
-                key={m.id}
-                className={`p-3 rounded-lg text-sm border-l-4 ${
-                  m.role === "assistant"
-                    ? "bg-indigo-500/20 border-indigo-400"
-                    : "bg-gray-700/20 border-gray-400"
-                }`}
-              >
-                {m.content}
+              <div key={m.id} className="space-y-2">
+                <div
+                  className={`p-3 rounded-lg text-sm border-l-4 ${
+                    m.role === "assistant"
+                      ? "bg-indigo-500/20 border-indigo-400"
+                      : "bg-gray-700/20 border-gray-400"
+                  }`}
+                >
+                  {m.content}
+                </div>
+                {m.needsConfirmation && m.intent && (
+                  <div className="flex gap-2 pl-2">
+                    <Button
+                      label="Confirm"
+                      className="p-button-sm p-button-success"
+                      onClick={() => {
+                        // Permission check before confirmation
+                        const role = user?.role || 'viewer';
+                        if (!canPerform(role, m.intent.tool)) {
+                          setToast({
+                            type: 'warn',
+                            message: `Insufficient permissions: role '${role}' cannot perform '${m.intent.tool}'.`
+                          });
+                          return;
+                        }
+                        confirm(m.intent);
+                      }}
+                    />
+                    <Button
+                      label="Dismiss"
+                      className="p-button-sm p-button-text"
+                      onClick={() => {
+                        // Remove only this confirmation message from list
+                        setMessages((prev) => prev.filter((x) => x.id !== m.id));
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             ))}
 
@@ -105,6 +138,28 @@ export default function SmallerChatBox({
               ` +${selectedContext.length - 3} more`}
           </span>
         </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          className={`mb-2 rounded-md border text-xs px-3 py-2 flex items-center justify-between gap-4 shadow ${
+            toast.type === 'warn'
+              ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+              : 'bg-gray-600/20 border-gray-500/40 text-gray-200'
+          }`}
+        >
+          <span>{toast.message}</span>
+          <button
+            onClick={() => setToast(null)}
+            className="text-xs px-2 py-1 rounded bg-gray-700 hover:bg-gray-600"
+          >
+            Close
+          </button>
+        </motion.div>
       )}
 
       {/* Input Bar */}

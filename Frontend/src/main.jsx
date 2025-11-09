@@ -6,7 +6,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "./App.css";
 
-import AppRouter from "./Routing.jsx";
+import App from "./App.jsx";
 import { AuthProvider } from "./contexts/authContext.jsx";
 
 const primeReactConfig = { ripple: true };
@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <PrimeReactProvider value={primeReactConfig}>
       <AuthProvider>
-        <AppRouter />
+        <App />
       </AuthProvider>
     </PrimeReactProvider>
   </StrictMode>

@@ -15,21 +15,85 @@ export default function MenuBar() {
       label: "Home",
       icon: "pi pi-home",
       command: () => handleNavigate(0, "/"),
+      template: (item) => {
+        const isActive = items[activeIndex].label === item.label;
+        return (
+          <span onClick={item.command} data-pr-tooltip={item.label} data-pr-position="top">
+            <i
+              className={`${item.icon} text-2xl sm:text-3xl transition-all duration-200 cursor-pointer ${
+                isActive ? "scale-110" : "scale-100"
+              } ${
+                isActive
+                  ? "text-indigo-500 dark:text-indigo-400"
+                  : "text-gray-700 dark:text-gray-300"
+              }`}
+            />
+          </span>
+        );
+      },
     },
     {
       label: "Resources",
       icon: "pi pi-database",
       command: () => handleNavigate(1, "/resources"),
+      template: (item) => {
+        const isActive = items[activeIndex].label === item.label;
+        return (
+          <span onClick={item.command} data-pr-tooltip={item.label} data-pr-position="top">
+            <i
+              className={`${item.icon} text-2xl sm:text-3xl transition-all duration-200 cursor-pointer ${
+                isActive ? "scale-110" : "scale-100"
+              } ${
+                isActive
+                  ? "text-indigo-500 dark:text-indigo-400"
+                  : "text-gray-700 dark:text-gray-300"
+              }`}
+            />
+          </span>
+        );
+      },
     },
     {
       label: "Tickets",
       icon: "pi pi-ticket",
       command: () => handleNavigate(2, "/tickets"),
+      template: (item) => {
+        const isActive = items[activeIndex].label === item.label;
+        return (
+          <span onClick={item.command} data-pr-tooltip={item.label} data-pr-position="top">
+            <i
+              className={`${item.icon} text-2xl sm:text-3xl transition-all duration-200 cursor-pointer ${
+                isActive ? "scale-110" : "scale-100"
+              } ${
+                isActive
+                  ? "text-indigo-500 dark:text-indigo-400"
+                  : "text-gray-700 dark:text-gray-300"
+              }`}
+            />
+          </span>
+        );
+      },
     },
     {
       label: "Logs",
       icon: "pi pi-file",
       command: () => handleNavigate(3, "/logs"),
+      template: (item) => {
+        const isActive = items[activeIndex].label === item.label;
+        return (
+          <span onClick={item.command} data-pr-tooltip={item.label} data-pr-position="top">
+            <i
+              className={`${item.icon} text-2xl sm:text-3xl transition-all duration-200 cursor-pointer ${
+                isActive ? "scale-110" : "scale-100"
+              } ${
+                isActive
+                  ? "text-indigo-500 dark:text-indigo-400"
+                  : "text-gray-700 dark:text-gray-300"
+              }`}
+            />
+          </span>
+        );
+      },
     },
   ];
 
@@ -38,26 +102,7 @@ export default function MenuBar() {
     navigate(path);
   };
 
-  const itemTemplate = (item) => {
-    const isActive = items[activeIndex].label === item.label;
-
-    return (
-      <i
-        className={`${
-          item.icon
-        } text-2xl sm:text-3xl transition-all duration-200 cursor-pointer ${
-          isActive ? "scale-110" : "scale-100"
-        } ${
-          isActive
-            ? "text-indigo-500 dark:text-indigo-400"
-            : "text-gray-700 dark:text-gray-300"
-        }`}
-        onClick={item.command}
-        data-pr-tooltip={item.label}
-        data-pr-position="top"
-      />
-    );
-  };
+  // No component-level itemTemplate prop; use per-item template above to avoid leaking props on DOM
 
   return (
     <>
@@ -67,7 +112,6 @@ export default function MenuBar() {
           <Dock
             model={items}
             position="bottom"
-            itemTemplate={itemTemplate}
             magnification={false}
             className="backdrop-blur-lg rounded-2xl shadow-lg px-4 py-2"
           />

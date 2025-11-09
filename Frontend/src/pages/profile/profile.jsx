@@ -1,29 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { auth, db } from "../../lib/firebase"; // adjust path if needed
-import { doc, getDoc } from "firebase/firestore";
+import { useAuth } from "../../contexts/authContext.jsx";
 
 export default function ProfilePage() {
-  const [user, setUser] = useState(null);
-  const [extraData, setExtraData] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-        // Fetch Firestore details (optional)
-        const userRef = doc(db, "users", firebaseUser.uid);
-        const snap = await getDoc(userRef);
-        if (snap.exists()) setExtraData(snap.data());
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const { user, loading } = useAuth();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -79,8 +59,8 @@ export default function ProfilePage() {
           className="flex flex-col sm:flex-row sm:items-center gap-6"
         >
           {/* Avatar */}
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-            {user.displayName ? user.displayName[0] : "U"}
+          <div className="w-24 h-24 rounded-full bg-linear-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+            {user.displayName ? user.displayName[0].toUpperCase() : user.email[0].toUpperCase()}
           </div>
 
           {/* Basic Info */}
@@ -89,8 +69,8 @@ export default function ProfilePage() {
               {user.displayName || "Unnamed User"}
             </h2>
             <p className="text-gray-400">{user.email}</p>
-            <p className="text-sm text-indigo-400 font-medium">
-              {extraData.role || "User"}
+            <p className="text-sm text-indigo-400 font-medium uppercase">
+              {user.role || "viewer"}
             </p>
           </div>
         </motion.div>
@@ -102,20 +82,18 @@ export default function ProfilePage() {
         >
           <div className="bg-white/5 border border-gray-700/40 rounded-xl p-4">
             <p className="text-sm text-gray-400">Account Status</p>
-            <p className="text-lg font-semibold text-green-400">
-              {extraData.status || "Active"}
-            </p>
+            <p className="text-lg font-semibold text-green-400">Active</p>
           </div>
 
           <div className="bg-white/5 border border-gray-700/40 rounded-xl p-4">
             <p className="text-sm text-gray-400">User ID</p>
-            <p className="text-lg font-mono text-gray-300">{user.uid}</p>
+            <p className="text-sm font-mono text-gray-300 truncate">{user.uid}</p>
           </div>
 
           <div className="bg-white/5 border border-gray-700/40 rounded-xl p-4">
-            <p className="text-sm text-gray-400">Joined</p>
-            <p className="text-lg font-semibold text-gray-200">
-              {extraData.joined || new Date(user.metadata.creationTime).toLocaleDateString()}
+            <p className="text-sm text-gray-400">Role</p>
+            <p className="text-lg font-semibold text-gray-200 uppercase">
+              {user.role || "viewer"}
             </p>
           </div>
         </motion.div>

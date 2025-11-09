@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 
 import { auth } from "../lib/firebase.js";
+import { getIdTokenResult } from "firebase/auth";
 
 const AuthContext = createContext(undefined);
 
@@ -16,15 +17,29 @@ export const AuthProvider = ({ children }) => {
   const provider = useMemo(() => new GoogleAuthProvider(), []);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        setUser({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-          photoURL: firebaseUser.photoURL,
-          role: "user",
-        });
+        try {
+          // Fetch token claims for role
+          const tokenResult = await getIdTokenResult(firebaseUser);
+          const role = tokenResult.claims.role || "viewer"; // default lowest privilege
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            displayName: firebaseUser.displayName,
+            photoURL: firebaseUser.photoURL,
+            role,
+          });
+        } catch (e) {
+          console.error("Failed to load custom claims", e);
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            displayName: firebaseUser.displayName,
+            photoURL: firebaseUser.photoURL,
+            role: "viewer",
+          });
+        }
       } else {
         setUser(null);
       }
