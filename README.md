@@ -70,11 +70,11 @@ scripts/                 Env sync, CI-support test scripts, dev/stop helpers
 ## Getting Started
 
 ```bash
-npm run setup   # installs Node + Python deps, syncs env files, runs the test suite
-npm run dev     # starts Flask (:5000), Node MCP client (:8080), and the frontend (:5173)
+npm run install:all   # installs root, mcp-client, and Frontend deps
+npm run sync-env       # fans root .env out to mcp-client/.env and Frontend/.env.local
+npm run dev             # starts Flask (:5000), Node MCP client (:8080), and the frontend (:5173),
+                          # then opens the browser once all three ports are up
 ```
-
-Or in one shot: `npm run demo` (kills stale ports, runs setup, starts the stack, opens the browser).
 
 Requires a root `.env` — see `.env.example` and `DEPLOYMENT.md` for the full variable list (NVIDIA API key, AWS credentials if exercising live Terraform, optional Firebase auth config).
 
