@@ -1,250 +1,91 @@
 # Olympus
-## Run everything with one command
 
-Requirements:
-- macOS with zsh
-- python3, node, npm in PATH
+AI-operated cloud infrastructure platform: monitor AWS resources, triage incidents, and provision/destroy infrastructure — all through natural-language chat instead of the AWS console or raw Terraform.
 
-Steps:
-1. Copy and edit `.env` at the repo root as needed (ports, API keys).
-2. From the repo root, run:
+Built at a hackathon as a full-stack system spanning a React frontend, two backend services (Flask + Node), an LLM-powered routing/analysis layer, and containerized Terraform execution.
 
-```
-make dev
-```
+## What It Does
 
-This starts:
-- Flask backend on http://localhost:${FLASK_PORT:-5000}
-- Node MCP server on http://localhost:8080
-- Frontend (Vite) on http://localhost:5173
+Olympus gives an operator a single chat interface to run three workflows that are normally spread across separate tools:
 
-To stop the stack:
+- **Monitoring** — pulls live EC2 metrics from CloudWatch (`mcp/monitor/cloudwatch_client.py`), or serves a mock fleet (`metrics.json`, `logs.json`) for demo/testing, and sends both metrics and logs to an NVIDIA-hosted LLM for health analysis and anomaly detection (`mcp/Nvidia_llm/AI_client.py`).
+- **Incident/ticketing** — `mcp/monitor/ticket_system.py` auto-creates tickets from detected issues, assigns them against an employee workload model, and routes anything flagged `CRITICAL` through an admin approval step before it can be actioned (`employees.json`, `admins.json`, `tickets.json`).
+- **Infrastructure automation** — natural-language requests ("create an S3 bucket called demo-assets") are routed to typed MCP tool calls that run real Terraform (`create_s3_bucket`, `create_ec2_instance`, `create_lambda`, and their `destroy_*` counterparts) inside a Docker container.
+
+## Architecture
 
 ```
-make stop
+React/Vite Frontend
+       │  REST + WebSocket
+       ▼
+Node MCP Client (mcp-client/server.js)  ──NL routing──▶ NVIDIA NIM (model/router.js)
+       │  MCP tool calls
+       ▼
+Terraform MCP Server (mcps/mcp_server.py, Docker)
+       │
+       ▼
+AWS (Terraform configs in mcps/terraform/{s3,ec2,lambda})
+
+Flask Backend (app.py)
+  ├─ /infra   → proxies to the Node MCP client for provisioning
+  └─ /monitor → CloudWatch + mock-fleet metrics, log analysis, ticketing
 ```
 
-To check listeners:
+Two backends exist because the Node service owns MCP/Terraform orchestration and the WebSocket path to the frontend, while Flask owns AWS SDK access (boto3) for CloudWatch and the ticket/employee data layer — the `/infra` blueprint proxies through to Node rather than duplicating Terraform logic in Python.
+
+## Engineering Highlights
+
+**LLM tool-routing with a deterministic fallback.** Chat messages are interpreted by an NVIDIA Nemotron model into a structured `{ tool, args }` call (`mcp-client/model/router.js`). When `USE_SIMPLE_ROUTER=1` or the API is unavailable, a keyword/regex router covers the same tool surface so the demo doesn't hard-depend on a third-party API being up.
+
+**Per-domain mutexes around Terraform state.** Concurrent S3/EC2/Lambda operations are serialized per resource type to prevent two requests from racing on the same Terraform state file, with exponential-backoff retries on transient failures. `PERSIST_TERRAFORM=1` trades isolation for latency by keeping a long-lived container (`mcps-terraform-persist`) alive between calls instead of paying Docker cold-start cost on every request.
+
+**Critical-path human approval.** Ticket creation isn't fully autonomous — `ticket_system.py` separates "create from detected issue" from "approve/reject if CRITICAL," so an LLM-detected incident can page an admin instead of silently triggering an action.
+
+**Unified env across three runtimes.** `scripts/sync-env.mjs` fans a single root `.env` out to `mcp-client/.env` and to `Frontend/.env.local` (filtered to `VITE_`-prefixed keys), so Python, Node, and Vite stay in sync from one source of truth (see `DEPLOYMENT.md`).
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, Vite (rolldown-vite), Tailwind CSS, Chart.js, Firebase, Vercel AI SDK |
+| Backend | Flask (Python) + Express (Node), WebSocket (`ws`) |
+| AI/Routing | NVIDIA NIM (Nemotron) for NL→tool routing and metrics/log analysis |
+| Infra | Terraform, Docker, AWS (S3, EC2, Lambda, CloudWatch via boto3) |
+| Protocol | Model Context Protocol (`@modelcontextprotocol/sdk`) |
+| CI | GitHub Actions — backend import check, Node router sanity build, frontend lint |
+
+## Project Structure
 
 ```
-make status
+app.py                  Flask entrypoint — /infra and /monitor blueprints
+mcp/infra/               Flask-side infra proxy routes
+mcp/monitor/              CloudWatch client, ticketing, mock log/metrics data
+mcp/Nvidia_llm/           NVIDIA LLM client for analysis
+mcp-client/               Node MCP server — NL routing, Terraform tool calls, WebSocket API
+mcps/                     Terraform MCP server (Dockerized) + Terraform configs (s3/ec2/lambda)
+Frontend/                React/Vite UI
+scripts/                 Env sync, CI-support test scripts, dev/stop helpers
 ```
 
-Notes:
-- The dev script will terminate any existing listeners on the ports (Flask_PORT, 8080, 5173) to avoid conflicts.
-- Node server automatically loads the root `.env`.
-- Frontend expects its own `.env` under `frontend/` if you need custom VITE_ variables.
-
-Modern infrastructure management platform with AI-powered natural language control, real-time monitoring, and intelligent log analysis.
-
-## 🚀 Quick Start
-
-### 1. Prerequisites
-- **Node.js** 18+ (for frontend and Node MCP server)
-- **Python** 3.11+ (for Flask monitoring backend)
-- **Docker** (for Terraform MCP container)
-- **AWS credentials** (optional, for live infrastructure)
-
-### 2. Installation
+## Getting Started
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd Olympus
-
-# Install all dependencies
-npm run setup
+npm run setup   # installs Node + Python deps, syncs env files, runs the test suite
+npm run dev     # starts Flask (:5000), Node MCP client (:8080), and the frontend (:5173)
 ```
 
-This command:
-- Installs root dependencies (concurrently)
-- Installs Node MCP dependencies
-- Installs Frontend dependencies
-- Syncs environment variables to all services
+Or in one shot: `npm run demo` (kills stale ports, runs setup, starts the stack, opens the browser).
 
-### 3. Configuration
+Requires a root `.env` — see `.env.example` and `DEPLOYMENT.md` for the full variable list (NVIDIA API key, AWS credentials if exercising live Terraform, optional Firebase auth config).
 
-Create a `.env` file in the root directory:
+## Testing
 
 ```bash
-cp .env.example .env
+npm run test:stack   # python import check + Flask route check + frontend lint + Node CORS check
 ```
 
-**Minimum required variables:**
-```env
-MODEL_API_KEY=your-nvidia-api-key
-VITE_NODE_URL=http://localhost:8080
-VITE_NODE_WS_URL=ws://localhost:8080
-FLASK_URL=http://localhost:5000
-FRONTEND_ORIGIN=http://localhost:5173
-PERSIST_TERRAFORM=1
-```
+CI (`.github/workflows/ci.yml`) runs three independent jobs on push/PR: a Python import sanity check for the Flask backend, a build/sanity check of the Node router against a test API key, and ESLint for the frontend.
 
-**For AWS integration:**
-```env
-AWS_ACCESS_KEY_ID=your-access-key
-AWS_SECRET_ACCESS_KEY=your-secret-key
-AWS_DEFAULT_REGION=us-east-1
-```
+## What This Demonstrates
 
-After updating `.env`, sync it:
-```bash
-npm run sync-env
-```
-
-### 4. Start Development / Demo
-
-Run the full stack with a single command (auto-installs, syncs env, and starts all services):
-```bash
-npm run demo
-```
-
-This starts:
-- 🔵 **Flask Backend** (port 5000) - Monitoring & AI analysis
-- 🟢 **Node MCP Server** (port 8080) - Primary backend & Terraform proxy
-- 🟣 **Frontend** (port 5173) - React UI
-
-Open your browser to **http://localhost:5173**
-
-If you prefer to start without reinstalling/syncing each time, use:
-```bash
-npm run dev
-```
-
-## 📁 Project Structure
-
-```
-Olympus/
-├── Frontend/               # React + Vite frontend
-│   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Route pages (Dashboard, Logs, Tickets)
-│   │   ├── lib/           # API client
-│   │   └── hooks/         # Custom React hooks (WebSocket)
-│   └── package.json
-├── mcp-client/            # Node MCP server (primary backend)
-│   ├── server.js          # Express server + WebSocket
-│   ├── model/             # NVIDIA routing & NLP
-│   └── package.json
-├── backend/               # Flask monitoring backend
-│   ├── app.py             # Flask app with monitoring endpoints
-│   └── requirements.txt
-├── mcps/                  # Terraform MCP (Docker)
-├── scripts/               # Utility scripts
-│   └── sync-env.mjs       # Environment sync tool
-├── .env                   # Root environment config
-└── package.json           # Root scripts (npm run dev)
-```
-
-## 🎯 Features
-
-### Infrastructure Management
-- **Natural Language Control**: "Create an S3 bucket for production logs"
-- **Terraform Integration**: Automated infrastructure provisioning
-- **Two-Phase Confirmation**: Safety checks before destructive operations
-- **Real-time Feedback**: WebSocket updates during deployments
-
-### Monitoring & Observability
-- **Live Metrics Dashboard**: CPU, RAM, Network, Disk usage
-- **Log Analysis**: Filter by status, resource, and AI-powered insights
-- **Ticket Management**: Track issues and incidents
-- **Auto-refresh**: Real-time data polling every 10-30 seconds
-
-### AI-Powered Features
-- **Intent Recognition**: Natural language → infrastructure actions
-- **Log Analysis**: Intelligent pattern detection and recommendations
-- **Chat Assistant**: Conversational interface for all operations
-
-## 📚 Available Scripts
-
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start all services (Flask + Node + Frontend) |
-| `npm run dev:flask` | Start Flask backend only |
-| `npm run dev:node` | Start Node MCP server only |
-| `npm run dev:frontend` | Start Frontend only |
-| `npm run setup` | Install all dependencies + sync env |
-| `npm run install:all` | Install dependencies for all services |
-| `npm run sync-env` | Sync root .env to all services |
-| `npm run build` | Build frontend for production |
-| `npm run test` | Run all tests |
-
-## 🏗️ Architecture
-
-```
-Frontend (React/Vite :5173)
-    ↓
-Node MCP Server (Express :8080) ← Primary Backend
-    ├→ Terraform MCP (Docker stdio)
-    ├→ Flask Backend (Monitoring :5000)
-    └→ NVIDIA API (NLP routing)
-```
-
-**Why Node is primary:**
-- Single entry point reduces complexity
-- WebSocket support for real-time updates
-- Unified routing for all infrastructure + monitoring
-- Proxies both Terraform and Flask endpoints
-
-## 🔒 Security
-
-- **Confirmation Flow**: Destructive operations require explicit user confirmation
-- **Environment Isolation**: Sensitive keys in `.env` (gitignored)
-- **CORS Protection**: Configured for localhost origins only
-- **Firebase Auth**: Optional user authentication (configurable)
-
-## 🧪 Testing
-
-Run backend validation:
-```bash
-npm run test:node
-```
-
-Run frontend linting:
-```bash
-npm run test:frontend
-```
-
-Run full test suite:
-```bash
-npm test
-```
-
-## 📖 Documentation
-
-- [DEPLOYMENT.md](./DEPLOYMENT.md) - Detailed deployment guide
-- [Frontend/WEBSOCKET_INTEGRATION.md](./Frontend/WEBSOCKET_INTEGRATION.md) - WebSocket implementation
-- [.env.example](./.env.example) - Environment variable reference
-
-## 🐛 Troubleshooting
-
-**Services won't start:**
-1. Check all ports are free (5000, 5173, 8080)
-2. Verify `.env` exists and has required variables
-3. Run `npm run sync-env` to update service configs
-4. Check Python dependencies: `pip install -r requirements.txt`
-
-**Frontend can't connect to backend:**
-1. Ensure `VITE_NODE_URL=http://localhost:8080` in `.env`
-2. Restart frontend after changing env vars
-3. Check Node server is running on port 8080
-
-**Terraform operations fail:**
-1. Verify Docker is running
-2. Check AWS credentials in `.env`
-3. Ensure `PERSIST_TERRAFORM=1` for state persistence
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for more troubleshooting tips.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-See [LICENSE](./LICENSE) file for details.
-```
+Coordinating three runtimes (Python, Node, browser) behind one conversational interface; wrapping a non-deterministic LLM router with a deterministic fallback so demos don't depend on an external API's uptime; and treating infrastructure mutation as something that needs concurrency control and human sign-off, not just an exposed API.
